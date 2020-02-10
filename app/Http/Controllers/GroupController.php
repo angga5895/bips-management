@@ -123,6 +123,19 @@ class GroupController extends Controller
         return response()->json($group);
     }
 
+    public function getGroupUser(Request $request){
+        // $requestData = $request->all();
+        // $groupID = $requestData['search_param']['groupID'];
+        $groupID = 5;
+        $query = 'SELECT 
+                    ROW_NUMBER() OVER (ORDER BY group_id)  sequence_no,
+                    "view_user_group_dealer".* 
+                  FROM "view_user_group_dealer" 
+                  WHERE "group_id" ='.$groupID;    
+        $data = DB::select($query);
+        return DataTables::of($data)->make(true);
+    }
+
     public function dataGroup(Request $request){
         $requestData = $request->all();
 

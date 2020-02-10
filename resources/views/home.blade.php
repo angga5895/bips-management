@@ -5,7 +5,6 @@
         $(document).ready(function () {
             getTableGroup();
             getTableList();
-            $("#table-listmember").DataTable();
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
@@ -20,7 +19,45 @@
             $("#groupID").val(id);
             getGroup();
         }
-
+        function getGroupId(id){
+            $("#table-listmember").DataTable({
+                destroy: true,
+                ajax : {
+                    url: '{{ url("getGroupUser/get") }}',
+                    data: function (d) {
+                        var search_data = {groupID:id};
+                        d.search_param = search_data;
+                    }
+                },  
+                columns : [
+                    {data : 'sequence_no', name: 'sequence_no'},
+                    {data : 'client_id', name: 'client_id'},
+                    {data : 'dlrname', name: 'dlrname'},
+                ],
+                columnDefs: [
+                {
+                    targets : [0],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [1],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [2],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    searchable : true,
+                    targets : [3],
+                    render : function (data, type, row) {
+                        var id = row.group_id;
+                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
+                    }
+                }]
+            });
+        }
         function getTableList() {
             $("#table-grouplist").DataTable({
                 /*processing: true,
@@ -88,7 +125,7 @@
                 var groupid = data.group_id;
                 tableGroup.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
-                alert( 'You clicked on '+groupid+'\'s row' );
+                getGroupId(groupid);
             } );
         }
 

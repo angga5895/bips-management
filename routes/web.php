@@ -36,4 +36,5 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('get-dataGroup/{id}', 'GroupController@dataGroup')->name('data-group');
     Route::get('/group/{id}/edit', 'GroupController@groupEdit')->name('group.edit');
     Route::get('group-update', 'GroupController@updateGroup');
+    Route::get('getGroupUser/{id}','GroupController@getGroupUser');
 });

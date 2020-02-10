@@ -82,6 +82,14 @@
                     searchable : true,
                 }]
             });
+
+            $('#table-reggroup tbody').on('click', 'tr', function () {
+                var data = tableGroup.row( this ).data();
+                var groupid = data.group_id;
+                tableGroup.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+                alert( 'You clicked on '+groupid+'\'s row' );
+            } );
         }
 
         $("#btn-current2").on("click", function(){

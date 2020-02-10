@@ -77,8 +77,8 @@
 
             $("#table-listclient").DataTable({
                 destroy: true,
-                processing: true,
-                serverSide: true,
+                /*processing: true,
+                serverSide: true,*/
                 ajax : {
                     url: '{{ url("get-dataClient/get") }}',
                     data: function (d) {

@@ -98,8 +98,8 @@
 
             $("#table-listclient").DataTable({
                 destroy: true,
-                processing: true,
-                serverSide: true,
+                /*processing: true,
+                serverSide: true,*/
                 ajax : {
                     url: '{{ url("get-dataClient/get") }}',
                     data: function (d) {
@@ -133,8 +133,8 @@
 
         function tablelist() {
             $("#table-listmember").DataTable({
-                processing: true,
-                serverSide: true,
+                /*processing: true,
+                serverSide: true,*/
                 ajax : {
                     url: '{{ url("get-dataRegistrasi/get") }}',
                     data: function (d) {
@@ -169,8 +169,8 @@
 
         function tablegetReg() {
             var tableData = $("#table-reggroup").DataTable({
-                processing: true,
-                serverSide: true,
+                /*processing: true,
+                serverSide: true,*/
                 aaSorting: [[0, 'desc']],
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){

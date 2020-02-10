@@ -59,8 +59,8 @@
 
         function getTableList() {
             $("#table-grouplist").DataTable({
-                processing: true,
-                serverSide: true,
+                /*processing: true,
+                serverSide: true,*/
                 ajax : {
                     url: '{{ url("get-dataGroup/get") }}',
                     data: function (d) {
@@ -95,8 +95,8 @@
 
         function getTableGroup(){
             var tableGroup = $("#table-reggroup").DataTable({
-                processing: true,
-                serverSide: true,
+                /*processing: true,
+                serverSide: true,*/
                 aaSorting: [[0, 'desc']],
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){

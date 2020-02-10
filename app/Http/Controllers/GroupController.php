@@ -124,9 +124,8 @@ class GroupController extends Controller
     }
 
     public function getGroupUser(Request $request){
-        // $requestData = $request->all();
-        // $groupID = $requestData['search_param']['groupID'];
-        $groupID = 5;
+        $requestData = $request->all();
+        $groupID = $requestData['search_param']['groupID'];
         $query = 'SELECT 
                     ROW_NUMBER() OVER (ORDER BY group_id)  sequence_no,
                     "view_user_group_dealer".* 

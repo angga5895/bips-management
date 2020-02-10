@@ -82,6 +82,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Gagal -->
+    <div class="modal fade" id="modalGagal" tabindex="-1" role="dialog" aria-labelledby="modalGagalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-gradient-gray text-lighter">
+                <div class="modal-body">
+                    <div class="py-3 text-center">
+                        <h1 class="mt-4">Please Input Group Before.</h1>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link text-white ml-auto" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Argon Scripts -->
 <!-- Core -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', ['title' => 'Register']);
+        $query = 'select count(*) FROM "group"';
+        $sql = DB::select($query);
+        $countgroup = '';
+        foreach ($sql as $p){
+            $countgroup = $p->count;
+        }
+        return view('home', ['title' => 'Register', 'countgroup'=>$countgroup]);
     }
 }

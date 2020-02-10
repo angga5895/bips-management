@@ -20,7 +20,14 @@ class UserController extends Controller
         $usertype = User_type::orderBy('id','ASC')->get();
         $userstatus = User_status::orderBy('id','ASC')->get();
 
-        return view('user-admin.user', compact('usertype','userstatus'), ['title' => 'User']);
+        $query = 'select count(*) FROM "group"';
+        $sql = DB::select($query);
+        $countgroup = '';
+        foreach ($sql as $p){
+            $countgroup = $p->count;
+        }
+
+        return view('user-admin.user', compact('usertype','userstatus','countgroup'), ['title' => 'User']);
     }
 
     public function userEdit($id)
@@ -29,7 +36,14 @@ class UserController extends Controller
         $userstatus = User_status::orderBy('id','ASC')->get();
         $userbips = User_bips::where('id',$id)->get();
 
-        return view('user-admin.user-edit', compact('usertype','userstatus', 'userbips'), ['title' => 'Edit User']);
+        $query = 'select count(*) FROM "group"';
+        $sql = DB::select($query);
+        $countgroup = '';
+        foreach ($sql as $p){
+            $countgroup = $p->count;
+        }
+
+        return view('user-admin.user-edit', compact('usertype','userstatus', 'userbips','countgroup'), ['title' => 'Edit User']);
     }
 
     public function uniqueUsername(){

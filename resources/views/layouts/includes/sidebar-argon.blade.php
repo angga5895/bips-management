@@ -121,9 +121,15 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="/user" class="nav-link {{ $routeName == 'user' || $routeName == 'user.edit' ? 'menu-active' : '' }}">
-                                    <span class="sidenav-normal"> User Management </span>
-                                </a>
+                                @if($countgroup === '0' || $countgroup === 0)
+                                    <a href="#" class="nav-link" data-toggle="modal" data-target="#modalGagal">
+                                        <span class="sidenav-normal"> User Management</span>
+                                    </a>
+                                @else
+                                    <a href="/user" class="nav-link {{ $routeName == 'user' || $routeName == 'user.edit' ? 'menu-active' : '' }}">
+                                        <span class="sidenav-normal"> User Management</span>
+                                    </a>
+                                @endif
                             </li>
                         </ul>
                     </div>

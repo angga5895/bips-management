@@ -13,12 +13,20 @@ class GroupController extends Controller
     public function group()
     {
         $group_list = Group::all();
-        
+
+        $query = 'select count(*) FROM "group"';
+        $sql = DB::select($query);
+        $row = '';
+        foreach ($sql as $p){
+            $row = $p->count;
+        }
+
         return view('user-admin/group', 
                     [
                         'title' => 'Group',
                         'group'=>$group_list,
                         'newid'=>$this->get_prime(),
+                        'countgroup' => $row
                     ]
                 );
     }
@@ -26,8 +34,14 @@ class GroupController extends Controller
     public function groupEdit($id)
     {
         $group = Group::where('group_id',$id)->get();
+        $query = 'select count(*) FROM "group"';
+        $sql = DB::select($query);
+        $countgroup = '';
+        foreach ($sql as $p){
+            $countgroup = $p->count;
+        }
 
-        return view('user-admin.group-edit', compact('group'), ['title' => 'Edit Group']);
+        return view('user-admin.group-edit', compact('group','countgroup'), ['title' => 'Edit Group']);
     }
 
     public function updateGroup(){
@@ -149,4 +163,5 @@ class GroupController extends Controller
         $data = DB::select($query);
         return DataTables::of($data)->make(true);
     }
+
 }

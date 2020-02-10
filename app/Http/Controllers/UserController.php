@@ -91,6 +91,10 @@ class UserController extends Controller
             }
         }
 
+        if ($user_type === '4' || $user_type === '5') {
+            $group = null;
+        }
+
         $expire = explode("/", $expire_date);
         $exdate = $expire[2]."-".$expire[1]."-".$expire[0]." 00:00:00";
 
@@ -107,36 +111,41 @@ class UserController extends Controller
         ]);
 
         if ($query){
-            $cekgroup = $group;
-            $arrgroup = [];
+            if($group === null){
+                $status = "00";
+                $user = $username;
+            } else {
+                $cekgroup = $group;
+                $arrgroup = [];
 
-            if($this->isprime($cekgroup) == true){
-                array_push($arrgroup,$cekgroup);
-            } else{
-                for($i = 1; $i < $cekgroup; $i++){
-                    if($cekgroup % $i == 0){
-                        $prime = $this->isprime($i);
-                        if($prime==true) {
-                            array_push($arrgroup,$i);
+                if ($this->isprime($cekgroup) == true) {
+                    array_push($arrgroup, $cekgroup);
+                } else {
+                    for ($i = 1; $i < $cekgroup; $i++) {
+                        if ($cekgroup % $i == 0) {
+                            $prime = $this->isprime($i);
+                            if ($prime == true) {
+                                array_push($arrgroup, $i);
+                            }
                         }
                     }
                 }
-            }
 
-            $isCount = count($arrgroup);
-            for($itr = 0; $itr<$isCount; $itr++){
-                $sql = User_group::create([
-                    'user_id' => $this->getMaxID(),
-                    'group_id' => $arrgroup[$itr],
-                ]);
-            }
+                $isCount = count($arrgroup);
+                for ($itr = 0; $itr < $isCount; $itr++) {
+                    $sql = User_group::create([
+                        'user_id' => $this->getMaxID(),
+                        'group_id' => $arrgroup[$itr],
+                    ]);
+                }
 
-            if ($sql){
-                $status = "00";
-                $user = $username;
-            } else{
-                $status = "01";
-                $user = "";
+                if ($sql) {
+                    $status = "00";
+                    $user = $username;
+                } else {
+                    $status = "01";
+                    $user = "";
+                }
             }
         } else {
             $status = "01";

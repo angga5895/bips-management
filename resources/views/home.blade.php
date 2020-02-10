@@ -33,6 +33,8 @@
                     {data : 'sequence_no', name: 'sequence_no'},
                     {data : 'client_id', name: 'client_id'},
                     {data : 'dlrname', name: 'dlrname'},
+                    {data : 'username', name: 'username'},
+                    {data : 'client_id', name: 'client_id'},
                 ],
                 columnDefs: [
                 {
@@ -48,8 +50,12 @@
                     orderable : true,
                     searchable : true,
                 },{
-                    searchable : true,
                     targets : [3],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    searchable : true,
+                    targets : [4],
                     render : function (data, type, row) {
                         var id = row.group_id;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
@@ -217,6 +223,7 @@
                                         <th>Seq</th>
                                         <th>AO ID</th>
                                         <th>AO Name</th>
+                                        <th>Username</th>
                                         <th>#</th>
                                     </tr>
                                     </thead>
@@ -226,11 +233,6 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
@@ -238,8 +240,17 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
                                     </tr>
                                     <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>

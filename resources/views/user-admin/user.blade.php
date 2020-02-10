@@ -235,7 +235,6 @@
                 success : function (res) {
                     if ($.trim(res)){
                         $("#adduserID").val(res.userID);
-                        $("#sales_id").val(res.salesID);
                     }
                 }
             });

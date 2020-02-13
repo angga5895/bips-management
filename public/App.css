@@ -209,3 +209,7 @@ body.loading .modal-ajax {
 table.dataTable tbody tr.selected {
     background-color: #B0BED9;
 }
+
+.sweet-alert .showSweetAlert .visible{
+	z-index:2!important;
+}

@@ -105,7 +105,7 @@ class UserController extends Controller
             }
         }
 
-        if ($user_type === '4' || $user_type === '5') {
+        if ($user_type ==='2' || $user_type === '4' || $user_type === '5') {
             $group = null;
         }
 
@@ -180,7 +180,7 @@ class UserController extends Controller
         $expire_date = $_GET['expire_date'];
         $client_id = $_GET['client_id'];
         $hclient_id = $_GET['hclient_id'];
-        $group = $_GET['group'];
+        $ggroup = $_GET['group'];
         $hgroup = $_GET['hgroup'];
         $sales_id = '';
 
@@ -195,6 +195,25 @@ class UserController extends Controller
                     $sales_id = $p->slscode;
                 }
             }
+        }
+
+        if ($ggroup === ''){
+            $ggroup = null;
+        }
+        if ($hgroup === ''){
+            $hgroup = null;
+        }
+        if ($sales_id === ''){
+            $sales_id = null;
+        }
+
+        $group = null;
+        if ($user_type === '2'){
+            if ($client_id === $hclient_id) {
+                $group = $hgroup;
+            }
+        } else {
+            $group = $ggroup;
         }
 
         $expire = explode("/", $expire_date);
@@ -216,9 +235,15 @@ class UserController extends Controller
             if ($group === $hgroup){
                 $status = "00";
                 $user = $username;
-            } else{
-                $del = User_group::where('user_id',$id)->delete();
-                if ($del){
+                if ($hclient_id !== $client_id){
+                    User_group::where('user_id',$id)->delete();
+                }
+            } else {
+                User_group::where('user_id',$id)->delete();
+                if ($group === null || $group === ''){
+                    $status = "00";
+                    $user = $username;
+                } else{
                     $cekgroup = $group;
                     $arrgroup = [];
 
@@ -250,9 +275,6 @@ class UserController extends Controller
                         $status = "01";
                         $user = "Gagal Insert User Group Baru";
                     }
-                } else{
-                    $status = "01";
-                    $user = "Gagal Delete User Group";
                 }
             }
         } else {
@@ -336,5 +358,13 @@ class UserController extends Controller
         }
 
         return $max;
+    }
+
+    public function getListAO(Request $request){
+        $query = 'SELECT "dealer".dlrname, "user".* FROM "user"
+                  JOIN "dealer" ON "dealer".dlrcode = "user".client_id';
+        $data = DB::select($query);
+
+        return DataTables::of($data)->make(true);
     }
 }

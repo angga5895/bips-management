@@ -124,7 +124,12 @@
                     orderable:false,
                     searchable : false,
                     render : function (data, type, row) {
+                        var ustype = $("#user_type").val();
                         var groupid = row.groupid;
+                        if (ustype === '2' || ustype === 2){
+                            groupid = ''
+                        }
+
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKClient(\''+data+'\',\''+groupid+'\')">OK</button>'
                     }
                 }]

@@ -5,11 +5,61 @@
         $(document).ready(function () {
             getTableGroup();
             getTableList();
+            getTableGroupUserAO();
+            getGroupId();
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
             $('.bootstrap-select').selectpicker();
         });
+
+        function getTableGroupUserAO() {
+            $("#table-aolist").dataTable({
+                destroy: true,
+                ajax : {
+                    url: '{{ url("get-dataAOList/get") }}',
+                    data: function (d) {
+                        var search_data = {aoID:''};
+                        d.search_param = search_data;
+                    }
+                },
+                columns : [
+                    {data : 'client_id', name: 'client_id'},
+                    {data : 'dlrname', name: 'dlrname'},
+                    {data : 'username', name: 'username'},
+                    {data : 'client_id', name: 'client_id'},
+                ],
+                columnDefs: [{
+                        targets : [0],
+                        orderable : true,
+                        searchable : true,
+                    },{
+                        targets : [1],
+                        orderable : true,
+                        searchable : true,
+                    },{
+                        targets : [2],
+                        orderable : true,
+                        searchable : true,
+                    },{
+                        searchable : true,
+                        targets : [3],
+                        render : function (data, type, row) {
+                            var id = row.id;
+                            var username = row.username;
+                            /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
+                            return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKUserAO(\''+id+'\',\''+username+'\')">OK</button>'
+                    }
+                }]
+            });
+        }
+
+        function clickOKUserAO(id,username) {
+            $("#aoid_id").val(id);
+            $("#aoid_us").val(username);
+
+            if($("#aoid_us").val() !== ""){$("#cekAoid").text('');$("#aoid_us").removeClass("is-invalid");}
+        }
 
         function refreshTableList(){
             $('#table-grouplist').DataTable().ajax.reload();
@@ -19,13 +69,14 @@
             $("#groupID").val(id);
             getGroup();
         }
-        function getGroupId(id){
-            $("#table-listmember").DataTable({
+
+        function getGroupId(){
+            var tableListMember = $("#table-listmember").DataTable({
                 destroy: true,
                 ajax : {
                     url: '{{ url("getGroupUser/get") }}',
                     data: function (d) {
-                        var search_data = {groupID:id};
+                        var search_data = {groupID:$("#group_hidden").val()};
                         d.search_param = search_data;
                     }
                 },  
@@ -34,7 +85,7 @@
                     {data : 'client_id', name: 'client_id'},
                     {data : 'dlrname', name: 'dlrname'},
                     {data : 'username', name: 'username'},
-                    {data : 'client_id', name: 'client_id'},
+                    /*{data : 'client_id', name: 'client_id'},*/
                 ],
                 columnDefs: [
                 {
@@ -53,17 +104,31 @@
                     targets : [3],
                     orderable : true,
                     searchable : true,
-                },{
+                },/*{
                     searchable : true,
                     targets : [4],
                     render : function (data, type, row) {
                         var id = row.group_id;
-                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
+                        /!*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*!/
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
                     }
-                }]
+                }*/]
             });
+
+            $('#table-listmember tbody').on('click', 'tr', function () {
+                var data = tableListMember.row( this ).data();
+                /*var aoid = data.user_id;*/
+                var aoname = data.username;
+                tableListMember.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+
+                $("#cekAoid").text("");
+                $("#aoid_us").removeClass("is-invalid");
+                $("#aoid_us").val(aoname);
+                /*$("#aoid_id").val(aoid);*/
+            } );
         }
+
         function getTableList() {
             $("#table-grouplist").DataTable({
                 /*processing: true,
@@ -131,7 +196,13 @@
                 var groupid = data.group_id;
                 tableGroup.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
-                getGroupId(groupid);
+
+                $("#group_hidden").val(groupid);
+                $('#table-listmember').DataTable().ajax.reload();
+
+                $("#cekUser").text("");
+                $("#grpname").removeClass("is-invalid");
+                $("#grpname").val(data.name);
             } );
         }
 
@@ -164,6 +235,27 @@
             }
         }
 
+        $("#add-btn").on("click", function () {
+            var user = $("#grpname").val();
+            var aoid = $("#aoid_us").val();
+
+            var required = "Field is required.";
+            var clicktable = "Click Table Group Before.";
+            var clickaoid = "Please Choose AOID Before.";
+            if (user === ''){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");$("#grpname").focus();}
+            if(aoid === ''){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");$("#aoid_us").focus();}
+        });
+
+        $("#del-btn").on("click", function () {
+            var user = $("#grpname").val();
+            var aoid = $("#aoid_us").val();
+
+            var required = "Field is required.";
+            var clicktable = "Click Table Group Before.";
+            var clickaoid = "Please Choose Username AO Before.";
+            if (user === ''){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");$("#grpname").focus();}
+            if(aoid === ''){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");$("#aoid_us").focus();}
+        });
     </script>
 @endsection
 
@@ -224,7 +316,7 @@
                                         <th>AO ID</th>
                                         <th>AO Name</th>
                                         <th>Username</th>
-                                        <th>#</th>
+                                        {{--<th>#</th>--}}
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -233,28 +325,28 @@
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td></td>
+                                        {{--<td></td>--}}
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td></td>
+                                        {{--<td></td>--}}
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td></td>
+                                        {{--<td></td>--}}
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td></td>
+                                        {{--<td></td>--}}
                                     </tr>
                                     </tbody>
                                 </table>
@@ -263,23 +355,29 @@
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                             <form>
                                 <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group Name</label>
-                                    <input class="form-control" type="text" placeholder="Please Input"/>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">Group Name</label>
+                                    <input class="form-control" type="hidden" placeholder="ID Group" required id="group_hidden"/>
+                                    <input class="form-control col-sm-5" type="text" placeholder="Please Click Table Group" readonly id="grpname"/>
+                                    <label id="cekUser" class="error invalid-feedback small d-block col-sm-5" for="grpname"></label>
                                 </div>
 
-                                <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Account Officer</label>
-                                    <select class="form-control mb-2 bootstrap-select w-select-100" data-live-search="true" data-style="btn-white" placeholder="Input ID Group">
-                                        <option value="" disabled selected>AOID</option>
-                                        <option value="1">Test</option>
-                                    </select>
-                                    <input class="form-control form-control-input mb-2" placeholder="Nama Detail Group" readonly>
-                                    <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal1"><i class="fa fa-search"></i></button>
+                                <div class="form-group form-inline lbl-user-aoid">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">Username AO</label>
+                                    <div class="input-group col-sm-5 px-0">
+                                        <input class="form-control form-control-input col-sm-12 mb-0 mx-0" placeholder="Username Account Officer" readonly id="aoid_us" value=""/>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text btn btn-default" data-toggle="modal" data-target="#exampleModal1">
+                                                <i class="fa fa-search"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <label id="cekAoid" class="error invalid-feedback small d-block col-sm-5" for="aoid_us"></label>
+                                    <input type="hidden" id="aoid_id"/>
                                 </div>
 
                                 <div class="form-group form-inline justify-content-end mb-0">
-                                    <button class="form-control-btn btn btn-primary mb-2" type="button">Search</button>
-                                    <button class="form-control-btn btn btn-danger mb-2" type="button">Delete</button>
+                                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="add-btn">Add</button>
+                                    <button class="form-control-btn btn btn-danger mb-2" type="button" id="del-btn">Delete</button>
                                 </div>
                             </form>
                         </div>
@@ -331,28 +429,22 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Employees List</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">User Account Officer List</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="table-grouplist">
+                        <table class="table table-striped table-bordered table-hover" id="table-aolist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Employee No</th>
-                                <th>Employee Name</th>
+                                <th>AOID</th>
+                                <th>AO Name</th>
+                                <th>Username</th>
                                 <th>#</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>3</td>
-                                <td>Amiruddin</td>
-                                <td><button class="btn btn-sm btn-success" type="button">OK</button></td>
-                            </tr>
-                            </tbody>
                         </table>
                     </div>
                 </div>

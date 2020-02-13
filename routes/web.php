@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('get-dataRegistrasi/{id}', 'UserController@dataRegistrasi')->name('data-registrasi');
     Route::get('/user/{id}/edit', 'UserController@userEdit')->name('user.edit');
     Route::get('get-dataClient/{id}', 'UserController@dataClient')->name('data-client');
+    Route::get('get-dataAOList/{id}', 'UserController@getListAO');
 
     Route::get('group-registrasi', 'GroupController@registrasiGroup');
     Route::get('group-get', 'GroupController@getGroup');

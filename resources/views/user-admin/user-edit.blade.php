@@ -4,6 +4,13 @@
     <script>
         $(document).ready(function () {
             $('.bootstrap-select').selectpicker();
+            var usertype = $("#user_type").val();
+            if(usertype !== '2'){
+                $("#hidden-usertype").removeClass("d-none");
+            }
+            if(usertype === '2'){
+                $("#hidden-usertype").addClass("d-none");
+            }
         });
 
         $("#canceluser").on("click", function () {
@@ -104,6 +111,7 @@
                     searchable : false,
                     render : function (data, type, row) {
                         var groupid = row.groupid;
+
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKClient(\''+data+'\',\''+groupid+'\')">OK</button>'
                     }
                 }]
@@ -116,6 +124,12 @@
                 $("#cekClientID").text('');$("#client_id").removeClass("is-invalid");
                 $("#client_id").val('');
                 $("#groupID").val('');
+            }
+            if(usertype !== '2'){
+                $("#hidden-usertype").removeClass("d-none");
+            }
+            if(usertype === '2'){
+                $("#hidden-usertype").addClass("d-none");
             }
         }
 
@@ -319,7 +333,7 @@
                                     <label id="cekClientID" class="error invalid-feedback small d-block col-sm-4" for="client_id"></label>
                                 </div>
 
-                                <div class="form-group form-inline lbl-group">
+                                <div class="form-group form-inline lbl-group" id="hidden-usertype">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>
                                     <input class="form-control col-sm-6" type="text" placeholder="Group ID" id="groupID" onchange="checking()" value="{{ $p->group }}" readonly/>
                                     <input class="form-control col-sm-6" type="hidden" placeholder="Group ID" id="hgroupID" value="{{ $p->group }}" readonly/>

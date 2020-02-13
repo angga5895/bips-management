@@ -191,7 +191,7 @@ body.loading .modal-ajax {
 
 .lbl-user-type > .is-invalid > .btn.dropdown-toggle:focus,
 .lbl-user-status > .is-invalid > .btn.dropdown-toggle:focus,
-.lbl-group > .is-invalid > .btn.dropdown-toggle:focus{
+.lbl-group > .is-invalid > .btn.dropdown-toggle:focus {
     outline: none!important;
 }
 

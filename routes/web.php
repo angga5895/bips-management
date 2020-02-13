@@ -39,4 +39,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('group-update', 'GroupController@updateGroup');
     Route::get('getGroupUser/{id}','GroupController@getGroupUser');
 
+    Route::get('addNewUserGroup', 'UserController@addUserGroup');
+    Route::get('delUserGroup', 'UserController@deleteUserGroup');
 });

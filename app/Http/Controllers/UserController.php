@@ -367,4 +367,75 @@ class UserController extends Controller
 
         return DataTables::of($data)->make(true);
     }
+
+    public function addUserGroup(){
+        $id = $_GET['id'];
+        $group_id = $_GET['group_id'];
+        // select
+        $user = $id;
+        if($this->_find_user_group($id,$group_id)){
+            return response()->json([
+                'status' => '01',
+            ]);
+        }else{
+            $ug = new User_Group;
+            $ug->user_id=$id;
+            $ug->group_id = $group_id;
+            $ug->save();
+            if($ug->save()){
+                $dataUser = User_bips::where('id',$id)->get();
+                $oldgroup = $dataUser[0]['group'];
+                if($oldgroup == 0){
+                    $newgroup = $group_id;
+                }else{
+                    $newgroup = $oldgroup * $group_id;
+                }
+                
+                User_bips::where('id',$id)->update(['group'=>$newgroup]);
+
+                return response()->json([
+                    'status' => '00',
+                    // 'res' => $dataUser,
+                ]);
+            }
+        }
+    }
+    public function deleteUserGroup(){
+        $id = $_GET['id'];
+        $group_id = $_GET['group_id'];
+    
+        if(!$this->_find_user_group($id,$group_id)){
+            return response()->json([
+                'status' => '03',
+            ]);
+        }else{
+                $match = [
+                    'user_id'=>$id,
+                    'group_id'=>$group_id,
+                ];
+                User_group::where($match)->delete();
+                $dataUser = User_bips::where('id',$id)->get();
+                $oldgroup = $dataUser[0]['group'];
+                $newgroup = $oldgroup / $group_id;
+                
+                User_bips::where('id',$id)->update(['group'=>$newgroup]);
+
+                return response()->json([
+                    'status' => '00',
+                    // 'res' => $dataUser,
+                ]);
+        }
+    }
+    private function _find_user_group($id,$group_id){
+        $match = [
+            'user_id'=>$id,
+            'group_id'=>$group_id,
+        ];
+        $result = User_Group::where($match)->get();
+            if($result->count() > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
 }

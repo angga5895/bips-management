@@ -210,6 +210,6 @@ table.dataTable tbody tr.selected {
     background-color: #B0BED9;
 }
 
-.sweet-alert .showSweetAlert .visible{
+.sweet-alert{
 	z-index:2!important;
 }

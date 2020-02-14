@@ -245,41 +245,44 @@
             var required = "Field is required.";
             var clicktable = "Click Table Group Before.";
             var clickaoid = "Please Choose AOID Before.";
-            if (user === ''){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");$("#grpname").focus();}
-            if(aoid === ''){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");$("#aoid_us").focus();}
 
-            $.ajax({
-                        type: "GET",
-                        url: "{{ url('addNewUserGroup') }}",
-                        data: {
-                            'id': userid,
-                            'group_id': groupid,
-                        },
-                        success: function (res) {
-                            if ($.trim(res)) {
-                                if (res.status === "00") {
-                                    $('#table-listmember').DataTable().ajax.reload();
-                                    swal({
-                                        title: "Success",
-                                        text: "Berhasil menambahkan user ke grup baru",
-                                        type: "success",
-                                        showCancelButton: false,
-                                        confirmButtonClass: 'btn-success',
-                                        confirmButtonText: 'OK',
-                                    });
-                                }else if(res.status === "01"){
-                                    swal({
-                                        title: "Failed",
-                                        text: "User telah bergabung dengan grup ini",
-                                        type: "warning",
-                                        showCancelButton: false,
-                                        confirmButtonClass: 'btn-success',
-                                        confirmButtonText: 'OK',
-                                    }); 
-                                }
+            if (user === '' || aoid === ''){
+                if (user === ''){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");$("#grpname").focus();}
+                if(aoid === ''){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");$("#aoid_us").focus();}
+            } else {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('addNewUserGroup') }}",
+                    data: {
+                        'id': userid,
+                        'group_id': groupid,
+                    },
+                    success: function (res) {
+                        if ($.trim(res)) {
+                            if (res.status === "00") {
+                                $('#table-listmember').DataTable().ajax.reload();
+                                swal({
+                                    title: "Success",
+                                    text: "Berhasil menambahkan user ke grup baru",
+                                    type: "success",
+                                    showCancelButton: false,
+                                    confirmButtonClass: 'btn-success',
+                                    confirmButtonText: 'OK',
+                                });
+                            }else if(res.status === "01"){
+                                swal({
+                                    title: "Failed",
+                                    text: "User telah bergabung dengan grup ini",
+                                    type: "warning",
+                                    showCancelButton: false,
+                                    confirmButtonClass: 'btn-success',
+                                    confirmButtonText: 'OK',
+                                });
                             }
                         }
-                    });
+                    }
+                });
+            }
         });
 
         $("#del-btn").on("click", function () {
@@ -305,43 +308,54 @@
                     var required = "Field is required.";
                     var clicktable = "Click Table Group Before.";
                     var clickaoid = "Please Choose Username AO Before.";
-                    if (user === ''){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");$("#grpname").focus();}
-                    if(aoid === ''){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");$("#aoid_us").focus();}
-                    
-                    $.ajax({
-                                type: "GET",
-                                url: "{{ url('delUserGroup') }}",
-                                data: {
-                                    'id': userid,
-                                    'group_id': groupid,
-                                },
-                                success: function (res) {
-                                    console.log(res.napa);
-                                    if ($.trim(res)) {
-                                        if (res.status === "00") {
-                                            $('#table-listmember').DataTable().ajax.reload();
-                                            swal({
-                                                title: "Success",
-                                                text: "Berhasil menghapus user",
-                                                type: "success",
-                                                showCancelButton: false,
-                                                confirmButtonClass: 'btn-success',
-                                                confirmButtonText: 'OK',
-                                            });
-                                        }else if(res.status === "03"){
-                                            swal({
-                                                title: "Failed",
-                                                text: "User tidak bergabung dengan grup",
-                                                type: "warning",
-                                                showCancelButton: false,
-                                                confirmButtonClass: 'btn-success',
-                                                confirmButtonText: 'OK',
-                                            }); 
-                                        }
+
+                    if (user === '' || aoid === ''){
+                        if (user === '') {
+                            $("#cekUser").text(required + ' ' + clicktable);
+                            $("#grpname").addClass("is-invalid");
+                            $("#grpname").focus();
+                        }
+                        if (aoid === '') {
+                            $("#cekAoid").text(required + ' ' + clickaoid);
+                            $("#aoid_us").addClass("is-invalid");
+                            $("#aoid_us").focus();
+                        }
+                    } else {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ url('delUserGroup') }}",
+                            data: {
+                                'id': userid,
+                                'group_id': groupid,
+                            },
+                            success: function (res) {
+                                console.log(res.napa);
+                                if ($.trim(res)) {
+                                    if (res.status === "00") {
+                                        $('#table-listmember').DataTable().ajax.reload();
+                                        swal({
+                                            title: "Success",
+                                            text: "Berhasil menghapus user",
+                                            type: "success",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-success',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    } else if (res.status === "03") {
+                                        swal({
+                                            title: "Failed",
+                                            text: "User tidak bergabung dengan grup",
+                                            type: "warning",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-success',
+                                            confirmButtonText: 'OK',
+                                        });
                                     }
                                 }
-                            });
-                        }
+                            }
+                        });
+                    }
+                }
             });
         });
         

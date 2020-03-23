@@ -15,14 +15,14 @@
                                 <div class="col-sm-8">
 
                                     <div class="input-group input-group-merge input-group-alternative">
-                                        <div class="input-group-prepend{{ $errors->has('username') ? ' is-invalid d-border-error-icon-login' : '' }}">
+                                        <div class="input-group-prepend{{ $errors->has('user_name') ? ' is-invalid d-border-error-icon-login' : '' }}">
                                             <span class="input-group-text"><i class="ni ni-single-02"></i></span>
                                         </div>
-                                        <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid d-border-error-input-login' : '' }}" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus placeholder="Username">
+                                        <input id="username" type="text" class="form-control{{ $errors->has('user_name') ? ' is-invalid d-border-error-input-login' : '' }}" name="user_name" value="{{ old('user_name') }}" required autocomplete="user_name" autofocus placeholder="Username">
 
-                                        @if ($errors->has('username'))
+                                        @if ($errors->has('user_name'))
                                             <span class="invalid-feedback text-center" role="alert">
-                                            <strong>{{ $errors->first('username') }}</strong>
+                                            <strong>{{ $errors->first('user_name') }}</strong>
                                         </span>
                                         @endif
                                     </div>

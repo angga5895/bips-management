@@ -6,7 +6,6 @@
             <div class="col-md-12">
                 <div class="card d-border-input">
                     <div class="bg-gradient-secondary card-header justify-content-center text-center"><img height="auto" width="50%" src="{{asset('/bahana-transparan.png')}}"/></div>
-
                     <div class="bg-gradient-secondary card-body">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
@@ -15,14 +14,14 @@
                                 <div class="col-sm-8">
 
                                     <div class="input-group input-group-merge input-group-alternative">
-                                        <div class="input-group-prepend{{ $errors->has('user_name') ? ' is-invalid d-border-error-icon-login' : '' }}">
+                                        <div class="input-group-prepend{{ $errors->has('username') ? ' is-invalid d-border-error-icon-login' : '' }}">
                                             <span class="input-group-text"><i class="ni ni-single-02"></i></span>
                                         </div>
-                                        <input id="username" type="text" class="form-control{{ $errors->has('user_name') ? ' is-invalid d-border-error-input-login' : '' }}" name="user_name" value="{{ old('user_name') }}" required autocomplete="user_name" autofocus placeholder="Username">
+                                        <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid d-border-error-input-login' : '' }}" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus placeholder="Username">
 
-                                        @if ($errors->has('user_name'))
+                                        @if ($errors->has('username'))
                                             <span class="invalid-feedback text-center" role="alert">
-                                            <strong>{{ $errors->first('user_name') }}</strong>
+                                            <strong>{{ $errors->first('username') }}</strong>
                                         </span>
                                         @endif
                                     </div>
@@ -89,7 +88,6 @@
                                     </div>
                                 </div>--}}
                             </div>
-
                             <div class="form-group row mb-0 justify-content-center">
                                 <div class="col-md-8">
                                     <button type="submit" class="btn btn-primary w-100">

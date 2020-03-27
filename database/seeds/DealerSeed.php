@@ -19,6 +19,7 @@ class DealerSeed extends Seeder
                 'phone' => NULL,
                 'mobilephone' => NULL,
                 'email' => NULL,
+                'user_id' => '10092',
             ],[
                 'dealer_id' => '10095',
                 'dealer_name' => 'Aditya Nugraha',
@@ -26,6 +27,7 @@ class DealerSeed extends Seeder
                 'phone' => NULL,
                 'mobilephone' => NULL,
                 'email' => NULL,
+                'user_id' => '10095',
             ],
         ];
         DB::table('dealer')->insert($arr);

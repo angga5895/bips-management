@@ -20,6 +20,7 @@ class CreateDealer extends Migration
             $table->String('phone',50)->nullable();
             $table->String('mobilephone',50)->nullable();
             $table->String('email',50)->nullable();
+            $table->String('user_id',20)->nullable(false);
         });
     }
 

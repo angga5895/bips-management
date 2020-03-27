@@ -21,6 +21,7 @@ class CreateSalesCode extends Migration
             $table->String('phone',50)->nullable();
             $table->String('mobilephone',50)->nullable();
             $table->String('email',50)->nullable();
+            $table->string('user_id',20)->nullable(false);
             $table->foreign('dealer_id')->references('dealer_id')->on('dealer')->onDelete('set null');
         });
     }

@@ -110,14 +110,26 @@
                     </a>
                     <div class="collapse show" id="navbar-useradmin">
                         <ul class="nav nav-sm flex-column">
+                            {{--<li class="nav-item">--}}
+                                {{--<a href="/home" class="nav-link {{ $routeName == 'home' || $routeName == '' ? 'menu-active' : '' }}">--}}
+                                    {{--<span class="sidenav-normal"> Registrasi </span>--}}
+                                {{--</a>--}}
+                            {{--</li>--}}
+
                             <li class="nav-item">
-                                <a href="/home" class="nav-link {{ $routeName == 'home' || $routeName == '' ? 'menu-active' : '' }}">
-                                    <span class="sidenav-normal"> Registrasi </span>
+                                <a href="/sales" class="nav-link {{ $routeName == 'sales' ? 'menu-active' : '' }}">
+                                    <span class="sidenav-normal"> Sales </span>
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="/dealer" class="nav-link {{ $routeName == 'dealer' ? 'menu-active' : '' }}">
+                                    <span class="sidenav-normal"> Dealer </span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a href="/group" class="nav-link {{ $routeName == 'group' || $routeName == 'group.edit' ? 'menu-active' : '' }}">
-                                    <span class="sidenav-normal"> Group Management </span>
+                                    <span class="sidenav-normal"> Group </span>
                                 </a>
                             </li>
                             <li class="nav-item">

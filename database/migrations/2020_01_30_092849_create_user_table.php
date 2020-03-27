@@ -22,6 +22,7 @@ class CreateUserTable extends Migration
             $table->bigInteger('user_status');
             $table->dateTime('expire_date');
             $table->string('sales_id');
+            $table->integer('group');
             $table->rememberToken();
             $table->timestamps();
         });

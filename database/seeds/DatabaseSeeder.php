@@ -11,21 +11,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//         $this->call(usersTableSeeder::class);
-        DB::table('role_app')->insert([
-            'name' => 'admin',
-            'created_at' => date("Y-m-d H:i:s"),
-            'updated_at' => date("Y-m-d H:i:s"),
-        ]);
+        $this->call(RoleApp::class);
+        $this->call(Group::class);
+        $this->call(UserAdmins::class);
+        $this->call(UsersSeed::class);
 
-        DB::table('user_admins')->insert([
-            'username' => 'admin',
-            'password' => Hash::make('admin'),
-            'role_app' => 1,
-            'email_verified' => date("Y-m-d H:i:s"),
-            'created_at' => date("Y-m-d H:i:s"),
-            'updated_at' => date("Y-m-d H:i:s"),
-            'remember_token' => '',
-        ]);
+        $this->call(DealerSeed::class);
     }
 }

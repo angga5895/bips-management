@@ -19,6 +19,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/group', 'GroupController@group')->name('group');
     Route::get('/user', 'UserController@user')->name('user');
+    Route::get('/sales', 'SalesController@sales')->name('sales');
+    Route::get('/dealer', 'DealerController@dealer')->name('dealer');
 
     Route::get('/test', 'UserController@getMaxID');
     Route::get('username-unique', 'UserController@uniqueUsername');
@@ -41,4 +43,8 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('addNewUserGroup', 'UserController@addUserGroup');
     Route::get('delUserGroup', 'UserController@deleteUserGroup');
+
+    Route::get('getDataDealer','DealerController@getDealer');
+    Route::get('getDataSales','SalesController@getSales');
+
 });

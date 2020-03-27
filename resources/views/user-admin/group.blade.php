@@ -113,7 +113,7 @@
                     {data : 'group_id', name: 'group_id'},
                     {data : 'name', name: 'name'},
                     {data : 'created_at', name: 'created_at'},
-                    {data : 'group_id', name: 'group_id'},
+                    {data : 'updated_at', name: 'updated_at'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -130,18 +130,29 @@
                         return getDateBips(data);
                     }
                 },{
-                    searchable : true,
                     targets : [3],
+                    searchable : true,
                     render : function (data, type, row) {
-                        return '<a class="btn btn-sm btn-success" href="/group/'+data+'/edit">Edit</a>' +
-                            '<button class="btn btn-sm btn-danger">Delete</button>'
+                        return getDateBips(data);
+                    }
+                },{
+                    searchable : true,
+                    targets : [4],
+                    render : function (data, type, row) {
+                        return '' +
+                            '<button class="btn btn-sm btn-warning fa fa-pen" type="button" data-dismiss= "modal")"></button>'+
+
+                        '<button class="btn btn-sm btn-danger fa fa-trash" type="button" data-dismiss= "modal")"></button>'
                     }
                 }]
             });
         }
 
         $("#savegroup").on("click", function () {
+            var groupid = $("#groupid").val();
             var groupname = $("#groupname").val();
+            var grouphead = $("#grouphead").val();
+            var groupheadname = $("#groupheadname").val();
 
             var required = "Field is required.";
             if (groupname !== ''){
@@ -151,7 +162,10 @@
                     type : "GET",
                     url  : "{{ url('group-registrasi') }}",
                     data : {
-                        'name' : groupname,
+                        'group_id' : groupid,
+                        'group_name' : groupname,
+                        'head_id' : grouphead,
+                        'head_name' : groupheadname,
                     },
                     success : function (res) {
                         if ($.trim(res)){
@@ -295,6 +309,7 @@
                                         <th>Group ID</th>
                                         <th>Group Name</th>
                                         <th>Create Date</th>
+                                        <th>Last Update</th>
                                         <th>#</th>
                                     </tr>
                                     </thead>
@@ -317,13 +332,24 @@
                         <div class="box-body">
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer Group ID</label>
-                                    <input class="form-control col-sm-6" type="text" readonly id="addgroupID"/>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>
+                                    <input class="form-control col-sm-6" type="text" id="groupid"/>
+                                    <label id="cekGroupid" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
                                 <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer Group Name</label>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group Name</label>
                                     <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head ID</label>
+                                    <input class="form-control col-sm-6" type="text" placeholder="" required id="grouphead"/>
+                                    <label id="cekGrouphead" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head Name</label>
+                                    <input class="form-control col-sm-6" type="text" placeholder="" required id="groupheadname"/>
+                                    <label id="cekGroupHeadName" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                             </div>
                         </div>

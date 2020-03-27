@@ -16,7 +16,7 @@ class CreateDealerUserGroup extends Migration
         Schema::create('dealer_user_group', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->String('user_id',20);
-            $table->Integer('group_id');
+            $table->String('group_id',20);
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->foreign('group_id')->references('group_id')->on('group');
         });

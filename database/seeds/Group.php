@@ -13,16 +13,19 @@ class Group extends Seeder
     {
         $arr = [
             [
-                'group_id'=>1,
-                'name' => 'SVP1',
-                'created_at' => date("Y-m-d H:i:s"),
-                'updated_at' => date("Y-m-d H:i:s"),
-            ],
-            [
-                'group_id'=>2,
-                'name' => 'GNC',
-                'created_at' => date("Y-m-d H:i:s"),
-                'updated_at' => date("Y-m-d H:i:s"),
+                'group_id'=>'SPV1',
+                'name'=>'Supervisor 1',
+                'head_id'=>Null,
+                'head_name'=>Null,
+                'updated_at'=>date('d-m-Y h:i:s'),
+                'created_at'=>date('d-m-Y h:i:s'),
+            ],[
+                'group_id'=>'GNC',
+                'name'=>'GNC',
+                'head_id'=>Null,
+                'head_name'=>Null,
+                'updated_at'=>date('d-m-Y h:i:s'),
+                'created_at'=>date('d-m-Y h:i:s'),
             ],
         ];
         DB::table('group')->insert($arr);

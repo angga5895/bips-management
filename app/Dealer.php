@@ -6,13 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dealer extends Model
 {
+    public $timestamps = false;
     protected $table = "dealer";
-    protected $primaryKey = "id";
+    protected $primaryKey = "dealer_id";
     protected $fillable =
         [
-            'dlrcode',
-            'dlrname',
-            'user_id',
-            'group_id',
+            'dealer_id',
+            'dealer_name',
+            'address',
+            'phone',
+            'mobilephone',
+            'email',
         ];
 }

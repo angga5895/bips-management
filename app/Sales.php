@@ -6,13 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sales extends Model
 {
+    public $timestamps = false;
+
     protected $table = "sales";
-    protected $primaryKey = "id";
+    protected $primaryKey = "sales_id";
     protected $fillable =
         [
-            'slscode',
-            'slsname',
-            'group_id',
-            'user_id',
+            'sales_id',
+            'sales_name',
+            'dealer_id',
+            'address',
+            'phone',
+            'mobilephone',
+            'email',
         ];
 }

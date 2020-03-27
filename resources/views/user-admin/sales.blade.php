@@ -66,11 +66,12 @@
 
                 },
                 columns : [
-                    {data : 'id', name: 'id'},
-                    {data : 'slscode', name: 'dealer code'},
-                    {data : 'slsname', name: 'dealer_name'},
-                    {data : 'group_id', name: 'group_id'},
-                    {data : 'user_id', name: 'user_id'},
+                    {data : 'sales_id', name: 'sales_id'},
+                    {data : 'sales_name', name: 'sales_name'},
+                    {data : 'address', name: 'address'},
+                    {data : 'phone', name: 'phone'},
+                    {data : 'mobilephone', name: 'mobilephone'},
+                    {data : 'email', name: 'email'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -93,12 +94,22 @@
                     orderable : true,
                     searchable : true,
                 },{
-                    searchable : true,
                     targets : [5],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [6],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    searchable : true,
+                    targets : [7],
                     render : function (data, type, row) {
                         var id = row.group_id;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
+                        return '' +
+                            '<button class="btn btn-sm btn-primary fa fa-trash" type="button" data-dismiss= "modal" onclick="clickOK('+id+')"></button>' +
+                            '<button class="btn btn-sm btn-primary fa fa-pencil" type="button" data-dismiss= "modal" onclick="clickOK(\'+id+\')">OK</button>'
                     }
                 }]
             });
@@ -113,12 +124,18 @@
                 initComplete: function(){
                     $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" id="addgroup" type="button" onclick="addGroup()">Add</button>');
                 },
+                ajax : {
+                    url: '{{ url("getDataSales") }}',
+
+                },
                 columns : [
-                    {data : 'id', name: 'id'},
-                    {data : 'slscode', name: 'dealer code'},
-                    {data : 'slsname', name: 'dealer_name'},
-                    {data : 'group_id', name: 'group_id'},
-                    {data : 'user_id', name: 'user_id'},
+                    {data : 'sales_id', name: 'sales_id'},
+                    {data : 'dealer_id', name: 'dealer_id'},
+                    {data : 'sales_name', name: 'sales_name'},
+                    {data : 'address', name: 'address'},
+                    {data : 'phone', name: 'phone'},
+                    {data : 'mobilephone', name: 'mobilephone'},
+                    {data : 'email', name: 'email'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -141,12 +158,22 @@
                     orderable : true,
                     searchable : true,
                 },{
-                    searchable : true,
                     targets : [5],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [6],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    searchable : true,
+                    targets : [7],
                     render : function (data, type, row) {
                         var id = row.group_id;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
+                        return '' +
+                            '<button class="btn btn-sm btn-primary fa fa-trash" type="button" data-dismiss= "modal" onclick="clickOK('+id+')"></button>' +
+                            '<button class="btn btn-sm btn-primary fa fa-pencil" type="button" data-dismiss= "modal" onclick="clickOK(\'+id+\')"></button>'
                     }
                 }]
             });
@@ -154,6 +181,12 @@
 
         $("#savegroup").on("click", function () {
             var groupname = $("#groupname").val();
+            var groupid = $("#groupid").val();
+            var groupdealer = $("#groupdealer").val();
+            var groupaddress = $("#groupaddress").val();
+            var groupmobile = $("#groupmobilphone").val();
+            var groupphone = $("#groupphone").val();
+            var groupemail = $("#groupemail").val();
 
             var required = "Field is required.";
             if (groupname !== ''){
@@ -161,9 +194,15 @@
 
                 $.ajax({
                     type : "GET",
-                    url  : "{{ url('group-registrasi') }}",
+                    url  : "{{ url('sales-registrasi') }}",
                     data : {
-                        'name' : groupname,
+                        'sales_id' : groupid,
+                        'dealer_id' : groupdealer,
+                        'sales_name' : groupname,
+                        'address' : groupaddress,
+                        'phone' : groupphone,
+                        'mobilephone' : groupmobile,
+                        'email' : groupemail,
                     },
                     success : function (res) {
                         if ($.trim(res)){
@@ -181,7 +220,12 @@
                     }
                 });
             } else{
+                if(groupemail === ''){$("#cekGroupEmail").text(required);$("#groupemail").addClass("is-invalid");$("#groupemail").focus();}
+                if(groupmobile === ''){$("#cekGroupMobilePhone").text(required);$("#groupmobilphone").addClass("is-invalid");$("#groupmobilphone").focus();}
+                if(groupphone === ''){$("#cekGroupPhone").text(required);$("#groupphone").addClass("is-invalid");$("#groupphone").focus();}
+                if(groupaddress === ''){$("#cekGroupAddress").text(required);$("#groupaddress").addClass("is-invalid");$("#groupaddress").focus();}
                 if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
+                if(groupid === ''){$("#cekGroupId").text(required);$("#groupid").addClass("is-invalid");$("#groupid").focus();}
             }
         });
 
@@ -304,11 +348,13 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
-                                        <th>#</th>
-                                        <th>Sales Code</th>
+                                        <th>Sales Id</th>
+                                        <th>Dealer Id</th>
                                         <th>Sales Name</th>
-                                        <th>Group Id</th>
-                                        <th>User Id</th>
+                                        <th>Address</th>
+                                        <th>Phone</th>
+                                        <th>Mobile Phone</th>
+                                        <th>Email</th>
                                         <th>#</th>
                                     </tr>
                                     </thead>
@@ -331,13 +377,45 @@
                         <div class="box-body">
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales Group ID</label>
-                                    <input class="form-control col-sm-6" type="text" readonly id="addgroupID"/>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales ID</label>
+                                    <input class="form-control col-sm-6" id="groupid" type="text" maxlength="20" placeholder="Please Input" required/>
+                                    <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
+
                                 </div>
                                 <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales Group Name</label>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer Name</label>
+                                    {{--<input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupdealer"/>--}}
+                                    <select class="form-control form-inline-label col-sm-6" name="groupdealer" id="groupdealer">
+                                        @foreach ($dealer_list as $res)
+                                            <option value="{{$res->dealer_id}}">{{$res->dealer_name}}</option>
+                                        @endforeach
+                                    </select>
+                                    <label id="cekGroupDealer" class="error invalid-feedback small d-block col-sm-4" for="groupdealer"></label>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales Name</label>
                                     <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Address</label>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupaddress"/>
+                                    <label id="cekGroupAddress" class="error invalid-feedback small d-block col-sm-4" for="groupaddress"></label>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Phone</label>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" maxlength="15" required id="groupphone"/>
+                                    <label id="cekGroupPhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Mobile Phone</label>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" maxlength="15" required id="groupmobilphone"/>
+                                    <label id="cekGroupMobilePhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Email</label>
+                                    <input class="form-control col-sm-6" type="email" placeholder="Please Input" required id="groupemail"/>
+                                    <label id="cekGroupEmail" class="error invalid-feedback small d-block col-sm-4" for="groupemail"></label>
                                 </div>
                             </div>
                         </div>

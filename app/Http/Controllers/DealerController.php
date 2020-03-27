@@ -17,8 +17,8 @@ class DealerController extends Controller
 
         $query = 'select count(*) FROM "dealer"';
         $sql = DB::select($query);
-        $row = '';
-        foreach ($sql as $p){
+        $row = 0;
+        foreach ($group_list as $p){
             $row = $p->count;
         }
 
@@ -26,7 +26,7 @@ class DealerController extends Controller
             [
                 'title' => 'Dealer',
                 'group'=>$group_list,
-                'newid'=>$this->get_prime(),
+//                'newid'=>$this->get_prime(),
                 'countgroup' => $row
             ]
         );
@@ -105,15 +105,20 @@ class DealerController extends Controller
         ]);
     }
 
-    function registrasiGroup(){
-        $name = $_GET['name'];
-        $group_id = (int)$this->get_prime();
-        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = Group::create([
-            'group_id' => $group_id,
-            'name' => $name,
-            'created_at' => $current_time,
-            'updated_at' => $current_time,
+    function registrasiDealer(){
+        $id = $_GET['dealer_id'];
+        $name = $_GET['dealer_name'];
+        $address = $_GET['address'];
+        $phone = $_GET['phone'];
+        $mobile = $_GET['mobilephone'];
+        $email = $_GET['email'];
+        $query = Dealer::create([
+            'dealer_id' => $id,
+            'dealer_name' => $name,
+            'address' => $address,
+            'phone' => $phone,
+            'mobilephone' => $mobile,
+            'email' => $email,
         ]);
 
         if ($query){

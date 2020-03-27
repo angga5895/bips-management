@@ -12,10 +12,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(RoleApp::class);
-        $this->call(Group::class);
         $this->call(UserAdmins::class);
         $this->call(UsersSeed::class);
 
         $this->call(DealerSeed::class);
+        $this->call(SalesSeed::class);
+        $this->call(Group::class);
+
     }
 }

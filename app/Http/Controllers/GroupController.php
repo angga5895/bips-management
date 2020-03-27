@@ -73,8 +73,12 @@ class GroupController extends Controller
     }
 
     public function get_prime(){
-        $count = 0;  
-        $num = Group::max("group_id") + 1;
+        $count = 0;
+        if(Group::max("group_id") < 1){
+            $num = 0;
+        }else{
+            $num = Group::max("group_id") + 1;
+        }
         if($num == 1){
             $num = 2;
         } 
@@ -105,19 +109,23 @@ class GroupController extends Controller
     }
 
     function registrasiGroup(){
-        $name = $_GET['name'];
-        $group_id = (int)$this->get_prime();
+        $group_name = $_GET['group_name'];
+        $group_id = $_GET['group_id'];
+        $head_name = $_GET['head_name'];
+        $head_id = $_GET['head_id'];
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
         $query = Group::create([
             'group_id' => $group_id,
-            'name' => $name,
+            'name' => $group_name,
+            'head_id'=>$head_id,
+            'head_name'=>$head_name,
             'created_at' => $current_time,
             'updated_at' => $current_time,
         ]);
 
         if ($query){
             $status = "00";
-            $group = $name;
+            $group = $group_name;
         } else {
             $status = "01";
             $group = "";

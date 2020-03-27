@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Sales;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Group;
+use App\Sales;
+use App\Dealer;
+
 use DataTables;
 
 class SalesController extends Controller
@@ -14,20 +16,18 @@ class SalesController extends Controller
     public function sales()
     {
         $group_list = Sales::all();
+        $dealer_list = Dealer::all();
 
-        $query = 'select count(*) FROM "sales"';
-        $sql = DB::select($query);
-        $row = '';
-        foreach ($sql as $p){
+        foreach ($group_list as $p){
             $row = $p->count;
         }
-
         return view('user-admin/sales',
             [
                 'title' => 'Sales',
                 'group'=>$group_list,
-                'newid'=>$this->get_prime(),
-                'countgroup' => $row
+//                'newid'=>$this->get_prime(),
+                'countgroup' => $row,
+                'dealer_list' => $dealer_list,
             ]
         );
     }
@@ -75,7 +75,11 @@ class SalesController extends Controller
 
     public function get_prime(){
         $count = 0;
-        $num = Group::max("group_id") + 1;
+        if(Group::max("group_id") < 1){
+            $num = 0;
+        }else{
+            $num = Group::max("group_id") + 1;
+        }
         if($num == 1){
             $num = 2;
         }
@@ -105,15 +109,22 @@ class SalesController extends Controller
         ]);
     }
 
-    function registrasiGroup(){
-        $name = $_GET['name'];
-        $group_id = (int)$this->get_prime();
-        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = Group::create([
-            'group_id' => $group_id,
-            'name' => $name,
-            'created_at' => $current_time,
-            'updated_at' => $current_time,
+    function registrasiSales(){
+        $id = $_GET['sales_id'];
+        $dealer_id = $_GET['dealer_id'];
+        $name = $_GET['sales_name'];
+        $address = $_GET['address'];
+        $phone = $_GET['phone'];
+        $mobile = $_GET['mobilephone'];
+        $email = $_GET['email'];
+        $query = Sales::create([
+            'sales_id' => $id,
+            'dealer_id' => $dealer_id,
+            'sales_name' => $name,
+            'address' => $address,
+            'phone' => $phone,
+            'mobilephone' => $mobile,
+            'email' => $email,
         ]);
 
         if ($query){

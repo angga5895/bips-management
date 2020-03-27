@@ -12,6 +12,8 @@ class Group extends Model
         [
             'group_id',
             'name',
+            'head_name',
+            'head_id',
             'created_at',
             'updated_at',
           ];

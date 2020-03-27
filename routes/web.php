@@ -45,6 +45,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('delUserGroup', 'UserController@deleteUserGroup');
 
     Route::get('getDataDealer','DealerController@getDealer');
+    Route::get('dealer-registrasi', 'DealerController@registrasiDealer');
+
     Route::get('getDataSales','SalesController@getSales');
+    Route::get('sales-registrasi', 'SalesController@registrasiSales');
+
 
 });

@@ -14,13 +14,12 @@ class CreateDealer extends Migration
     public function up()
     {
         Schema::create('dealer', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->String('dlrcode',20);
-            $table->String('dlrname',50);
-            $table->String('user_id',20);
-            $table->Integer('group_id');
-            $table->foreign('user_id')->references('user_id')->on('users');
-            $table->foreign('group_id')->references('group_id')->on('group');
+            $table->String('dealer_id',20)->nullable(false)->primary();
+            $table->String('dealer_name',50);
+            $table->String('address',50)->nullable();
+            $table->String('phone',50)->nullable();
+            $table->String('mobilephone',50)->nullable();
+            $table->String('email',50)->nullable();
         });
     }
 

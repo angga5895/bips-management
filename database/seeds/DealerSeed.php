@@ -11,12 +11,23 @@ class DealerSeed extends Seeder
      */
     public function run()
     {
-        DB::table('dealer')->insert([
-            'id' => 1,
-            'dlrcode' => "SW001",
-            'dlrname' => "Dealer 1",
-            'user_id' => 1,
-            'group_id' => 1,
-            ]);
+        $arr = [
+            [
+                'dealer_id' => '10092',
+                'dealer_name' => 'Rory Jery Hendika',
+                'address' => NULL,
+                'phone' => NULL,
+                'mobilephone' => NULL,
+                'email' => NULL,
+            ],[
+                'dealer_id' => '10095',
+                'dealer_name' => 'Aditya Nugraha',
+                'address' => NULL,
+                'phone' => NULL,
+                'mobilephone' => NULL,
+                'email' => NULL,
+            ],
+        ];
+        DB::table('dealer')->insert($arr);
     }
 }

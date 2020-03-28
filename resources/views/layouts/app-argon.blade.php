@@ -75,7 +75,7 @@
                         <p>Sorry, this page is not available right now.</p>
                         <p>Please visit later.</p>
                     </div>
-                </div>p
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-link text-white ml-auto" data-dismiss="modal">Close</button>
                 </div>

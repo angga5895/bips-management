@@ -9,8 +9,8 @@
         </div>
         <div class="col-xl-6">
             <ul class="nav nav-footer justify-content-center justify-content-xl-end">
-                <li class="nav-item {{ $routeName == 'home' ? 'active' : '' }}">
-                    <a href="{{ route('home') }}" class="nav-link {{ $routeName == 'home' ? 'active' : '' }}">Admin User</a>
+                <li class="nav-item {{ $routeName == 'assign' ? 'active' : '' }}">
+                    <a href="{{ route('useradmin.assign') }}" class="nav-link {{ $routeName == 'useradmin.assign' ? 'active' : '' }}">Admin User</a>
                 </li>
                 {{--<li class="nav-item {{ $routeName == 'user.ganti-pass' ? 'active' : '' }}">
                     <a href="{{ route('user.ganti-pass') }}" class="nav-link {{ $routeName == 'user.ganti-pass' ? 'active' : '' }}">Ganti Password</a>

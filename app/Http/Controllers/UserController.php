@@ -27,7 +27,29 @@ class UserController extends Controller
             $countgroup = $p->count;
         }
 
-        return view('user-admin.user', compact('usertype','userstatus','countgroup'), ['title' => 'User']);
+        $clapp = DB::select(' SELECT cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app
+                                LEFT JOIN cl_app_mod ON cl_app.cla_id = cl_app_mod.clam_cla_id
+                                LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                                JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
+                                ORDER BY cl_app.cla_order;');
+
+        $cl_app = DB::select('SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id ORDER BY cl_app.cla_order;');
+
+        $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
+                            JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
+                            JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                            WHERE cl_module.clm_slug = \'user\'');
+
+        $countpermission = 0;
+        foreach ($permission as $p){
+            $countpermission = $p->count;
+        }
+
+        if ($countpermission === '0'){
+            return view('permission');
+        } else {
+            return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp', 'cl_app'), ['title' => 'User']);
+        }
     }
 
     public function userEdit($id)
@@ -361,8 +383,8 @@ class UserController extends Controller
     }
 
     public function getListAO(Request $request){
-        $query = 'SELECT "dealer".dlrname, "user".* FROM "user"
-                  JOIN "dealer" ON "dealer".dlrcode = "user".client_id';
+        $query = 'SELECT "dealer".dealer_name, "user".* FROM "user"
+                  JOIN "dealer" ON "dealer".dealer_id = "user".client_id';
         $data = DB::select($query);
 
         return DataTables::of($data)->make(true);

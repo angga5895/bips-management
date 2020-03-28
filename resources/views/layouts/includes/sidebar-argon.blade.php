@@ -104,136 +104,54 @@
             {{--<hr class="my-0">--}}
             <!-- Navigation -->
             <ul class="navbar-nav navbar-dark">
-                <li class="nav-item {{ $routeName == 'home' || $routeName == 'group' || $routeName == 'user' || $routeName == 'user.edit' || $routeName == 'group.edit' || $routeName == '' ? 'active' : '' }}">
-                    <a class="nav-link {{ $routeName == 'home' || $routeName == 'group' || $routeName == 'user' || $routeName == 'user.edit' || $routeName == 'group.edit' || $routeName == '' ? 'active' : '' }}" href="#navbar-useradmin" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-useradmin">
-                        <i class="ni ni-single-02 text-yellow"></i> User Admin
-                    </a>
-                    <div class="collapse show" id="navbar-useradmin">
-                        <ul class="nav nav-sm flex-column">
-                            {{--<li class="nav-item">--}}
-                                {{--<a href="/home" class="nav-link {{ $routeName == 'home' || $routeName == '' ? 'menu-active' : '' }}">--}}
-                                    {{--<span class="sidenav-normal"> Registrasi </span>--}}
-                                {{--</a>--}}
-                            {{--</li>--}}
+                @foreach($cl_app as $p)
+                    @if($p->cla_module)
+                        <?php $clappmodule = Illuminate\Support\Facades\DB::select
+                            ('
+                                SELECT cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app_mod
+                                LEFT JOIN cl_app ON cl_app.cla_id = cl_app_mod.clam_cla_id
+                                LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                                JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
+                                WHERE cl_app.cla_id = '.$p->cla_id.' ORDER BY cl_module.clm_order;
+                            ')
+                        ?>
 
-                            <li class="nav-item">
-                                <a href="/sales" class="nav-link {{ $routeName == 'sales' ? 'menu-active' : '' }}">
-                                    <span class="sidenav-normal"> Sales </span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/dealer" class="nav-link {{ $routeName == 'dealer' ? 'menu-active' : '' }}">
-                                    <span class="sidenav-normal"> Dealer </span>
-                                </a>
-                            </li>
+                        <li class="nav-item {{ strpos($routeName, $p->cla_routename) !== false ? 'active' : '' }}">
+                            <a class="nav-link {{ strpos($routeName, $p->cla_routename) !== false ? 'active' : '' }}" href="#{{ $p->cla_slug }}" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="{{ $p->cla_slug }}">
+                                <i class="{{ $p->cla_icon }}"></i> {{ $p->cla_name }}
+                            </a>
+                            <div class="collapse {{ strpos($routeName, $p->cla_routename) !== false ? 'show' : '' }}" id="{{ $p->cla_slug }}">
+                                <ul class="nav nav-sm flex-column">
+                                    @foreach($clappmodule as $r)
+                                        <li class="nav-item">
+                                            <a href="/{{ $r->clm_slug }}" class="nav-link {{ $routeName == $r->clm_routename ? 'menu-active' : '' }}">
+                                                <span class="sidenav-normal"> {{ $r->clm_name }} </span>
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </li>
+                    @endif
+                @endforeach
 
+                @foreach($clapp as $p)
+                    @if(!$p->cla_module)
+                        @if($p->cla_slug === 'empty')
                             <li class="nav-item">
-                                <a href="/group" class="nav-link {{ $routeName == 'group' || $routeName == 'group.edit' ? 'menu-active' : '' }}">
-                                    <span class="sidenav-normal"> Group </span>
+                                <a class="nav-link" href="#" data-toggle="modal" data-target="#modalNotAvailable">
+                                    <i class="{{ $p->cla_icon }}"></i> {{ $p->cla_name }}
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                @if($countgroup === '0' || $countgroup === 0)
-                                    <a href="#" class="nav-link" data-toggle="modal" data-target="#modalGagal">
-                                        <span class="sidenav-normal"> User Management</span>
-                                    </a>
-                                @else
-                                    <a href="/user" class="nav-link {{ $routeName == 'user' || $routeName == 'user.edit' ? 'menu-active' : '' }}">
-                                        <span class="sidenav-normal"> User Management</span>
-                                    </a>
-                                @endif
+                        @else
+                            <li class="nav-item {{ $routeName == $p->cla_routename ? 'active' : '' }}">
+                                <a class="nav-link {{ $routeName == $p->cla_routename ? 'active' : '' }}" href="/{{ $p->cla_slug }}">
+                                    <i class="{{ $p->cla_icon }}"></i> {{ $p->cla_name }}
+                                </a>
                             </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item {{ $routeName == '' ? '' : '' }}">
-                    <a class="nav-link {{ $routeName == '' ? '' : '' }}" href="#" data-toggle="modal" data-target="#modalNotAvailable">
-                        <i class="fa fa-laptop text-gray"></i> IT Admin
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == '' ? '' : '' }}">
-                    <a class="nav-link {{ $routeName == '' ? '' : '' }}" href="#" data-toggle="modal" data-target="#modalNotAvailable">
-                        <i class="fa fa-asterisk text-primary"></i> Risk Management
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == '' ? '' : '' }}">
-                    <a class="nav-link {{ $routeName == '' ? '' : '' }}" href="#" data-toggle="modal" data-target="#modalNotAvailable">
-                        <i class="ni ni-diamond text-danger"></i> Finance
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == '' ? '' : '' }}">
-                    <a class="nav-link {{ $routeName == '' ? '' : '' }}" href="#" data-toggle="modal" data-target="#modalNotAvailable">
-                        <i class="ni ni-archive-2 text-light"></i> Custodian
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == '' ? '' : '' }}">
-                    <a class="nav-link {{ $routeName == '' ? '' : '' }}" href="#" data-toggle="modal" data-target="#modalNotAvailable">
-                        <i class="fab fa-telegram text-success"></i> Call Center
-                    </a>
-                </li>
-                {{--<li class="nav-item {{ $routeName == 'user.ganti-pass' ? 'active' : '' }}">
-                    <a class="nav-link {{ $routeName == 'user.ganti-pass' ? 'active' : '' }}" href="{{ route('user.ganti-pass') }}">
-                        <i class="fa fa-user-lock text-warning"></i> Ganti Password
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == 'user.blog-saya' ? 'active' : '' ||
-                        $routeName == 'user.blog-saya-upgrade-history' ? 'active' : '' ||
-                        $routeName == 'user.blog-saya-add-new' ? 'active' : '' }}">
-                    <a class="nav-link {{ $routeName == 'user.blog-saya' ? 'active' : '' ||
-                        $routeName == 'user.blog-saya-upgrade-history' ? 'active' : '' ||
-                        $routeName == 'user.blog-saya-add-new' ? 'active' : '' }}" href="{{ route('user.blog-saya') }}">
-                        <i class="fa fa-globe-americas text-info"></i> Blog Saya
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == 'user.beli-backlink' ? 'active' : '' }}">
-                    <a class="nav-link {{ $routeName == 'user.beli-backlink' ? 'active' : '' }}" href="{{ route('user.beli-backlink') }}">
-                        <i class="fa fa-shopping-cart text-primary"></i> Beli Backlink
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == 'user.jual-backlink' ? 'active' : '' }}">
-                    <a class="nav-link {{ $routeName == 'user.jual-backlink' ? 'active' : '' }}" href="{{ route('user.jual-backlink') }}">
-                        <i class="fa fa-hand-holding-usd text-green"></i> Jual Backlink
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa fa-wallet text-light-blue"></i> Dompet Saya
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa fa-money-bill-alt text-green"></i> Setor Deposit
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa fa-money-bill text-primary"></i> Tarik Tunai
-                    </a>
-                </li>
-                <li class="nav-item {{ $routeName == 'user.rekening-bank' ? 'active' : '' }}">
-                    <a class="nav-link {{ $routeName == 'user.rekening-bank' ? 'active' : '' }}" href="{{ route('user.rekening-bank') }}">
-                        <i class="fa fa-credit-card text-gray"></i> Rekening Bank
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa fa-globe text-info"></i> Blog PBN
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa fa-handshake text-dark"></i> Affiliasi
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                         document.getElementById('logout-form-1').submit();">
-                        <i class="ni ni-button-power text-danger"></i> Keluar
-                    </a>
-                    <form id="logout-form-1" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                </li>--}}
+                        @endif
+                    @endif
+                @endforeach
             </ul>
         </div>
     </div>

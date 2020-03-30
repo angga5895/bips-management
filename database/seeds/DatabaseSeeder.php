@@ -25,5 +25,8 @@ class DatabaseSeeder extends Seeder
         $this->call(SeedClPermissionAppMod::class);
         $this->call(SeedClPermissionApp::class);
 
+        $this->call(AccountSeed::class);
+        $this->call(DealerSalesSeed::class);
+
     }
 }

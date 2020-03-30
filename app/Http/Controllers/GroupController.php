@@ -50,26 +50,24 @@ class GroupController extends Controller
         }
     }
 
-    public function groupEdit($id)
+    public function groupEdit()
     {
-        $group = Group::where('group_id',$id)->get();
-        $query = 'select count(*) FROM "group"';
-        $sql = DB::select($query);
-        $countgroup = '';
-        foreach ($sql as $p){
-            $countgroup = $p->count;
-        }
-
-        return view('user-admin.group-edit', compact('group','countgroup'), ['title' => 'Edit Group']);
+        $id = $_GET['id'];
+        $group = Group::where('group_id',$id)->get()[0];
+        return response()->json($group);
     }
 
     public function updateGroup(){
         $id = $_GET['group_id'];
         $name = $_GET['name'];
+        $head_id = $_GET['head_id'];
+        $head_name = $_GET['head_name'];
 
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
         $query = Group::where('group_id', $id)->update([
             'name' => $name,
+            'head_name' => $head_name,
+            'head_id' => $head_id,
             'updated_at' => $current_time,
         ]);
 

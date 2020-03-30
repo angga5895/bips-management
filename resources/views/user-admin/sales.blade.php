@@ -77,6 +77,7 @@
                     targets : [0],
                     orderable : true,
                     searchable : false,
+
                 },{
                     targets : [1],
                     orderable : true,
@@ -129,13 +130,13 @@
 
                 },
                 columns : [
-                    {data : 'sales_id', name: 'sales_id'},
-                    {data : 'dealer_id', name: 'dealer_id'},
+                    {data : 'user_id', name: 'user_id'},
                     {data : 'sales_name', name: 'sales_name'},
                     {data : 'address', name: 'address'},
                     {data : 'phone', name: 'phone'},
                     {data : 'mobilephone', name: 'mobilephone'},
                     {data : 'email', name: 'email'},
+                    {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -159,21 +160,13 @@
                     searchable : true,
                 },{
                     targets : [5],
-                    orderable : true,
+                    orderable :true,
                     searchable : true,
                 },{
+                    searchable : true,
                     targets : [6],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    searchable : true,
-                    targets : [7],
                     render : function (data, type, row) {
-                        var id = row.group_id;
-                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '' +
-                            '<button class="btn btn-sm btn-primary fa fa-trash" type="button" data-dismiss= "modal" onclick="clickOK('+id+')"></button>' +
-                            '<button class="btn btn-sm btn-primary fa fa-pencil" type="button" data-dismiss= "modal" onclick="clickOK(\'+id+\')"></button>'
+                        return  '<i class="text-center"><button class="btn btn-sm btn-warning fa fa-pen" onclick="editSales(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
                     }
                 }]
             });
@@ -181,8 +174,7 @@
 
         $("#savegroup").on("click", function () {
             var groupname = $("#groupname").val();
-            var groupid = $("#groupid").val();
-            var groupdealer = $("#groupdealer").val();
+            var groupid = $("#groupid").val()
             var groupaddress = $("#groupaddress").val();
             var groupmobile = $("#groupmobilphone").val();
             var groupphone = $("#groupphone").val();
@@ -197,7 +189,6 @@
                     url  : "{{ url('sales-registrasi') }}",
                     data : {
                         'sales_id' : groupid,
-                        'dealer_id' : groupdealer,
                         'sales_name' : groupname,
                         'address' : groupaddress,
                         'phone' : groupphone,
@@ -249,7 +240,111 @@
             $("#main-group").addClass("d-none");
             clearCache();
         }
+        function editSales(data){
+            $.ajax({
+                type : "GET",
+                        url  : "{{ url('sales-update/') }}",
+                        data : {
+                        'id' : data,
+                    },
+                    success : function (res) {
+                        // console.log(res.name);
+                        $("#groupid").val(data);
+                        $("#groupname").val(res.sales_name);
+                        $("#groupaddress").val(res.address);
+                        $("#groupphone").val(res.phone);
+                        $("#groupmobilphone").val(res.mobile_phone);
+                        $("#groupemail").val(res.email);
+                }
+            });
 
+            // $("#groupname").val('');
+            $("#hiddensalesid").val(data);
+
+            $("#add-group").removeClass("d-none");
+            $("#add-group").addClass("d-block");
+            $("#main-group").removeClass("d-block");
+            $("#main-group").addClass("d-none");
+            $("#savegroupbutton").addClass('d-none');
+            $("#editgroupbutton").removeClass('d-none');
+            clearCache();
+        }
+        $("#resetgroup").on('click', function(){
+            var data = $("#hiddensalesid").val()
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('sales-update/') }}",
+                data : {
+                    'id' : data,
+                },
+                success : function (res) {
+                    // console.log(res.name);
+                    $("#groupid").val(data);
+                    $("#groupname").val(res.sales_name);
+                    $("#groupaddress").val(res.address);
+                    $("#groupphone").val(res.phone);
+                    $("#groupmobilphone").val(res.mobile_phone);
+                    $("#groupemail").val(res.email);
+                }
+            });
+        });
+        $("#updategroup").on("click", function () {
+            var groupid = $("#hiddensalesid").val();
+            var groupname = $("#groupname").val();
+            var groupaddress = $("#groupaddress").val();
+            var groupphone = $("#groupphone").val();
+            var groupmobilephone = $("#groupmobilphone").val();
+            var groupemail = $("#groupemail").val();
+
+            var required = "Field is required.";
+            if (groupname !== ''){
+                $.get("/mockjax");
+                $.ajax({
+                    type : "GET",
+                    url  : "{{ url('sales-update/submit') }}",
+                    data : {
+                        'sales_id' : groupid,
+                        'sales_name' : groupname,
+                        'address': groupaddress,
+                        'phone': groupphone,
+                        'mobile_phone': groupmobilephone,
+                        'email': groupemail,
+                    },
+                    success : function (res) {
+                        if ($.trim(res)){
+                            if (res.status === "00"){
+                                $('#table-reggroup').DataTable().ajax.reload();
+                                $("#add-group").removeClass("d-block");
+                                $("#add-group").addClass("d-none");
+                                $("#main-group").removeClass("d-none");
+                                $("#main-group").addClass("d-block");
+                                $("#update_sales_notification").text(res.group);
+                                $("#alert-success-update").removeClass("d-none");
+                                $("#alert-success-update").addClass("d-block");
+                            }
+                        }
+                    }
+                });
+            } else{
+                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
+            }
+
+            $("#add-group").removeClass("d-none");
+            $("#add-group").addClass("d-block");
+            $("#main-group").removeClass("d-block");
+            $("#main-group").addClass("d-none");
+            $("#savegroupbutton").removeClass('d-none');
+            $("#editgroupbutton").addClass('d-none');
+            clearCache();
+        });
+        $("#canceleditgroup").on("click", function () {
+            if(confirm("Are u sure dischard changes?")){
+                $("#add-group").removeClass("d-block");
+                $("#add-group").addClass("d-none");
+                $("#main-group").removeClass("d-none");
+                $("#main-group").addClass("d-block");
+            }
+        });
         function clearCache(){
             var groupname = $("#groupname").val();
             $("#cekGroupname").text('');$("#groupname").removeClass("is-invalid");
@@ -332,6 +427,15 @@
                     </button>
                 </div>
             </div>
+            <div class="d-none" id="alert-success-update">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-inner--text"><strong id="update_sales_notification"></strong>, has updated.</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
 
             <!-- Main content -->
             <section class="content">
@@ -349,7 +453,6 @@
                                     <tr>
                                         {{--<th>ID</th>--}}
                                         <th>Sales Id</th>
-                                        <th>Dealer Id</th>
                                         <th>Sales Name</th>
                                         <th>Address</th>
                                         <th>Phone</th>
@@ -369,6 +472,7 @@
 
     <div class="card shadow d-none" id="add-group">
         <form>
+            <input type="hidden" id="hiddensalesid">
             <div class="card card-body" style="min-height: 365px">
                 <!-- Main content -->
                 <section class="content">
@@ -378,19 +482,9 @@
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales ID</label>
-                                    <input class="form-control col-sm-6" id="groupid" type="text" maxlength="20" placeholder="Please Input" required/>
+                                    <input class="form-control col-sm-6" id="groupid" readonly type="text" maxlength="20" placeholder="Please Input" required/>
                                     <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
 
-                                </div>
-                                <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer Name</label>
-                                    {{--<input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupdealer"/>--}}
-                                    <select class="form-control form-inline-label col-sm-6" name="groupdealer" id="groupdealer">
-                                        @foreach ($dealer_list as $res)
-                                            <option value="{{$res->dealer_id}}">{{$res->dealer_name}}</option>
-                                        @endforeach
-                                    </select>
-                                    <label id="cekGroupDealer" class="error invalid-feedback small d-block col-sm-4" for="groupdealer"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales Name</label>
@@ -423,9 +517,14 @@
                 </section>
             </div>
             <div class="card card-footer">
-                <div class="form-inline justify-content-end">
+                <div class="form-inline justify-content-end" id="savegroupbutton">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelgroup">Cancel</button>
+                </div>
+                <div class="form-inline justify-content-end d-none" id="editgroupbutton">
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
+                    <button class="form-control-btn btn btn-success mb-2" type="button" id="updategroup">Update</button>
+                    <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceleditgroup">Cancel</button>
                 </div>
             </div>
         </form>

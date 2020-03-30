@@ -14,10 +14,10 @@ class Sales extends Model
         [
             'sales_id',
             'sales_name',
-            'dealer_id',
             'address',
             'phone',
             'mobilephone',
             'email',
+            'user_id',
         ];
 }

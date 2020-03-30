@@ -40,8 +40,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('group-get', 'GroupController@getGroup');
     Route::get('get-idgroup', 'GroupController@getIdGroup');
     Route::get('get-dataGroup/{id}', 'GroupController@dataGroup')->name('data-group');
-    Route::get('/group/{id}/edit', 'GroupController@groupEdit')->name('group.edit');
-    Route::get('group-update', 'GroupController@updateGroup');
+    Route::get('/group/{id}', 'GroupController@groupEdit')->name('group-edit');
+    Route::get('group-update', 'GroupController@groupEdit');
+    Route::get('group-update/submit', 'GroupController@updateGroup');
     Route::get('getGroupUser/{id}','GroupController@getGroupUser');
 
     Route::get('addNewUserGroup', 'UserController@addUserGroup');
@@ -49,9 +50,12 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('getDataDealer','DealerController@getDealer');
     Route::get('dealer-registrasi', 'DealerController@registrasiDealer');
+    Route::get('dealer-update', 'DealerController@dealerEdit');
+    Route::get('dealer-update/submit', 'DealerController@updateDealer');
 
     Route::get('getDataSales','SalesController@getSales');
     Route::get('sales-registrasi', 'SalesController@registrasiSales');
-
+    Route::get('sales-update', 'SalesController@salesEdit');
+    Route::get('sales-update/submit', 'SalesController@updateSales');
 
 });

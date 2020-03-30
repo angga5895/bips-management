@@ -17,5 +17,6 @@ class Dealer extends Model
             'phone',
             'mobilephone',
             'email',
+            'user_id',
         ];
 }

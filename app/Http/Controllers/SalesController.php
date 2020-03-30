@@ -52,27 +52,27 @@ class SalesController extends Controller
         }
     }
 
-    public function groupEdit($id)
+    public function salesEdit()
     {
-        $group = Group::where('group_id',$id)->get();
-        $query = 'select count(*) FROM "group"';
-        $sql = DB::select($query);
-        $countgroup = '';
-        foreach ($sql as $p){
-            $countgroup = $p->count;
-        }
-
-        return view('user-admin.group-edit', compact('group','countgroup'), ['title' => 'Edit Group']);
+        $id = $_GET['id'];
+        $sales = Sales::where('sales_id',$id)->get()[0];
+        return response()->json($sales);
     }
 
-    public function updateGroup(){
-        $id = $_GET['group_id'];
-        $name = $_GET['name'];
+    public function updateSales(){
+        $id = $_GET['sales_id'];
+        $name = $_GET['sales_name'];
+        $address = $_GET['address'];
+        $phone = $_GET['phone'];
+        $mobile = $_GET['mobile_phone'];
+        $email = $_GET['email'];
 
-        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = Group::where('group_id', $id)->update([
-            'name' => $name,
-            'updated_at' => $current_time,
+        $query = Sales::where('sales_id', $id)->update([
+            'sales_name' => $name,
+            'address' => $address,
+            'phone' => $phone,
+            'mobilephone' => $mobile,
+            'email' => $email,
         ]);
 
         if ($query){
@@ -131,7 +131,6 @@ class SalesController extends Controller
 
     function registrasiSales(){
         $id = $_GET['sales_id'];
-        $dealer_id = $_GET['dealer_id'];
         $name = $_GET['sales_name'];
         $address = $_GET['address'];
         $phone = $_GET['phone'];
@@ -139,12 +138,12 @@ class SalesController extends Controller
         $email = $_GET['email'];
         $query = Sales::create([
             'sales_id' => $id,
-            'dealer_id' => $dealer_id,
             'sales_name' => $name,
             'address' => $address,
             'phone' => $phone,
             'mobilephone' => $mobile,
             'email' => $email,
+            'user_id'=> $id,
         ]);
 
         if ($query){

@@ -85,9 +85,7 @@
                     searchable : true,
                     targets : [2],
                     render : function (data, type, row) {
-                        var id = row.group_id;
-                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
+                        return  '<button class="btn btn-sm btn-warning fa fa-pen" type="button" onclick="addGroup()" data-dismiss= "modal")"></button>'
                     }
                 }]
             });
@@ -114,6 +112,7 @@
                     {data : 'name', name: 'name'},
                     {data : 'created_at', name: 'created_at'},
                     {data : 'updated_at', name: 'updated_at'},
+                    {data : 'group_id', name: 'group_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -139,10 +138,7 @@
                     searchable : true,
                     targets : [4],
                     render : function (data, type, row) {
-                        return '' +
-                            '<button class="btn btn-sm btn-warning fa fa-pen" type="button" data-dismiss= "modal")"></button>'+
-
-                        '<button class="btn btn-sm btn-danger fa fa-trash" type="button" data-dismiss= "modal")"></button>'
+                        return  '<button class="btn btn-sm btn-warning fa fa-pen" onclick="editGroup(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
                     }
                 }]
             });
@@ -207,6 +203,103 @@
             $("#main-group").addClass("d-none");
             clearCache();
         }
+        function editGroup(data){
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('group-update/') }}",
+                data : {
+                    'id' : data,
+                },
+                success : function (res) {
+                    // console.log(res.name);
+                    $("#groupid").val(data);
+                    $("#groupname").val(res.name);
+                    $("#grouphead").val(res.head_id);
+                    $("#groupheadname").val(res.head_name);
+                }
+            });
+
+            // $("#groupname").val('');
+            $("#hiddengroupid").val(data);
+
+            $("#add-group").removeClass("d-none");
+            $("#add-group").addClass("d-block");
+            $("#main-group").removeClass("d-block");
+            $("#main-group").addClass("d-none");
+            $("#savegroupbutton").addClass('d-none');
+            $("#editgroupbutton").removeClass('d-none');
+            clearCache();
+        }
+        $("#updategroup").on("click", function () {
+            var groupid = $("#hiddengroupid").val();
+            var groupname = $("#groupname").val();
+            var groupheadid = $("#grouphead").val();
+            var groupheadname = $("#groupheadname").val();
+
+            var required = "Field is required.";
+            if (groupname !== ''){
+                $.get("/mockjax");
+                $.ajax({
+                    type : "GET",
+                    url  : "{{ url('group-update/submit') }}",
+                    data : {
+                        'group_id' : groupid,
+                        'name' : groupname,
+                        'head_id': groupheadid,
+                        'head_name': groupheadname,
+                    },
+                    success : function (res) {
+                        if ($.trim(res)){
+                            if (res.status === "00"){
+                                $('#table-reggroup').DataTable().ajax.reload();
+                                $("#add-group").removeClass("d-block");
+                                $("#add-group").addClass("d-none");
+                                $("#main-group").removeClass("d-none");
+                                $("#main-group").addClass("d-block");
+                                $("#update_group_notification").text(res.group);
+                                $("#alert-success-update").removeClass("d-none");
+                                $("#alert-success-update").addClass("d-block");
+                            }
+                        }
+                    }
+                });
+            } else{
+                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
+            }
+
+            $("#add-group").removeClass("d-none");
+            $("#add-group").addClass("d-block");
+            $("#main-group").removeClass("d-block");
+            $("#main-group").addClass("d-none");
+            $("#savegroupbutton").removeClass('d-none');
+            $("#editgroupbutton").addClass('d-none');
+            clearCache();
+        });
+        $("#resetgroup").on('click', function(){
+            var data = $("#hiddengroupid").val()
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('group-update/') }}",
+                data : {
+                    'id' : data,
+                },
+                success : function (res) {
+                    // console.log(res.name);
+                    $("#groupid").val(data);
+                    $("#groupname").val(res.name);
+                    $("#grouphead").val(res.head_id);
+                    $("#groupheadname").val(res.head_name);
+                }
+            });
+        });
+        $("#canceleditgroup").on("click", function () {
+            if(confirm("Are u sure dischard changes?")){
+                $("#add-group").removeClass("d-block");
+                $("#add-group").addClass("d-none");
+                $("#main-group").removeClass("d-none");
+                $("#main-group").addClass("d-block");
+            }
+        });
 
         function clearCache(){
             var groupname = $("#groupname").val();
@@ -290,7 +383,15 @@
                     </button>
                 </div>
             </div>
-
+            <div class="d-none" id="alert-success-update">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-inner--text"><strong id="update_group_notification"></strong>, has updated.</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
             <!-- Main content -->
             <section class="content">
 
@@ -324,6 +425,7 @@
 
     <div class="card shadow d-none" id="add-group">
         <form>
+            <input type="hidden" id="hiddengroupid">
             <div class="card card-body" style="min-height: 365px">
                 <!-- Main content -->
                 <section class="content">
@@ -333,7 +435,7 @@
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>
-                                    <input class="form-control col-sm-6" type="text" id="groupid"/>
+                                    <input class="form-control col-sm-6" type="text" id="groupid" readonly/>
                                     <label id="cekGroupid" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
                                 <div class="form-group form-inline">
@@ -357,13 +459,19 @@
                 </section>
             </div>
             <div class="card card-footer">
-                <div class="form-inline justify-content-end">
+                <div class="form-inline justify-content-end" id="savegroupbutton">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelgroup">Cancel</button>
+                </div>
+                <div class="form-inline justify-content-end d-none" id="editgroupbutton">
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
+                    <button class="form-control-btn btn btn-success mb-2" type="button" id="updategroup">Update</button>
+                    <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceleditgroup">Cancel</button>
                 </div>
             </div>
         </form>
     </div>
+
     <!-- Modal Group List -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

@@ -51,27 +51,27 @@ class DealerController extends Controller
         }
     }
 
-    public function groupEdit($id)
+    public function dealerEdit()
     {
-        $group = Group::where('group_id',$id)->get();
-        $query = 'select count(*) FROM "group"';
-        $sql = DB::select($query);
-        $countgroup = '';
-        foreach ($sql as $p){
-            $countgroup = $p->count;
-        }
-
-        return view('user-admin.group-edit', compact('group','countgroup'), ['title' => 'Edit Group']);
+        $id = $_GET['id'];
+        $dealer = Dealer::where('dealer_id',$id)->get()[0];
+        return response()->json($dealer);
     }
 
-    public function updateGroup(){
-        $id = $_GET['group_id'];
-        $name = $_GET['name'];
+    public function updateDealer(){
+        $id = $_GET['dealer_id'];
+        $name = $_GET['dealer_name'];
+        $address = $_GET['address'];
+        $phone = $_GET['phone'];
+        $mobile = $_GET['mobile_phone'];
+        $email = $_GET['email'];
 
-        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = Group::where('group_id', $id)->update([
-            'name' => $name,
-            'updated_at' => $current_time,
+        $query = Dealer::where('dealer_id', $id)->update([
+            'dealer_name' => $name,
+            'address' => $address,
+            'phone' => $phone,
+            'mobilephone' => $mobile,
+            'email' => $email,
         ]);
 
         if ($query){
@@ -138,6 +138,7 @@ class DealerController extends Controller
             'phone' => $phone,
             'mobilephone' => $mobile,
             'email' => $email,
+            'user_id' => $id,
         ]);
 
         if ($query){

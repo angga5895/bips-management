@@ -16,12 +16,15 @@ Route::get('/', 'HomeController@index', 301);
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function() {
+    //page
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('/group', 'GroupController@group')->name('group');
-    Route::get('/user', 'UserController@user')->name('user');
-    Route::get('/sales', 'SalesController@sales')->name('sales');
-    Route::get('/dealer', 'DealerController@dealer')->name('dealer');
+    Route::get('/assign', 'AssignController@index')->name('useradmin.assign');
+    Route::get('/group', 'GroupController@group')->name('useradmin.group');
+    Route::get('/user', 'UserController@user')->name('useradmin.user');
+    Route::get('/sales', 'SalesController@sales')->name('masterdata.sales');
+    Route::get('/dealer', 'DealerController@dealer')->name('masterdata.dealer');
 
+    //feature
     Route::get('/test', 'UserController@getMaxID');
     Route::get('username-unique', 'UserController@uniqueUsername');
     Route::get('username-get', 'UserController@getUsername');

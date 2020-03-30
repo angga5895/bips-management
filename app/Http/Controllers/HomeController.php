@@ -33,6 +33,9 @@ class HomeController extends Controller
         foreach ($sql as $p){
             $countgroup = $p->count;
         }
-        return view('home', ['title' => 'Register', 'countgroup'=>$countgroup]);
+
+        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
+
+        return view('home', ['title' => 'Dashboard', 'countgroup'=>$countgroup, 'clapp' => $clapp]);
     }
 }

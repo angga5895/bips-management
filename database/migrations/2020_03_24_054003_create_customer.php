@@ -13,7 +13,7 @@ class CreateCustomer extends Migration
      */
     public function up()
     {
-        Schema::create('customer', function (Blueprint $table) {
+        /*Schema::create('customer', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->String('custcode',20);
             $table->String('custname',50);
@@ -23,7 +23,7 @@ class CreateCustomer extends Migration
             $table->String('pass',60);
             $table->foreign('user_id')->references('user_id')->on('users');
 
-        });
+        });*/
     }
 
     /**
@@ -33,6 +33,6 @@ class CreateCustomer extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('customer');
+        //Schema::dropIfExists('customer');
     }
 }

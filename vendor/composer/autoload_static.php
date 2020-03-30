@@ -389,10 +389,12 @@ class ComposerStaticInit90e3fac3a00209eb82e5249d1e3a8723
     );
 
     public static $classMap = array (
+        'AccountSeed' => __DIR__ . '/../..' . '/database/seeds/AccountSeed.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Dealer' => __DIR__ . '/../..' . '/app/Dealer.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Group' => __DIR__ . '/../..' . '/app/Group.php',
+        'App\\Http\\Controllers\\AssignController' => __DIR__ . '/../..' . '/app/Http/Controllers/AssignController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
@@ -472,6 +474,7 @@ class ComposerStaticInit90e3fac3a00209eb82e5249d1e3a8723
         'Cron\\MinutesField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MinutesField.php',
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeds/DatabaseSeeder.php',
+        'DealerSalesSeed' => __DIR__ . '/../..' . '/database/seeds/DealerSalesSeed.php',
         'DealerSeed' => __DIR__ . '/../..' . '/database/seeds/DealerSeed.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
         'DeepCopy\\Exception\\CloneException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
@@ -1037,6 +1040,7 @@ class ComposerStaticInit90e3fac3a00209eb82e5249d1e3a8723
         'Fideloper\\Proxy\\TrustProxies' => __DIR__ . '/..' . '/fideloper/proxy/src/TrustProxies.php',
         'Fideloper\\Proxy\\TrustedProxyServiceProvider' => __DIR__ . '/..' . '/fideloper/proxy/src/TrustedProxyServiceProvider.php',
         'Group' => __DIR__ . '/../..' . '/database/seeds/Group.php',
+        'GroupDealerSeed' => __DIR__ . '/../..' . '/database/seeds/GroupDealerSeed.php',
         'Hamcrest\\Arrays\\IsArray' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArray.php',
         'Hamcrest\\Arrays\\IsArrayContaining' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArrayContaining.php',
         'Hamcrest\\Arrays\\IsArrayContainingInAnyOrder' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArrayContainingInAnyOrder.php',
@@ -3959,6 +3963,7 @@ class ComposerStaticInit90e3fac3a00209eb82e5249d1e3a8723
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Property\\Property' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Property/Property.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Processor' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Processor.php',
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
+        'UserAccountSeed' => __DIR__ . '/../..' . '/database/seeds/UserAccountSeed.php',
         'UserAdmins' => __DIR__ . '/../..' . '/database/seeds/UserAdmins.php',
         'UsersSeed' => __DIR__ . '/../..' . '/database/seeds/UsersSeed.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',

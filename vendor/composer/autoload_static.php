@@ -3965,6 +3965,8 @@ class ComposerStaticInit90e3fac3a00209eb82e5249d1e3a8723
         'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
         'UserAccountSeed' => __DIR__ . '/../..' . '/database/seeds/UserAccountSeed.php',
         'UserAdmins' => __DIR__ . '/../..' . '/database/seeds/UserAdmins.php',
+        'UserStatusSeed' => __DIR__ . '/../..' . '/database/seeds/UserStatusSeed.php',
+        'UserTypeSeed' => __DIR__ . '/../..' . '/database/seeds/UserTypeSeed.php',
         'UsersSeed' => __DIR__ . '/../..' . '/database/seeds/UsersSeed.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
         'Whoops\\Exception\\ErrorException' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/ErrorException.php',

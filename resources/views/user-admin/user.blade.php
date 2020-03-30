@@ -2,6 +2,10 @@
 
 @section('js')
     <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
         function getDateBips(tanggal){
             var datetime = tanggal.split(" ");
             var tgl = datetime[0].split("-");
@@ -148,9 +152,9 @@
                     }
                 },
                 columns : [
-                    {data : 'id', name : 'id'},
-                    {data : 'username', name: 'username'},
-                    {data : 'id', name: 'id'},
+                    {data : 'user_id', name : 'user_id'},
+                    {data : 'user_name', name: 'user_name'},
+                    {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -164,9 +168,9 @@
                     orderable:false,
                     searchable : false,
                     render : function (data, type, row) {
-                        var id = row.id;
-                        var us = row.username;
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
+                        var uid = row.user_id;
+                        var us = row.user_name;
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+uid+'\')">OK</button>'
                     }
                 }]
             });
@@ -189,13 +193,14 @@
                     }
                 },
                 columns : [
-                    {data : 'id', name : 'id'},
-                    {data : 'username', name: 'username'},
-                    {data : 'groupname', name: 'groupname'},
-                    {data : 'type', name: 'type'},
-                    {data : 'status', name: 'status'},
-                    {data : 'expire_date', name: 'expire_date'},
-                    {data : 'id', name: 'id'},
+                    {data : 'user_id', name : 'user_id'},
+                    {data : 'user_name', name: 'user_name'},
+                    {data : 'email_address', name: 'email_address'},
+                    {data : 'msidn', name: 'msidn'},
+                    {data : 'usertype', name: 'usertype'},
+                    {data : 'userstatus', name: 'userstatus'},
+                    {data : 'last_login', name: 'last_login'},
+                    {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -219,14 +224,25 @@
                 },{
                     searchable : true,
                     targets : [5],
+                },{
+                    searchable : true,
+                    targets : [6],
                     render : function (data, type, row) {
                         return getDateBips(data)
                     }
                 },{
                     searchable : true,
-                    targets : [6],
+                    targets : [7],
                     render : function (data, type, row) {
-                        return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>'
+                        return '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
+                            '<i class="fa fa-pen"></i>' +
+                            '</a>' +
+                            '<a class="btn btn-sm btn-facebook" href="/user" data-toggle="tooltip" data-placement="top" title="Reset Password">' +
+                            '<i class="fa fa-lock-open"></i>' +
+                            '</a>' +
+                            '<a class="btn btn-sm btn-dark" href="/user" data-toggle="tooltip" data-placement="top" title="Reset PIN">' +
+                            '<i class="fa fa-qrcode"></i>' +
+                            '</a>'
                     }
                 }]
             });
@@ -522,10 +538,11 @@
                                     <tr>
                                         <th>User ID</th>
                                         <th>User Name</th>
-                                        <th>Group Name</th>
+                                        <th>Email</th>
+                                        <th>MSIDN</th>
                                         <th>User Type</th>
                                         <th>Status</th>
-                                        <th>Expire Date</th>
+                                        <th>Last Login</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>

@@ -3582,6 +3582,8 @@ return array(
     'TijsVerkoyen\\CssToInlineStyles\\Css\\Rule\\Rule' => $vendorDir . '/tijsverkoyen/css-to-inline-styles/src/Css/Rule/Rule.php',
     'UserAccountSeed' => $baseDir . '/database/seeds/UserAccountSeed.php',
     'UserAdmins' => $baseDir . '/database/seeds/UserAdmins.php',
+    'UserStatusSeed' => $baseDir . '/database/seeds/UserStatusSeed.php',
+    'UserTypeSeed' => $baseDir . '/database/seeds/UserTypeSeed.php',
     'UsersSeed' => $baseDir . '/database/seeds/UsersSeed.php',
     'Webmozart\\Assert\\Assert' => $vendorDir . '/webmozart/assert/src/Assert.php',
     'Whoops\\Exception\\ErrorException' => $vendorDir . '/filp/whoops/src/Whoops/Exception/ErrorException.php',

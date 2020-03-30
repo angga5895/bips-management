@@ -32,5 +32,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UserAccountSeed::class);
         $this->call(GroupDealerSeed::class);
 
+        $this->call(UserTypeSeed::class);
+        $this->call(UserStatusSeed::class);
+
     }
 }

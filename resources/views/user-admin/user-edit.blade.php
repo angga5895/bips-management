@@ -190,7 +190,7 @@
                                         confirmButtonClass: 'btn-success',
                                         confirmButtonText: 'OK'
                                     }, function () {
-                                        window.location.href = "{{route('user')}}";
+                                        window.location.href = "{{route('useradmin.user')}}";
                                     });
                                 }
                             }
@@ -243,21 +243,6 @@
 @endsection
 
 @section('content')
-    <?php
-        function rollbackFormatDate($tanggal){
-            $fulldate = explode(" ",$tanggal);
-
-            $date = $fulldate[0];
-            $tgl = explode("-",$date);
-
-            $day = $tgl[2];
-            $month = $tgl[1];
-            $year = $tgl[0];
-
-            return $day."/".$month."/".$year;
-        }
-    ?>
-
     <div class="modal-ajax"></div>
     <div class="header text-white">
         <div class="row col-xs-0">
@@ -269,7 +254,7 @@
                         <li class="breadcrumb-item active">User</li>
                         <li class="breadcrumb-item active">Edit</li>
                         @foreach($userbips as $p)
-                            <li class="breadcrumb-item active" aria-current="page">{{ $p->username }}</li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ $p->user_name }}</li>
                         @endforeach
                     </ol>
                 </nav>
@@ -288,77 +273,51 @@
                         <div class="box-body">
                             @foreach($userbips as $p)
                                 <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                                <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User ID</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="User ID" readonly id="userID" value="{{ $p->id }}"/>
-                                </div>
-                                <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input username" id="username" onchange="cekUsername()" value="{{ $p->username }}"/>
-                                    <input type="hidden" id="husername" value="{{ $p->username }}"/>
-                                    <label id="cekUsername" class="error invalid-feedback small d-block col-sm-4" for="username"></label>
-                                </div>
-                                <div class="form-group form-inline lbl-user-status">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Status</label>
-                                    <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking()">
-                                        <option value="" disabled>Choose User Status</option>
-                                        @foreach($userstatus as $r)
-                                            <option @if((int)$p->user_status === (int)$r->id) selected="selected" @endif value="{{ $r->id }}">{{ $r->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <label id="cekUserstatus" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
-                                </div>
-                                <div class="form-group form-inline lbl-user-type">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Type</label>
-                                    <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_type" onchange="checkUserType()">
-                                        <option value="" disabled>Choose User Type</option>
-                                        @foreach($usertype as $r)
-                                            <option @if((int)$p->user_type === (int)$r->id) selected="selected" @endif value={{ $r->id }}>{{ $r->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <label id="cekUsertype" class="error invalid-feedback small d-block col-sm-4" for="user_type"></label>
-                                </div>
-
-                                <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Client Code</label>
-                                    <div class="input-group col-sm-6 px-0">
-                                        <input class="form-control" type="text" placeholder="Client ID" readonly id="client_id" value="{{ $p->client_id }}" onchange="checkUserType()"/>
-                                        <input class="form-control" type="hidden" placeholder="Client ID" readonly id="hclient_id" value="{{ $p->client_id }}"/>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text btn btn-default" id="btn-clientid">
-                                                <i class="fa fa-search"></i>
-                                            </span>
-                                        </div>
+                                    <div class="form-group form-inline">
+                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User ID</label>
+                                        <input class="form-control col-sm-6" type="text" placeholder="User ID" readonly id="userID" value="{{ $p->user_id }}"/>
                                     </div>
-                                    <label id="cekClientID" class="error invalid-feedback small d-block col-sm-4" for="client_id"></label>
-                                </div>
-
-                                <div class="form-group form-inline lbl-group" id="hidden-usertype">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Group ID" id="groupID" onchange="checking()" value="{{ $p->group }}" readonly/>
-                                    <input class="form-control col-sm-6" type="hidden" placeholder="Group ID" id="hgroupID" value="{{ $p->group }}" readonly/>
-                                    <label id="cekGroupID" class="error invalid-feedback small d-block col-sm-4" for="groupID"></label>
-                                </div>
-
-                                {{--<div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales ID</label>--}}
-                                    <input class="form-control col-sm-6" type="hidden" placeholder="Sales ID" readonly id="sales_id" value="{{ $p->sales_id }}"/>
-                                    {{--<label id="cekSalesID" class="error invalid-feedback small d-block col-sm-4" for="sales_id"></label>
-                                </div>--}}
-                                <div class="form-group form-inline">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Expire Date</label>
-                                    <div class="input-group input-group-alternative col-sm-6 d-border-input" id="errExpire">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
-                                        </div>
-                                        <?php
-                                            $datebips = rollbackFormatDate($p->expire_date);
-                                        ?>
-                                        <input class="form-control datepicker" placeholder="Select date" type="text" id="datepicker-base" readonly style="background: white" data-date-start-date="0d" onchange="checking()" value="{{ $datebips }}">
+                                    <div class="form-group form-inline">
+                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Name</label>
+                                        <input class="form-control col-sm-6" type="text" placeholder="Please Input username" id="username" onchange="cekUsername()" value="{{ $p->user_name }}" readonly/>
+                                        <input type="hidden" id="husername" value="{{ $p->user_name }}"/>
+                                        <label id="cekUsername" class="error invalid-feedback small d-block col-sm-4" for="username"></label>
                                     </div>
-                                    <label id="cekExpire" class="error invalid-feedback small d-block col-sm-4" for="datepicker-base"></label>
+
+                                    <div class="form-group form-inline">
+                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Email</label>
+                                        <input class="form-control col-sm-6" type="email" placeholder="Please Input Email" id="email" value="{{ $p->email_address }}" readonly/>
+                                        <input type="hidden" id="hemail" value="{{ $p->email_address }}"/>
+                                    </div>
+
+                                    <div class="form-group form-inline">
+                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">MSIDN</label>
+                                        <input class="form-control col-sm-6" type="text" placeholder="Please Input MSIDN" id="msidn" value="{{ $p->msidn }}" readonly/>
+                                        <input type="hidden" id="hemail" value="{{ $p->msidn }}"/>
+                                    </div>
+
+                                    <div class="form-group form-inline lbl-user-type">
+                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Type</label>
+                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_type" onchange="checkUserType()" disabled>
+                                            <option value="" disabled>Choose User Type</option>
+                                            @foreach($usertype as $r)
+                                                <option @if($p->user_type === $r->id) selected="selected" @endif value={{ $r->id }}>{{ $r->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <label id="cekUsertype" class="error invalid-feedback small d-block col-sm-4" for="user_type"></label>
+                                    </div>
+
+                                    <div class="form-group form-inline lbl-user-status">
+                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Status</label>
+                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking()">
+                                            <option value="" disabled>Choose User Status</option>
+                                            @foreach($userstatus as $r)
+                                                <option @if($p->user_status === $r->id) selected="selected" @endif value="{{ $r->id }}">{{ $r->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <label id="cekUserstatus" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
+                                    </div>
                                 </div>
-                            </div>
                             @endforeach
                         </div>
                     </div>
@@ -367,7 +326,7 @@
             <div class="card card-footer">
                 <div class="form-inline justify-content-end">
                     <button class="form-control-btn btn btn-success mb-2" type="button" id="saveuser">Update</button>
-                    <a class="form-control-btn btn btn-danger mb-2" type="button" id="canceluser" href="{{ route('user') }}">Cancel</a>
+                    <a class="form-control-btn btn btn-danger mb-2" type="button" id="canceluser" href="{{ route('useradmin.user') }}">Cancel</a>
                 </div>
             </div>
         </form>

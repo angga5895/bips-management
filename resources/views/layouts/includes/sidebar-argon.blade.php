@@ -104,15 +104,15 @@
             {{--<hr class="my-0">--}}
             <!-- Navigation -->
             <ul class="navbar-nav navbar-dark">
-                @foreach($cl_app as $p)
+                @foreach($clapp as $p)
                     @if($p->cla_module)
                         <?php $clappmodule = Illuminate\Support\Facades\DB::select
-                            ('
+                        ('
                                 SELECT cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app_mod
                                 LEFT JOIN cl_app ON cl_app.cla_id = cl_app_mod.clam_cla_id
                                 LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
                                 JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
-                                WHERE cl_app.cla_id = '.$p->cla_id.' ORDER BY cl_module.clm_order;
+                                WHERE cl_app.cla_id = '.$p->cla_id.' AND cl_app_mod.clam_show = TRUE ORDER BY cl_module.clm_order;
                             ')
                         ?>
 
@@ -132,11 +132,7 @@
                                 </ul>
                             </div>
                         </li>
-                    @endif
-                @endforeach
-
-                @foreach($clapp as $p)
-                    @if(!$p->cla_module)
+                    @else
                         @if($p->cla_slug === 'empty')
                             <li class="nav-item">
                                 <a class="nav-link" href="#" data-toggle="modal" data-target="#modalNotAvailable">

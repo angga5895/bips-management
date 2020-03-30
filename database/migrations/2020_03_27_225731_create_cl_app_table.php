@@ -21,6 +21,7 @@ class CreateClAppTable extends Migration
             $table->string('cla_icon',50)->nullable();
             $table->string('cla_routename',50)->nullable();
             $table->boolean('cla_module')->nullable();
+            $table->bigInteger('cla_shown')->nullable();
             $table->timestamps();
         });
     }

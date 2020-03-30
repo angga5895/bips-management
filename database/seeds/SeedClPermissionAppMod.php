@@ -32,26 +32,6 @@ class SeedClPermissionAppMod extends Seeder
                 'clp_role_app' => 1,
                 'clp_app_mod' => 5,
             ],
-            [
-                'clp_role_app' => 1,
-                'clp_app_mod' => 6,
-            ],
-            [
-                'clp_role_app' => 1,
-                'clp_app_mod' => 7,
-            ],
-            [
-                'clp_role_app' => 1,
-                'clp_app_mod' => 8,
-            ],
-            [
-                'clp_role_app' => 1,
-                'clp_app_mod' => 9,
-            ],
-            [
-                'clp_role_app' => 1,
-                'clp_app_mod' => 10,
-            ],
         ];
         DB::table('cl_permission_app_mod')->insert($arr);
     }

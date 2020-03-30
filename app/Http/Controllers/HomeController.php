@@ -34,14 +34,8 @@ class HomeController extends Controller
             $countgroup = $p->count;
         }
 
-        $clapp = DB::select(' SELECT cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app
-                                LEFT JOIN cl_app_mod ON cl_app.cla_id = cl_app_mod.clam_cla_id
-                                LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
-                                JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
-                                ORDER BY cl_app.cla_order;');
+        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
 
-        $cl_app = DB::select('SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id ORDER BY cl_app.cla_order;');
-
-        return view('home', ['title' => 'Dashboard', 'countgroup'=>$countgroup, 'clapp' => $clapp, 'cl_app' => $cl_app]);
+        return view('home', ['title' => 'Dashboard', 'countgroup'=>$countgroup, 'clapp' => $clapp]);
     }
 }

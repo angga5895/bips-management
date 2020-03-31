@@ -37,6 +37,10 @@ class SeedClAppMod extends Seeder
                 'clam_cla_id' => 2,
                 'clam_clm_id' => 5,
                 'clam_show' => true,
+            ],[
+                'clam_cla_id' => 2,
+                'clam_clm_id' => 6,
+                'clam_show' => true,
             ],
         ];
         DB::table('cl_app_mod')->insert($arr);

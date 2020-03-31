@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/user', 'UserController@user')->name('useradmin.user');
     Route::get('/sales', 'SalesController@sales')->name('masterdata.sales');
     Route::get('/dealer', 'DealerController@dealer')->name('masterdata.dealer');
+    Route::get('/customer', 'CustomerController@customer')->name('masterdata.customer');
 
     //feature
     Route::get('/test', 'UserController@getMaxID');
@@ -57,5 +58,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('sales-registrasi', 'SalesController@registrasiSales');
     Route::get('sales-update', 'SalesController@salesEdit');
     Route::get('sales-update/submit', 'SalesController@updateSales');
+
+    Route::get('getDataCustomer','CustomerController@getCustomer');
+    Route::get('getDataCustomerDetail','CustomerController@getCustomerDetail');
 
 });

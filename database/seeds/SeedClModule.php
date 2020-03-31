@@ -51,6 +51,13 @@ class SeedClModule extends Seeder
                 'clm_routename' => 'masterdata.dealer',
                 'updated_at'=>date('d-m-Y h:i:s'),
                 'created_at'=>date('d-m-Y h:i:s'),
+            ],[
+                'clm_name' => 'Customer',
+                'clm_slug' => 'customer',
+                'clm_order' => 3,
+                'clm_routename' => 'masterdata.customer',
+                'updated_at'=>date('d-m-Y h:i:s'),
+                'created_at'=>date('d-m-Y h:i:s'),
             ],
         ];
         DB::table('cl_module')->insert($arr);

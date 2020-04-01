@@ -492,6 +492,15 @@
             }
         }
 
+        function resetApp(){
+            $("[id=user_type]").val('');
+            $("[data-id=user_type] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('Choose User Type');
+            $("[id=user_status]").val('');
+            $("[data-id=user_status] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('Choose User Status');
+
+            clearCache();
+        }
+
         $("#saveuser").on("click", function () {
             var usertype = $("#user_type").val();
             var userstatus = $("#user_status").val();
@@ -791,7 +800,7 @@
             <div class="card card-footer">
                 <div class="form-inline justify-content-end">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="saveuser">Save</button>
-                    <button class="form-control-btn btn btn-info mb-2" type="button" onclick="clearCache()">Reset</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="button" onclick="resetApp()">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceluser">Cancel</button>
                 </div>
             </div>

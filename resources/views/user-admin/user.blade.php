@@ -367,6 +367,14 @@
                 });
 
                 $("#cek"+str).text('');
+
+                if (str === 'User_type'){
+                    $(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
+                }
+
+                if (str === 'User_status'){
+                    $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
+                }
             }
         }
 
@@ -393,8 +401,8 @@
             var cekHash_password_confirm = $("#cekPassword-confirm");
             var cekHash_pin = $("#cekPin");
             var cekHash_pin_confirm = $("#cekPin-confirm");
-            var cekUser_type = $("#cekUsertype");
-            var cekUser_status = $("#cekUserstatus");
+            var cekUser_type = $("#cekUser_type");
+            var cekUser_status = $("#cekUser_status");
 
             if(!user_status[0].checkValidity()){cekUser_status.text(user_status[0].validationMessage);$(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");user_status.focus();}
             else {cekUser_status.text('');$(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");}
@@ -433,10 +441,10 @@
         }
 
         function clearCache(){
-            $("#cekUsertype").text('');
+            $("#cekUser_type").text('');
             $(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
 
-            $("#cekUserstatus").text('');
+            $("#cekUser_status").text('');
             $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
 
             $("#cekClient_id").text('');
@@ -580,7 +588,7 @@
                     confirmButtonText: 'OK'
                 }, function () {
                     var required = "Field is required.";
-                    $("#cekUsertype").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();
+                    $("#cekUser_type").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();
                 });
             } else {
                 if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
@@ -687,7 +695,7 @@
                                             <option value="{{ $p->id }}">{{ $p->name }}</option>
                                         @endforeach
                                     </select>
-                                    <label id="cekUsertype" class="error invalid-feedback small d-block col-sm-4" for="user_type"></label>
+                                    <label id="cekUser_type" class="error invalid-feedback small d-block col-sm-4" for="user_type"></label>
                                 </div>
 
                                 <div class="row">
@@ -773,7 +781,7 @@
                                             <option value="{{ $p->id }}">{{ $p->name }}</option>
                                         @endforeach
                                     </select>
-                                    <label id="cekUserstatus" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
+                                    <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
                                 </div>
                             </div>
                         </div>

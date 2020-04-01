@@ -53,6 +53,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('dealer-registrasi', 'DealerController@registrasiDealer');
     Route::get('dealer-update', 'DealerController@dealerEdit');
     Route::get('dealer-update/submit', 'DealerController@updateDealer');
+    Route::get('dealerGetSales', 'DealerController@dealerGetSales');
+    Route::get('dealerAssign/add/', 'DealerController@dealerAssignAdd');
+    Route::get('dealerAssign/remove/', 'DealerController@dealerAssignRemove');
+
 
     Route::get('getDataSales','SalesController@getSales');
     Route::get('sales-registrasi', 'SalesController@registrasiSales');

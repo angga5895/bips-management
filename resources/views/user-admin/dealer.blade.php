@@ -162,7 +162,8 @@
                     render : function (data, type, row) {
                         var id = row.group_id;
                         return '' +
-                            '<button class="btn btn-sm btn-warning fa fa-pen" type="button" data-dismiss= "modal" onclick="editDealer(\''+data+'\')"></button>'
+                            '<button class="btn btn-sm btn-warning fa fa-pen" type="button" data-dismiss= "modal" onclick="editDealer(\''+data+'\')"></button>' +
+                            '<button class="btn btn-sm btn-info fa fa-user-cog" type="button" data-dismiss= "modal" onclick="assignSales(\''+data+'\')"></button>'
                     }
                 }]
             });
@@ -235,6 +236,115 @@
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             clearCache();
+        }
+        function assignSales(data){
+            $("#sales-group").removeClass("d-none");
+            $("#sales-group").addClass("d-block");
+            $("#main-group").removeClass("d-block");
+            $("#main-group").addClass("d-none");
+            $("#idCurrDealer").val(data);
+            getAssignSalesTable(data);
+            clearCache();
+        }
+        function getAssignSalesTable(data){
+            var id = $("#idCurrDealer").val();
+            $("#table-dealer-sales").DataTable({
+                /*processing: true,
+                serverSide: true,*/
+                dom: 'l<"toolbar">frtip',
+                initComplete: function(){
+                    $("div.toolbar").html('<a href="{{url('dealer')}}"><button class="form-control-btn-0 btn btn-primary mb-2"type="button">Back</button></a>');
+                },
+                ajax : {
+                    url: '{{ url("dealerGetSales") }}',
+                    data : {
+                        'id' : data,
+                    },
+                },
+                columns : [
+                    {data : 'sls', name: 'sls'},
+                    {data : 'sales_name', name: 'sales_name'},
+                    {data : 'address', name: 'address'},
+                    {data : 'phone', name: 'phone'},
+                    {data : 'mobilephone', name: 'mobilephone'},
+                    {data : 'email', name: 'email'},
+                    {data : 'sales_id', name: 'sales_id'},
+                ],
+                columnDefs: [{
+                    targets : [0],
+                    orderable : true,
+                    searchable : false,
+                },{
+                    targets : [1],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [2],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [3],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [4],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [5],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    searchable : true,
+                    targets : [6],
+                    render : function (data, type, row) {
+                        var id = row.group_id;
+                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
+                        if(data == null){
+                            return '<button class="btn btn-sm btn-success fa fa-user-plus" type="button" data-dismiss= "modal" onclick="addThis(\''+row.sls+'\')"></button>'
+                        }else{
+                            return '<button class="btn btn-sm btn-danger fa fa-user-minus" type="button" data-dismiss= "modal" onclick="removeThis(\''+row.sls+'\')"></button>'
+                        }
+                    }
+                }]
+            });
+        }
+        function addThis(salesId){
+            dealerId = $("#idCurrDealer").val();
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('dealerAssign/add/') }}",
+                data : {
+                    'dealer_id' : dealerId,
+                    'sales_id': salesId,
+                },
+                success : function (res) {
+                    $("#alert-addsuccess").removeClass("d-none");
+                    $("#alert-addsuccess").addClass("d-block");
+                    $("#alert-del").removeClass("d-block");
+                    $("#alert-del").addClass("d-none");
+                    $('#table-dealer-sales').DataTable().ajax.reload();
+                }
+            });
+        }
+        function removeThis(salesId){
+            dealerId = $("#idCurrDealer").val();
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('dealerAssign/remove/') }}",
+                data : {
+                    'dealer_id' : dealerId,
+                    'sales_id': salesId,
+                },
+                success : function (res) {
+                    $("#alert-del").removeClass("d-none");
+                    $("#alert-del").addClass("d-block");
+
+                    $("#alert-addsuccess").removeClass("d-block");
+                    $("#alert-addsuccess").addClass("d-none");
+                    $('#table-dealer-sales').DataTable().ajax.reload();
+                }
+            });
         }
         function editDealer(data){
             $.ajax({
@@ -381,7 +491,12 @@
                 });
             }
         }
-
+        function closeAlert(){
+            $("#alert-del").removeClass("d-block");
+            $("#alert-del").addClass("d-none");
+            $("#alert-addsuccess").removeClass("d-block");
+            $("#alert-addsuccess").addClass("d-none");
+        }
     </script>
 @endsection
 
@@ -526,6 +641,71 @@
             </div>
         </form>
     </div>
+    <div class="card shadow d-none" id="sales-group">
+        <input type="hidden" id="idCurrDealer">
+        <div class="card card-header">
+            <form class="form-inline">
+                <label class="form-control-label pr-5 mb-2">Dealer ID</label>
+                <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="groupID" onchange="getGroup()">
+                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Dealer Group" readonly id="groupGet">
+                <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
+                <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
+            </form>
+        </div>
+
+        <div class="card card-body" style="min-height: 365px">
+            <div class="d-none" id="alert-addsuccess">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
+                    <span class="alert-inner--text">Sales has registered.</span>
+                    <button type="button" class="close" onclick="closeAlert()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+            <div class="d-none" id="alert-del">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="fa fa-trash"></i></span>
+                    <span class="alert-inner--text">Sales has un-registered.</span>
+                    <button type="button" class="close" onclick="closeAlert()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <section class="content">
+
+                <!-- Default box -->
+                <div class="box">
+                    <div class="box-body">
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            {{--<div class="form-inline">
+
+                            </div>--}}
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="table-dealer-sales">
+                                    <thead class="bg-gradient-primary text-lighter">
+                                    <tr>
+                                        {{--<th>ID</th>--}}
+                                        <th>Sales Id</th>
+                                        <th>Sales Name</th>
+                                        <th>Adress</th>
+                                        <th>Phone</th>
+                                        <th>Mobile Phone</th>
+                                        <th>Email</th>
+                                        <th>#</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
     <!-- Modal Group List -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

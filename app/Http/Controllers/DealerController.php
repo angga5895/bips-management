@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\DealerSales;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Dealer;
+use App\Sales;
 use App\Group;
 use DataTables;
 
@@ -159,7 +161,51 @@ class DealerController extends Controller
         $dealer = Dealer::all();
 //        return response()->json($dealer);
         return DataTables::of($dealer)->make(true);
+    }
+    public function dealerGetSales(){
+        $id = $_GET['id'];
+        $rowData = DB::select("select *,a.sales_id as sls from sales a
+                                        LEFT JOIN
+                                        (select * from dealer_sales b WHERE b.dealer_id = '$id') c
+                                        ON a.sales_id = c.sales_id");
+        return DataTables::of($rowData)->make(true);
+    }
+    public function dealerAssignAdd(){
+        $dealer_id = $_GET['dealer_id'];
+        $sales_id = $_GET['sales_id'];
+        $res = DB::insert("INSERT INTO dealer_sales values ('$dealer_id','$sales_id')");
+        if ($res){
+            $status = "00";
+            $group = "";
+        } else {
+            $status = "01";
+            $group = "";
+        }
 
+        return response()->json([
+            'status' => $status,
+            'group' => $group
+        ]);
+    }
+    public function dealerAssignRemove(){
+        $dealer_id = $_GET['dealer_id'];
+        $sales_id = $_GET['sales_id'];
+        $res = DealerSales::where([
+            'dealer_id' => $dealer_id,
+            'sales_id' => $sales_id,
+        ])->delete();
+        if ($res){
+            $status = "00";
+            $group = "";
+        } else {
+            $status = "01";
+            $group = "";
+        }
+
+        return response()->json([
+            'status' => $status,
+            'group' => $group
+        ]);
     }
 
     public function getGroupUser(Request $request){

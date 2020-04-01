@@ -247,7 +247,7 @@
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
                     $("div.toolbar").html('' +
-                        '<a href="{{url('customer')}}"><button class="form-control-btn-0 btn btn-primary mb-2" type="button"><i class="fa fa-arrow-left"></i> ' +
+                        '<a href="{{url('customer')}}"><button class="form-control-btn-0 btn btn-primary mb-2" type="button"> ' +
                         'Back</button></a>');
                 },
                 ajax : {

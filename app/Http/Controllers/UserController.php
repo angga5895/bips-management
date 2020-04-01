@@ -339,13 +339,12 @@ class UserController extends Controller
 
         $userType = $requestData['search_param']['userType'];
 
-        if ($userType === "1"){
+        if ($userType === "S"){
             $query = 'SELECT * FROM "sales"';
-        } else if ($userType === "2"){
+        } else if ($userType === "D"){
             $query = 'SELECT * FROM "dealer"';
-        } else if ($userType === "3"){
-            $query = 'SELECT sales.groupid, "customers".* FROM "customers"
-                      LEFT JOIN "sales" ON "sales".slscode = "customers".slscode';
+        } else if ($userType === "C"){
+            $query = 'SELECT * FROM "customer"';
         }
 
         $data = DB::select($query);

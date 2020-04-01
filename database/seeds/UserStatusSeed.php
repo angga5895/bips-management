@@ -16,19 +16,37 @@ class UserStatusSeed extends Seeder
         $arr = [
             [
                 'id' => 'A',
-                'name' => 'Aktif',
+                'name' => 'Active',
+                'created_at' => date('d-m-Y h:i:s'),
+                'updated_at' => date('d-m-Y h:i:s'),
+            ],
+            [
+                'id' => 'B',
+                'name' => 'Suspend Buy',
                 'created_at' => date('d-m-Y h:i:s'),
                 'updated_at' => date('d-m-Y h:i:s'),
             ],
             [
                 'id' => 'S',
-                'name' => 'Suspend',
+                'name' => 'Suspend Sell',
                 'created_at' => date('d-m-Y h:i:s'),
                 'updated_at' => date('d-m-Y h:i:s'),
             ],
             [
-                'id' => 'C',
-                'name' => 'Closed',
+                'id' => 'T',
+                'name' => 'Trade Disabled',
+                'created_at' => date('d-m-Y h:i:s'),
+                'updated_at' => date('d-m-Y h:i:s'),
+            ],
+            [
+                'id' => 'I',
+                'name' => 'Inactive',
+                'created_at' => date('d-m-Y h:i:s'),
+                'updated_at' => date('d-m-Y h:i:s'),
+            ],
+            [
+                'id' => 'F',
+                'name' => 'Block Due To Fraud',
                 'created_at' => date('d-m-Y h:i:s'),
                 'updated_at' => date('d-m-Y h:i:s'),
             ],

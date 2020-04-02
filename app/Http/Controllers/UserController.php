@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Account;
+use App\Customer;
+use App\DealerSales;
 use App\User;
 use App\User_bips;
 use App\User_group;
 use App\User_status;
 use App\User_type;
+use App\UserAccount;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -114,90 +119,147 @@ class UserController extends Controller
     }
 
     public function registrasiUser(){
-        $username = $_GET['username'];
-        $password = $_GET['password'];
+        $user_id = $_GET['user_id'];
+        $user_name = $_GET['user_name'];
+        $email_address = $_GET['email_address'];
+        $msidn = $_GET['msidn'];
+        $hash_password = $_GET['hash_password'];
+        $hash_pin = $_GET['hash_pin'];
         $user_type = $_GET['user_type'];
-        $client_id = $_GET['client_id'];
         $user_status = $_GET['user_status'];
-        $expire_date = $_GET['expire_date'];
-        $group = $_GET['group'];
-
-        $sales_id = '';
-        if ($user_type === '1'){
-            $sales_id = $_GET['client_id'];
-        } else if ($user_type === '3'){
-            $query = 'SELECT "customers".slscode FROM "customers"
-                        WHERE "customers".custcode = \'' . $_GET['client_id'] . '\'';
-            $data = DB::select($query);
-            foreach ($data as $p){
-                $sales_id = $p->slscode;
-            }
-        }
-
-        if ($user_type ==='2' || $user_type === '4' || $user_type === '5') {
-            $group = null;
-        }
-
-        $expire = explode("/", $expire_date);
-        $exdate = $expire[2]."-".$expire[1]."-".$expire[0]." 00:00:00";
 
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = User_bips::create([
-            'username' => $username,
-            'password' => Hash::make($password),
-            'user_type' => $user_type,
-            'client_id' => $client_id,
-            'user_status' => $user_status,
-            'expire_date' => $exdate,
-            'sales_id' => $sales_id,
-            'group' => $group,
-        ]);
 
-        if ($query){
-            if($group === null){
-                $status = "00";
-                $user = $username;
-            } else {
-                $cekgroup = $group;
-                $arrgroup = [];
+        try {
+            $query = User::create([
+                'user_id' => $user_id,
+                'user_name' => $user_name,
+                'email_address' => $email_address,
+                'msidn' => $msidn,
+                'hash_password' => $hash_password,
+                'status' => $user_status,
+                'last_login' => $current_time,
+                'last_teriminalid' => null,
+                'user_type' => $user_type,
+                'hash_pin' => $hash_pin,
+            ]);
 
-                if ($this->isprime($cekgroup) == true) {
-                    array_push($arrgroup, $cekgroup);
-                } else {
-                    for ($i = 1; $i < $cekgroup; $i++) {
-                        if ($cekgroup % $i == 0) {
-                            $prime = $this->isprime($i);
-                            if ($prime == true) {
-                                array_push($arrgroup, $i);
+            if ($query) {
+                if ($user_type === 'C') {
+                    $lowercustcode = DB::select('SELECT custcode FROM "customer" WHERE "lower"(user_id) = \''.strtolower($user_id).'\'');
+                    foreach ($lowercustcode as $p){
+                        $custcode = $p->custcode;
+                    }
+
+                    $countaccount = DB::select('SELECT count(*) FROM account WHERE account_no = \'' . $custcode . '\'');
+                    foreach ($countaccount as $p) {
+                        $isaccount = $p->count;
+                    }
+
+                    $statusaccount = '0';
+                    if ($isaccount === '0') {
+                        $sid = Customer::where('custcode', $custcode)->pluck('sid');
+                        try {
+                            Account::create([
+                                'account_no' => $custcode,
+                                'account_name' => $user_name,
+                                'cif_no' => null,
+                                'asset_code' => 'IDR',
+                                'balance' => 0,
+                                'balance_hold' => null,
+                                'equiv_balance' => null,
+                                'account_type' => $user_type,
+                                'is_base' => 'T',
+                                'compliance_id' => substr($sid, 7, 6),
+                                'account_status' => $user_status,
+                                'locked' => null,
+                                'base_account_no' => $custcode,
+                            ]);
+                        } catch (QueryException $ex) {
+                            if (User::where('user_id', $user_id)->delete()) {
+                                $status = '01';
+                                $user = $user_name;
+                                $message = $ex->getMessage();
+                            }
+                            $statusaccount = '1';
+                        }
+                    }
+
+                    if ($statusaccount === '0'){
+                        $insertuseraccountcust = '0';
+                        $salesid = Customer::where('custcode', $custcode)->pluck('sales_id');
+                        try{
+                            UserAccount::create([
+                                'user_id' => $user_id,
+                                'account_no' => $custcode,
+                                'access_flag' => 'T',
+                            ]);
+                        } catch (QueryException $exp){
+                            if (Account::where('account_no', $custcode)->delete()) {
+                                if (User::where('user_id', $user_id)->delete()) {
+                                    $status = '01';
+                                    $user = $user_name;
+                                    $message = $exp->getMessage();
+
+                                    $insertuseraccountcust = '1';
+                                }
+                            }
+                        }
+
+                        if ($insertuseraccountcust === '0'){
+                            $insertuseraccountdealer = '0';
+                            $exDealer = '';
+                            $selectdealer = DealerSales::where('sales_id', $salesid)->get();
+                            foreach ($selectdealer as $p){
+                                $cekDealer = User::where('user_id', $p->dealer_id)->get();
+                                $countDealer = $cekDealer->count();
+                                if ($countDealer !== 0) {
+                                    try {
+                                        UserAccount::create([
+                                            'user_id' => $p->dealer_id,
+                                            'account_no' => $custcode,
+                                            'access_flag' => 'T',
+                                        ]);
+                                    } catch (QueryException $excep) {
+                                        $insertuseraccountdealer = '1';
+                                        $exDealer = $excep->getMessage();
+                                    }
+                                }
+                            }
+
+                            if ($insertuseraccountdealer === '1'){
+                                if (UserAccount::where('user_id', $user_id)->delete()) {
+                                    if (Account::where('account_no', $custcode)->delete()) {
+                                        if (User::where('user_id', $user_id)->delete()) {
+                                            $status = '01';
+                                            $user = $user_name;
+                                            $message = $exDealer;
+                                        }
+                                    }
+                                }
+                            } else {
+                                $status = '00';
+                                $user = $user_name;
+                                $message = 'Success';
                             }
                         }
                     }
                 }
 
-                $isCount = count($arrgroup);
-                for ($itr = 0; $itr < $isCount; $itr++) {
-                    $sql = User_group::create([
-                        'user_id' => $this->getMaxID(),
-                        'group_id' => $arrgroup[$itr],
-                    ]);
-                }
-
-                if ($sql) {
-                    $status = "00";
-                    $user = $username;
-                } else {
-                    $status = "01";
-                    $user = "";
-                }
+            } else {
+                $status = "01";
+                $user = "";
             }
-        } else {
-            $status = "01";
-            $user = "";
+        } catch (QueryException $e){
+            $status = '01';
+            $user = $user_name;
+            $message = $e->getMessage();
         }
 
         return response()->json([
             'status' => $status,
-            'user' => $user
+            'user' => $user,
+            'message' => $message
         ]);
     }
 
@@ -340,11 +402,17 @@ class UserController extends Controller
         $userType = $requestData['search_param']['userType'];
 
         if ($userType === "S"){
-            $query = 'SELECT * FROM "sales"';
+            $query = 'SELECT "sales".* FROM "sales" LEFT JOIN users
+                      ON "lower"(users.user_id) = "lower"("sales".sales_id)
+                      WHERE users.user_id is NULL';
         } else if ($userType === "D"){
-            $query = 'SELECT * FROM "dealer"';
+            $query = 'SELECT "dealer".* FROM "dealer" LEFT JOIN users
+                      ON "lower"(users.user_id) = "lower"("dealer".dealer_id)
+                      WHERE users.user_id is NULL';
         } else if ($userType === "C"){
-            $query = 'SELECT * FROM "customer"';
+            $query = 'SELECT "customer".* FROM "customer" LEFT JOIN users
+                      ON "lower"(users.user_id) = "lower"("customer".custcode)
+                      WHERE users.user_id is NULL';
         }
 
         $data = DB::select($query);

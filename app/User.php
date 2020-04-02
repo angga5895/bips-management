@@ -16,6 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $primaryKey = "user_id";
+    public $timestamps = false;
     protected $fillable = [
         'user_id',
         'user_name',
@@ -25,7 +26,7 @@ class User extends Authenticatable
         'status',
         'last_login',
         'last_teriminalid',
-        'usert_type',
+        'user_type',
         'hash_pin',
     ];
 

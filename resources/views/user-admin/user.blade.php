@@ -3,8 +3,17 @@
 @section('js')
     <script>
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="tooltip"]').tooltip();
         });
+
+        function hanyaAngka(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)){
+                return false;
+            } else {
+                return true;
+            }
+        }
 
         function getDateBips(tanggal){
             var datetime = tanggal.split(" ");
@@ -50,7 +59,7 @@
                 placeholder: 'AOID'
             });
             $('.bootstrap-select').selectpicker();
-            $(".readonly").on('keydown paste', function(e){
+            $(".readonly").on('keydown paste mousedown mouseup drop', function(e){
                 e.preventDefault();
             });
         });
@@ -89,19 +98,19 @@
             var usertype = $("#user_type").val();
 
             if(usertype === 'S'){
-                var id = 'sales_id';
+                var id = 'user_id';
                 var name = 'sales_name';
                 $("#exampleModalLabel2").text('Trader List');
                 $("#idClident").text('Sales Code');
                 $("#nameClient").text('Sales Name');
             } else if(usertype === 'D'){
-                var id = 'dealer_id';
+                var id = 'user_id';
                 var name = 'dealer_name';
                 $("#exampleModalLabel2").text('Dealer List');
                 $("#idClident").text('Dealer Code');
                 $("#nameClient").text('Dealer Name');
             } else if(usertype === 'C'){
-                var id = 'custcode';
+                var id = 'user_id';
                 var name = 'custname';
                 $("#exampleModalLabel2").text('Customers List');
                 $("#idClident").text('Customer Code');
@@ -142,21 +151,21 @@
                         var usertype = $("#user_type").val();
                         var arrRow = [];
                         if (usertype === 'C'){
-                            var user_id = row.custcode; //user_id
+                            var user_id = row.user_id.toLowerCase(); //user_id
                             var user_name = row.custname; //user_name
                             var email_address = row.email; //email_address
                             var msidn = row.phonecell; //msidn
-                            var hash_password = row.user_password; //hash_password
-                            var hash_pin = row.user_pin; //hash_pin
+                            var hash_password = (row.user_password === null) ? '' : row.user_password; //hash_password
+                            var hash_pin = (row.user_pin === null) ? '' : row.user_pin; //hash_pin
                         } else if (usertype === 'D'){
-                            var user_id = row.dealer_id; //user_id
+                            var user_id = row.user_id.toLowerCase(); //user_id
                             var user_name = row.dealer_name; //user_name
                             var email_address = (row.email === null) ? '' : row.email; //email_address
                             var msidn = (row.mobilephone === null) ? '' : row.mobilephone; //msidn
                             var hash_password = ''; //hash_password
                             var hash_pin = ''; //hash_pin
                         } else if (usertype === 'S'){
-                            var user_id = row.sales_id; //user_id
+                            var user_id = row.user_id.toLowerCase(); //user_id
                             var user_name = row.sales_name; //user_name
                             var email_address = (row.email === null) ? '' : row.email; //email_address
                             var msidn = (row.mobilephone === null) ? '' : row.mobilephone; //msidn
@@ -165,7 +174,7 @@
                         }
 
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKClient(\''
-                            +data+'\',\''
+                            +data.toLowerCase()+'\',\''
                             +user_name+'\',\''
                             +email_address+'\',\''
                             +msidn+'\',\''
@@ -324,7 +333,15 @@
         function checkUserType() {
             var usertype = $("#user_type").val();
             if(usertype !== null){
-                clearCache();
+                if(usertype === 'T'){
+                    $("#useridT").removeClass("d-none");
+                    $("#useridCDS").addClass("d-none");
+                    clearCache();
+                } else {
+                    $("#useridCDS").removeClass("d-none");
+                    $("#useridT").addClass("d-none");
+                    clearCache();
+                }
             }
         }
 
@@ -403,7 +420,7 @@
             var cekHash_pin_confirm = $("#cekPin-confirm");
             var cekUser_type = $("#cekUser_type");
             var cekUser_status = $("#cekUser_status");
-
+            
             if(!user_status[0].checkValidity()){cekUser_status.text(user_status[0].validationMessage);$(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");user_status.focus();}
             else {cekUser_status.text('');$(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");}
 
@@ -482,14 +499,6 @@
             $("#cekPin-confirm").text('');
             $("#pin-confirm").removeClass("is-invalid");
             $("#pin-confirm").val('');
-
-            if (usertype === 'T'){
-                $("#useridT").removeClass('d-none');
-                $("#useridCDS").addClass('d-none');
-            } else {
-                $("#useridCDS").removeClass('d-none');
-                $("#useridT").addClass('d-none');
-            }
         }
 
         function resetApp(){
@@ -502,54 +511,70 @@
         }
 
         $("#saveuser").on("click", function () {
-            var usertype = $("#user_type").val();
-            var userstatus = $("#user_status").val();
-
-            var username = $("#username").val();
+            var user_type = $("#user_type").val();
+            var user_status = $("#user_status").val();
+            var user_name = $("#user_name").val();
             var password = $("#password").val();
             var cpassword = $("#password-confirm").val();
-            var expire = $("#datepicker-base").val();
-            var clientid = $("#client_id").val();
-            var groupid = $("#groupID").val();
+            var pin = $("#pin").val();
+            var cpin = $("#pin-confirm").val();
 
-            var required = "Field is required.";
+            var email_address = $("#email_address").val();
+            var msidn = $("#msidn").val();
 
-            if (username !== '' && usertype !== null && userstatus !== null && password !== ''
-                && cpassword !== '' && expire !== '' /*&& clientid !== ''*/){
-                if((usertype === '1' || usertype === '2' || usertype === '3') && clientid === ''){
-                    $("#cekClient_id").text(required);$("#client_id").addClass("is-invalid");$("#client_id").focus();
-                } else {
-                    $.get("/mockjax");
+            if (user_type === 'T'){
+                var user_id = $("#client_id_t").val();
+            } else {
+                var user_id = $("#client_id").val();
+            }
 
-                    $.ajax({
-                        type : "GET",
-                        url  : "{{ url('username-registrasi') }}",
-                        data : {
-                            'username' : username,
-                            'password' : password,
-                            'user_type' : usertype,
-                            'client_id' : clientid,
-                            'user_status' : userstatus,
-                            'expire_date' : expire,
-                            'group' : groupid,
-                            'sales_id' : $("#sales_id").val(),
-                        },
-                        success : function (res) {
-                            if ($.trim(res)){
-                                if (res.status === "00"){
-                                    $('#table-reggroup').DataTable().ajax.reload();
-                                    $("#add-user").removeClass("d-block");
-                                    $("#add-user").addClass("d-none");
-                                    $("#main-user").removeClass("d-none");
-                                    $("#main-user").addClass("d-block");
-                                    $("#regisuser").text(res.user);
-                                    $("#alert-success-registrasi").removeClass("d-none");
-                                    $("#alert-success-registrasi").addClass("d-block");
-                                }
+            var emailaddress = $("#email_address");
+            var hashpin = $("#pin");
+            var hashpinconfirm = $("#pin-confirm");
+
+            if (user_name !== '' && user_type !== null && user_status !== null && password !== '' && cpassword !== ''
+                && pin !== '' && cpin !== '' && user_id !== '' && msidn !== '' && email_address !== ''
+                && emailaddress[0].checkValidity() && hashpin[0].checkValidity() && hashpinconfirm[0].checkValidity()
+            ){
+                $.get("/mockjax");
+
+                $.ajax({
+                    type : "GET",
+                    url  : "{{ url('username-registrasi') }}",
+                    data : {
+                        'user_id' : user_id,
+                        'user_name' : user_name,
+                        'email_address' : email_address,
+                        'msidn' : msidn,
+                        'hash_password' : password,
+                        'hash_pin' : pin,
+                        'user_type' : user_type,
+                        'user_status' : user_status,
+                    },
+                    success : function (res) {
+                        if ($.trim(res)){
+                            if (res.status === "00"){
+                                $('#table-reggroup').DataTable().ajax.reload();
+                                $("#add-user").removeClass("d-block");
+                                $("#add-user").addClass("d-none");
+                                $("#main-user").removeClass("d-none");
+                                $("#main-user").addClass("d-block");
+                                $("#regisuser").text(res.user);
+                                $("#alert-success-registrasi").removeClass("d-none");
+                                $("#alert-success-registrasi").addClass("d-block");
+                            } else {
+                                $('#table-reggroup').DataTable().ajax.reload();
+                                $("#add-user").removeClass("d-block");
+                                $("#add-user").addClass("d-none");
+                                $("#main-user").removeClass("d-none");
+                                $("#main-user").addClass("d-block");
+                                $("#messageuser").text(res.message);
+                                $("#alert-error-registrasi").removeClass("d-none");
+                                $("#alert-error-registrasi").addClass("d-block");
                             }
                         }
-                    });
-                }
+                    }
+                });
             } else {
                 checkCache();
             }
@@ -600,7 +625,8 @@
                     $("#cekUser_type").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();
                 });
             } else {
-                if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
+                // if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
+                if (usertype === 'C'){
                     clientlist();
                 } else {
                     swal({
@@ -650,6 +676,14 @@
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
                     <span class="alert-inner--text"><strong id="regisuser"></strong>, has registered.</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+            <div class="d-none" id="alert-error-registrasi">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--text">Error Because =>&nbsp;<strong id="messageuser"></strong></span>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -768,14 +802,14 @@
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">PIN</label>
                                             <div class="col-sm-9 px-0 row">
-                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required/>
                                                 <label id="cekPin" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Confirm PIN</label>
                                             <div class="col-sm-9 px-0 row">
-                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin-confirm" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin-confirm" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required/>
                                                 <label id="cekPin-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin-confirm"></label>
                                             </div>
                                         </div>

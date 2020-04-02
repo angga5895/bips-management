@@ -163,7 +163,7 @@ class AccountSeed extends Seeder
                 'locked' => NULL,
                 'base_account_no' => 'SW197'
             ],
-            [
+            /*[
                 'account_no' => 'SW203',
                 'account_name' => 'AGUNG LEON HARYATMO',
                 'cif_no' => NULL,
@@ -312,7 +312,7 @@ class AccountSeed extends Seeder
                 'account_status' => 'A',
                 'locked' => NULL,
                 'base_account_no' => 'SW276'
-            ],
+            ],*/
         ];
         DB::table('account')->insert($arr);
     }

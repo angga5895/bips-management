@@ -164,10 +164,22 @@ class DealerController extends Controller
     }
     public function dealerGetSales(){
         $id = $_GET['id'];
-        $rowData = DB::select("select *,a.sales_id as sls from sales a
+        $type = $_GET['type'];
+        if($type == "01"){
+            $rowData = DB::select("select *,a.sales_id as sls from sales a
+                                        INNER JOIN
+                                        (select * from dealer_sales b WHERE b.dealer_id = '$id') c
+                                        ON a.sales_id = c.sales_id");
+        }elseif($type == "02"){
+            $rowData = DB::select("select *,a.sales_id as sls from sales a
+                                        WHERE a.sales_id NOT IN
+                                        (select sales_id from dealer_sales b WHERE b.dealer_id = '$id')");
+        }else{
+            $rowData = DB::select("select *,a.sales_id as sls from sales a
                                         LEFT JOIN
                                         (select * from dealer_sales b WHERE b.dealer_id = '$id') c
                                         ON a.sales_id = c.sales_id");
+        }
         return DataTables::of($rowData)->make(true);
     }
     public function dealerAssignAdd(){

@@ -243,22 +243,43 @@
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#idCurrDealer").val(data);
-            getAssignSalesTable(data);
+            getAssignSalesTable(data,"01");
             clearCache();
         }
-        function getAssignSalesTable(data){
+        $("#typeuser").on('change', function() {
+            alert( this.value );
+        });
+        function getAssignSalesTable(data,typeRes){
             var id = $("#idCurrDealer").val();
+            // var typeRes = $("#typeCurrUser").val();
+            var select01 = "";
+            var select02 = "";
+            var select00 = "";
+            if(typeRes == "00"){
+                var select00 = "selected";
+            }else if(typeRes == "02"){
+                var select02 = "selected";
+            }else{
+                var select01 = "selected";
+            }
             $("#table-dealer-sales").DataTable({
                 /*processing: true,
                 serverSide: true,*/
-                dom: 'l<"toolbar">frtip',
+                dom: 'l<"toolbar"><"selectToolbar col-md-3">frtip',
                 initComplete: function(){
-                    $("div.toolbar").html('<a href="{{url('dealer')}}"><button class="form-control-btn-0 btn btn-primary mb-2"type="button">Back</button></a>');
+                    $("div.toolbar").html('' +
+                        '<div class="input-group"><a href="{{url('dealer')}}">'+
+                    '<button class="form-control-btn-0 btn btn-primary mb-2" type="button"  style="display: inline";>Back</button></a>&nbsp;&nbsp;&nbsp;<div id="idselect"></div></div>');
+                    $('<select class="form-control"><option value="01" '+select01+'>Registered</option><option value="02"  '+select02+'>Non Registered</option><option value="00" '+select00+'>All</option></select>').appendTo( $("div.selectToolbar")).on('change', function (){
+                        $("#table-dealer-sales").DataTable().clear().destroy();
+                        getAssignSalesTable(data,$(this).val());
+                    });
                 },
                 ajax : {
-                    url: '{{ url("dealerGetSales") }}',
+                    url: '{{ url("dealerGetSales/") }}',
                     data : {
                         'id' : data,
+                        'type': typeRes,
                     },
                 },
                 columns : [
@@ -299,15 +320,24 @@
                     targets : [6],
                     render : function (data, type, row) {
                         var id = row.group_id;
-                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        if(data == null){
+                        if(!row.dealer_id){
                             return '<button class="btn btn-sm btn-success fa fa-user-plus" type="button" data-dismiss= "modal" onclick="addThis(\''+row.sls+'\')"></button>'
                         }else{
-                            return '<button class="btn btn-sm btn-danger fa fa-user-minus" type="button" data-dismiss= "modal" onclick="removeThis(\''+row.sls+'\')"></button>'
+                            if(data == null){
+                                return '<button class="btn btn-sm btn-success fa fa-user-plus" type="button" data-dismiss= "modal" onclick="addThis(\''+row.sls+'\')"></button>'
+                            }else{
+                                return '<button class="btn btn-sm btn-danger fa fa-user-minus" type="button" data-dismiss= "modal" onclick="removeThis(\''+row.sls+'\')"></button>'
+                            }
                         }
+                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
+
                     }
                 }]
             });
+        }
+        function selectChange(code){
+            var data = $("#idCurrDealer").val();
+
         }
         function addThis(salesId){
             dealerId = $("#idCurrDealer").val();
@@ -643,6 +673,8 @@
     </div>
     <div class="card shadow d-none" id="sales-group">
         <input type="hidden" id="idCurrDealer">
+        <input type="hidden" id="typeCurrUser">
+
         <div class="card card-header">
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Dealer ID</label>

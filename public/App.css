@@ -213,3 +213,10 @@ table.dataTable tbody tr.selected {
 .sweet-alert{
 	z-index:2!important;
 }
+.selectToolbar{
+    display: inline-block;
+}
+.dataTables_filter{
+    display: inline-block;
+    float:right;
+}

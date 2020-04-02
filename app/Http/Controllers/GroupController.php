@@ -119,9 +119,15 @@ class GroupController extends Controller
     }
 
     public function getIdGroup(){
-        $groupID = (int)$this->get_prime();
+        $id = $_GET['id'];
+        $res = Group::where('group_id',$id)->count();
+        if($res > 0){
+            $status = "01";
+        }else{
+            $status = "00";
+        }
         return response()->json([
-            'groupID' => $groupID,
+            'status' => $status,
         ]);
     }
 

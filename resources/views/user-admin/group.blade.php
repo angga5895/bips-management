@@ -150,8 +150,7 @@
             var grouphead = $("#grouphead").val();
             var groupheadname = $("#groupheadname").val();
 
-            var required = "Field is required.";
-            if (groupname !== ''){
+            if (validateField()){
                 $.get("/mockjax");
 
                 $.ajax({
@@ -178,11 +177,93 @@
                         }
                     }
                 });
-            } else{
-                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
             }
         });
+        function validateField(data){
+            var groupid = $("#groupid").val();
+            var groupname = $("#groupname").val();
+            var grouphead = $("#grouphead").val();
+            var groupheadname = $("#groupheadname").val();
+            var required = "Field is required.";
 
+            res = true;
+            if(groupheadname === ''){
+                $("#cekGroupHeadName").text(required);
+                $("#groupheadname").addClass("is-invalid");
+                $("#groupheadname").focus();
+                res = false;
+            }
+            if(grouphead === ''){
+                $("#cekGrouphead").text(required);
+                $("#grouphead").addClass("is-invalid");
+                $("#grouphead").focus();
+                res = false;
+            }
+            if(groupname === ''){
+                $("#cekGroupname").text(required);
+                $("#groupname").addClass("is-invalid");
+                $("#groupname").focus();
+                res = false;
+            }
+            if(data !== "update") {
+                if (groupid === '') {
+                    $("#cekGroupId").text(required);
+                    $("#groupid").addClass("is-invalid");
+                    $("#groupid").focus();
+                    res = false;
+                }
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('get-idgroup') }}",
+                    data: {
+                        'id': groupid,
+                    },
+                    success: function (res) {
+                        if (res.status === "01") {
+                            $("#cekGroupId").text('Group Id not available, try another ID');
+                            $("#groupid").addClass("is-invalid");
+                            $("#groupid").focus();
+                            res = false;
+                        } else {
+                            res = true;
+                        }
+                    }
+                });
+            }
+            return res;
+        }
+        function changeCheck(data){
+            switch (data) {
+                case 'groupid':
+                    var groupid = $("#groupid").val();
+                    if(groupid !== ''){
+                        $("#groupid").removeClass("is-invalid");
+                        $("#cekGroupId").text('');
+                    };
+                    break;
+                case 'groupname':
+                    var groupname = $("#groupname").val();
+                    if(groupname !== ''){
+                        $("#groupname").removeClass("is-invalid");
+                        $("#cekGroupname").text('');
+                    };
+                    break;
+                case 'grouphead':
+                    var grouphead = $("#grouphead").val();
+                    if(grouphead !== ''){
+                        $("#grouphead").removeClass("is-invalid");
+                        $("#cekGrouphead").text('');
+                    };
+                    break;
+                case 'groupheadname':
+                    var groupheadname = $("#groupheadname").val();
+                    if(groupheadname !== ''){
+                        $("#groupheadname").removeClass("is-invalid");
+                        $("#cekGroupHeadName").text('');
+                    };
+                    break;
+            }
+        }
         function addGroup() {
             var id = $("#addgroupID").val();
             $.ajax({
@@ -213,6 +294,7 @@
                 success : function (res) {
                     // console.log(res.name);
                     $("#groupid").val(data);
+                    $("#groupid").attr('readonly',true);
                     $("#groupname").val(res.name);
                     $("#grouphead").val(res.head_id);
                     $("#groupheadname").val(res.head_name);
@@ -237,7 +319,7 @@
             var groupheadname = $("#groupheadname").val();
 
             var required = "Field is required.";
-            if (groupname !== ''){
+            if (validateField('update')){
                 $.get("/mockjax");
                 $.ajax({
                     type : "GET",
@@ -259,21 +341,13 @@
                                 $("#update_group_notification").text(res.group);
                                 $("#alert-success-update").removeClass("d-none");
                                 $("#alert-success-update").addClass("d-block");
+                                clearCache();
                             }
                         }
                     }
                 });
-            } else{
-                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
             }
 
-            $("#add-group").removeClass("d-none");
-            $("#add-group").addClass("d-block");
-            $("#main-group").removeClass("d-block");
-            $("#main-group").addClass("d-none");
-            $("#savegroupbutton").removeClass('d-none');
-            $("#editgroupbutton").addClass('d-none');
-            clearCache();
         });
         $("#resetgroup").on('click', function(){
             var data = $("#hiddengroupid").val()
@@ -435,22 +509,22 @@
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>
-                                    <input class="form-control col-sm-6" type="text" id="groupid" readonly/>
-                                    <label id="cekGroupid" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
+                                    <input class="form-control col-sm-6" placeholder="Group ID" onchange="changeCheck('groupid')" type="text" id="groupid" maxlength="20"/>
+                                    <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Group name" onchange="changeCheck('groupname')" max="255" required id="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head ID</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="" required id="grouphead"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Head ID" onchange="changeCheck('grouphead')" maxlength="20" required id="grouphead"/>
                                     <label id="cekGrouphead" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="" required id="groupheadname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Head Name" onchange="changeCheck('groupheadname')" maxlength="50" required id="groupheadname"/>
                                     <label id="cekGroupHeadName" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                             </div>
@@ -461,11 +535,12 @@
             <div class="card card-footer">
                 <div class="form-inline justify-content-end" id="savegroupbutton">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelgroup">Cancel</button>
                 </div>
                 <div class="form-inline justify-content-end d-none" id="editgroupbutton">
-                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-success mb-2" type="button" id="updategroup">Update</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceleditgroup">Cancel</button>
                 </div>
             </div>

@@ -52,6 +52,43 @@
             return date+" "+month+" "+year;
         }
 
+        function getDateTimeBips(tanggal){
+            var datetime = tanggal.split(" ");
+            var tgl = datetime[0].split("-");
+
+            var year = tgl[0];
+
+            if (tgl[1] == '01' ||tgl[1] == '1'){
+                var month = 'January';
+            } else if (tgl[1] == '02' ||tgl[1] == '2'){
+                var month = 'February';
+            } else if (tgl[1] == '03' ||tgl[1] == '3'){
+                var month = 'March';
+            } else if (tgl[1] == '04' ||tgl[1] == '4'){
+                var month = 'April';
+            } else if (tgl[1] == '05' ||tgl[1] == '5'){
+                var month = 'Mei';
+            } else if (tgl[1] == '06' ||tgl[1] == '6'){
+                var month = 'June';
+            } else if (tgl[1] == '07' ||tgl[1] == '7'){
+                var month = 'July';
+            } else if (tgl[1] == '08' ||tgl[1] == '8'){
+                var month = 'August';
+            } else if (tgl[1] == '09' ||tgl[1] == '9'){
+                var month = 'September';
+            } else if (tgl[1] == '10'){
+                var month = 'October';
+            } else if (tgl[1] == '11'){
+                var month = 'November';
+            } else if (tgl[1] == '12'){
+                var month = 'December';
+            }
+
+            var date = tgl[2];
+
+            return date+" "+month+" "+year+" | "+datetime[1]+" WIB";
+        }
+
         $(document).ready(function () {
             tablegetReg();
             tablelist();
@@ -285,7 +322,10 @@
                     searchable : true,
                     targets : [5],
                     render : function (data, type, row) {
-                        return '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
+                        return '<button class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail" onclick="detailUser(\''+data+'\')">' +
+                            '<i class="fa fa-search"></i>' +
+                            '</button>'+
+                            '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
                             '<i class="fa fa-pen"></i>' +
                             '</a>' +
                             '<a class="btn btn-sm btn-facebook" href="/user" data-toggle="tooltip" data-placement="top" title="Reset Password">' +
@@ -299,6 +339,38 @@
             });
         }
 
+        function detailUser(userid) {
+            $.get("/mockjax");
+
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('get-detailUser') }}",
+                data : {
+                    'user_id' : userid,
+                },
+                success : function (res) {
+                    //row 1
+                    $("#dtl_user_id").text((res.user_id === null) ? '-' : res.user_id);
+                    $("#dtl_user_name").text((res.user_name === null) ? '-' : res.user_name);
+                    $("#dtl_email_address").text((res.email_address === null) ? '-' : res.email_address);
+                    $("#dtl_msidn").text((res.msidn === null) ? '-' : res.msidn);
+                    //row 2
+                    $("#dtl_status").text((res.status === null) ? '-' : res.status);
+                    $("#dtl_last_login").text((res.last_login === null) ? '-' : getDateTimeBips(res.last_login));
+                    $("#dtl_last_teriminalid").text((res.last_teriminalid === null) ? '-' : res.last_teriminalid);
+                    $("#dtl_user_type").text((res.user_type === null) ? '-' : res.user_type);
+
+                    $("#detail-userid").text(res.user_id);
+                    $("#detail-user").removeClass("d-none");
+                    $("#detail-user").addClass("d-block");
+                    $("#add-user").removeClass("d-block");
+                    $("#add-user").addClass("d-none");
+                    $("#main-user").removeClass("d-block");
+                    $("#main-user").addClass("d-none");
+                }
+            });
+        }
+
         function addUser() {
             $("[id=user_type]").val('');
             $("[data-id=user_type] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('Choose User Type');
@@ -309,9 +381,20 @@
             $("#add-user").addClass("d-block");
             $("#main-user").removeClass("d-block");
             $("#main-user").addClass("d-none");
+            $("#detail-user").removeClass("d-block");
+            $("#detail-user").addClass("d-none");
 
             clearCache();
         };
+
+        $("#backdetail").on("click", function () {
+            $("#detail-user").removeClass("d-block");
+            $("#detail-user").addClass("d-none");
+            $("#add-user").removeClass("d-block");
+            $("#add-user").addClass("d-none");
+            $("#main-user").removeClass("d-none");
+            $("#main-user").addClass("d-block");
+        });
 
         $("#canceluser").on("click", function () {
             swal({
@@ -331,6 +414,8 @@
                         $("#add-user").addClass("d-none");
                         $("#main-user").removeClass("d-none");
                         $("#main-user").addClass("d-block");
+                        $("#detail-user").removeClass("d-block");
+                        $("#detail-user").addClass("d-none");
                     }
                 }
             )
@@ -871,6 +956,57 @@
                 </div>
             </div>
         </form>
+    </div>
+
+    <div class="card shadow d-none" id="detail-user">
+        <div class="card card-header">
+            <form class="form-inline">
+                <button class="btn btn-sm btn-primary" type="button" id="backdetail"><i class="fa fa-backspace"></i> Back</button>
+                <label class="form-control-label pr-5 mb-0">Detail User ID : &nbsp;<span id="detail-userid"></span></label>
+            </form>
+        </div>
+        <div class="card card-body" style="min-height: 365px">
+            <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User ID</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_user_id"></div>
+                        </div>
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User Name</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_user_name"></div>
+                        </div>
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Email</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_email_address"></div>
+                        </div>
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">MSIDN</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_msidn"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Status</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_status"></div>
+                        </div>
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Last Login</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_last_login"></div>
+                        </div>
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Last Teriminal Id</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_last_teriminalid"></div>
+                        </div>
+                        <div class="form-group form-inline mb-5">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User Type</label>
+                            <div class="col-sm-8 pr-0 row" id="dtl_user_type"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Employees List -->

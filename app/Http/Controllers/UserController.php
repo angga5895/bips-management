@@ -426,6 +426,45 @@ class UserController extends Controller
         return DataTables::of($data)->make(true);
     }
 
+    public function getDetailUser(){
+        $user_id = $_GET['user_id'];
+        $selectUser = DB::select('SELECT user_type."name" AS type_name, user_status."name" AS status_name, users.* FROM users
+                    JOIN user_type ON user_type."id" = users.user_type
+                    JOIN user_status ON user_status."id" = users.status 
+                    WHERE users.user_id = \''.$user_id.'\'');
+
+        $user_id = '';
+        $user_name = '';
+        $email_address = '';
+        $msidn = '';
+        $status = '';
+        $last_login = '';
+        $last_teriminalid = '';
+        $user_type = '';
+
+        foreach ($selectUser as $p){
+            $user_id = $p->user_id;
+            $user_name = $p->user_name;
+            $email_address = $p->email_address;
+            $msidn = $p->msidn;
+            $status = $p->status_name;
+            $last_login = $p->last_login;
+            $last_teriminalid = $p->last_teriminalid;
+            $user_type = $p->type_name;
+        }
+
+        return response()->json([
+            'user_id' => $user_id,
+            'user_name' => $user_name,
+            'email_address' => $email_address,
+            'msidn' => $msidn,
+            'status' => $status,
+            'last_login' => $last_login,
+            'last_teriminalid' => $last_teriminalid,
+            'user_type' => $user_type
+        ]);
+    }
+
     public function dataClient(Request $request){
         $requestData = $request->all();
 

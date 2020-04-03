@@ -531,9 +531,17 @@
             var emailaddress = $("#email_address");
             var hashpin = $("#pin");
             var hashpinconfirm = $("#pin-confirm");
+            var hashpassword = $("#password");
+            var hashpasswordconfirm = $("#password-confirm");
+            var username = $("#user_name");
+            var usertype = $("#user_type");
+            var userstatus = $("#user_status");
+            var userid = $("#user_id");
+            var msidn_no = $("#msidn");
 
-            if (user_name !== '' && user_type !== null && user_status !== null && password !== '' && cpassword !== ''
-                && pin !== '' && cpin !== '' && user_id !== '' && msidn !== '' && email_address !== ''
+            /*&& user_type !== null && user_status !== null*/
+            if (username[0].checkValidity() && hashpassword[0].checkValidity() && hashpasswordconfirm[0].checkValidity()
+                && userid[0].checkValidity() && msidn_no[0].checkValidity() && usertype[0].checkValidity() && userstatus[0].checkValidity()
                 && emailaddress[0].checkValidity() && hashpin[0].checkValidity() && hashpinconfirm[0].checkValidity()
             ){
                 $.get("/mockjax");
@@ -625,8 +633,7 @@
                     $("#cekUser_type").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();
                 });
             } else {
-                // if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
-                if (usertype === 'C'){
+                if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
                     clientlist();
                 } else {
                     swal({

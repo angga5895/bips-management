@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Account;
 use App\Customer;
+use App\Dealer;
 use App\DealerSales;
+use App\Sales;
 use App\User;
 use App\User_bips;
 use App\User_group;
@@ -246,6 +248,95 @@ class UserController extends Controller
                     }
                 }
 
+                else if ($user_type === 'D') {
+                    $selectdealer =  DB::select('SELECT dealer.* FROM dealer WHERE dealer.user_id = \''.$user_id.'\'');
+                    foreach ($selectdealer as $pd){
+                        $dealerid = $pd->dealer_id;
+                    }
+
+                    $insertuseraccountdealercust = 0;
+                    $exDealerCust = '';
+
+                    $selectcust = DB::select('SELECT customer.custcode, dealer_sales.* FROM customer JOIN user_account
+                                ON "lower"(user_account.user_id) = "lower"(customer.user_id)
+                                JOIN dealer_sales ON dealer_sales.sales_id = customer.sales_id
+                                WHERE dealer_sales.dealer_id = \''.$dealerid.'\'');
+
+                    foreach ($selectcust as $pc){
+                        try{
+                            UserAccount::create([
+                                'user_id' => $user_id,
+                                'account_no' => $pc->custcode,
+                                'access_flag' => 'T',
+                            ]);
+                        } catch (QueryException $queryEx){
+                            if (UserAccount::where('user_id', $user_id)->delete()) {
+                                if (User::where('user_id', $user_id)->delete()) {
+                                    $insertuseraccountdealercust = '1';
+                                    $exDealerCust = $queryEx->getMessage();
+                                }
+                            }
+                        }
+                    }
+
+                    if ($insertuseraccountdealercust === '1'){
+                        $status = '01';
+                        $user = $user_name;
+                        $message = $exDealerCust;
+                    } else {
+                        $status = '00';
+                        $user = $user_name;
+                        $message = 'Success';
+                    }
+                }
+
+                else if ($user_type === 'S') {
+                    $selectsales = DB::select('SELECT sales.* FROM sales WHERE sales.user_id = \''.$user_id.'\'');
+                    foreach ($selectsales as $ps){
+                        $sales_id = $ps->sales_id;
+                    }
+
+                    $insertuseraccountsalescust = 0;
+                    $exSalesCust = '';
+
+                    $selectsalescust = DB::select('SELECT customer.custcode, sales.* FROM customer JOIN user_account
+                            ON "lower"(user_account.user_id) = "lower"(customer.user_id)
+                            JOIN sales ON sales.sales_id = customer.sales_id
+                            WHERE sales.sales_id = \''.$sales_id.'\'');
+
+                    foreach ($selectsalescust as $psc){
+                        try{
+                            UserAccount::create([
+                                'user_id' => $user_id,
+                                'account_no' => $psc->custcode,
+                                'access_flag' => 'T',
+                            ]);
+                        } catch (QueryException $querySalesEx){
+                            if (UserAccount::where('user_id', $user_id)->delete()) {
+                                if (User::where('user_id', $user_id)->delete()) {
+                                    $insertuseraccountsalescust = '1';
+                                    $exSalesCust = $querySalesEx->getMessage();
+                                }
+                            }
+                        }
+                    }
+
+                    if ($insertuseraccountsalescust === '1'){
+                        $status = '01';
+                        $user = $user_name;
+                        $message = $exSalesCust;
+                    } else {
+                        $status = '00';
+                        $user = $user_name;
+                        $message = 'Success';
+                    }
+                }
+
+                else {
+                    $status = '00';
+                    $user = $user_name;
+                    $message = 'Success';
+                }
             } else {
                 $status = "01";
                 $user = "";

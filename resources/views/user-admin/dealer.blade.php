@@ -110,7 +110,8 @@
             });
         }
 
-        function getTableGroup(){
+        function
+        getTableGroup(){
             var tableGroup = $("#table-reggroup").DataTable({
                 /*processing: true,
                 serverSide: true,*/
@@ -177,8 +178,7 @@
             var groupphone = $("#groupphone").val();
             var groupemail = $("#groupemail").val();
 
-            var required = "Field is required.";
-            if (groupname !== ''){
+            if (validateGroup('save')){
                 $.get("/mockjax");
 
                 $.ajax({
@@ -196,7 +196,10 @@
                         if ($.trim(res)){
                             if (res.status === "00"){
                                 $('#table-reggroup').DataTable().ajax.reload();
+
                                 $("#add-group").removeClass("d-block");
+                                $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+
                                 $("#add-group").addClass("d-none");
                                 $("#main-group").removeClass("d-none");
                                 $("#main-group").addClass("d-block");
@@ -207,16 +210,155 @@
                         }
                     }
                 });
-            } else{
-                if(groupemail === ''){$("#cekGroupEmail").text(required);$("#groupemail").addClass("is-invalid");$("#groupemail").focus();}
-                if(groupmobile === ''){$("#cekGroupMobilePhone").text(required);$("#groupmobilphone").addClass("is-invalid");$("#groupmobilphone").focus();}
-                if(groupphone === ''){$("#cekGroupPhone").text(required);$("#groupphone").addClass("is-invalid");$("#groupphone").focus();}
-                if(groupaddress === ''){$("#cekGroupAddress").text(required);$("#groupaddress").addClass("is-invalid");$("#groupaddress").focus();}
-                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
-                if(groupid === ''){$("#cekGroupId").text(required);$("#groupid").addClass("is-invalid");$("#groupid").focus();}
             }
         });
+        function validateGroup(typeData){
+            var res = true;
+            var required = "Field is required.";
 
+            var groupname = $("#groupname").val();
+            var groupid = $("#groupid").val();
+            var groupaddress = $("#groupaddress").val();
+            var groupmobile = $("#groupmobilphone").val();
+            var groupphone = $("#groupphone").val();
+            var groupemail = $("#groupemail").val();
+
+            if (testEmail(groupemail) === false){
+                $("#cekGroupEmail").text('Email not valid');
+                $("#groupemail").addClass("is-invalid");
+                $("#groupemail").focus();
+                res = false;
+            }
+            if(groupemail === ''){
+                $("#cekGroupEmail").text(required);
+                $("#groupemail").addClass("is-invalid");
+                $("#groupemail").focus();
+                res = false;
+            }
+            var isnum = /^\d+$/.test(groupmobile);
+            if(isnum === false){
+                $("#cekGroupMobilePhone").text("Number only");
+                $("#groupmobilphone").addClass("is-invalid");
+                $("#groupmobilphone").focus();
+                res = false;
+            }
+            if(groupmobile === ''){
+                $("#cekGroupMobilePhone").text(required);
+                $("#groupmobilphone").addClass("is-invalid");
+                $("#groupmobilphone").focus();
+                res = false;
+            }
+            isnum2 = /^\d+$/.test(groupphone);
+            if(isnum2 === false){
+                $("#cekGroupPhone").text("Number only");
+                $("#groupphone").addClass("is-invalid");
+                $("#groupphone").focus();
+                res = false;
+            }
+            if(groupphone === ''){
+                $("#cekGroupPhone").text(required);
+                $("#groupphone").addClass("is-invalid");
+                $("#groupphone").focus();
+                res = false;
+            }
+            if(groupaddress === ''){
+                $("#cekGroupAddress").text(required);
+                $("#groupaddress").addClass("is-invalid");
+                $("#groupaddress").focus();
+                res = false;
+
+            }
+            if(groupname === ''){
+                $("#cekGroupname").text(required);
+                $("#groupname").addClass("is-invalid");
+                $("#groupname").focus();
+                res = false;
+
+            }
+            if(groupid === ''){
+                $("#cekGroupId").text(required);
+                $("#groupid").addClass("is-invalid");
+                $("#groupid").focus();
+                res = false;
+            }
+            if (groupid === '') {
+                    $("#cekGroupId").text(required);
+                    $("#groupid").addClass("is-invalid");
+                    $("#groupid").focus();
+                    res = false;
+                }
+            if(typeData == "save"){
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('getDealerId') }}",
+                    data: {
+                        'id': groupid,
+                    },
+                    success: function (res) {
+                        if (res.status === "01") {
+                            $("#cekGroupId").text('Dealer Id not available, try another ID');
+                            $("#groupid").addClass("is-invalid");
+                            $("#groupid").focus();
+                            res = false;
+                        } else {
+                            res = true;
+                        }
+                    }
+               });
+            }
+            return res;
+        }
+        function changeCheck(data){
+
+            switch (data) {
+                case 'groupid':
+                    var groupid = $("#groupid").val();
+                    if(groupid !== ''){
+                        $("#groupid").removeClass("is-invalid");
+                        $("#cekGroupId").text('');
+                    };
+                    break;
+                case 'groupname':
+                    var groupname = $("#groupname").val();
+                    if(groupname !== ''){
+                        $("#groupname").removeClass("is-invalid");
+                        $("#cekGroupname").text('');
+                    };
+                    break;
+                case 'groupaddress':
+                    var groupaddress = $("#groupaddress").val();
+                    if(groupaddress !== ''){
+                        $("#groupaddress").removeClass("is-invalid");
+                        $("#cekGroupAddress").text('');
+                    };
+                    break;
+                case 'groupphone':
+                    var groupphone = $("#groupphone").val();
+                    if(groupphone !== ''){
+                        $("#groupphone").removeClass("is-invalid");
+                        $("#cekGroupPhone").text('');
+                    };
+                    break;
+                case 'groupmobilephone':
+                    var groupmobile = $("#groupmobilphone").val();
+                    if(groupmobile !== ''){
+                        $("#groupmobilphone").removeClass("is-invalid");
+                        $("#cekGroupMobilePhone").text('');
+                    };
+                    break;
+                case 'groupemail':
+                    var groupemail = $("#groupemail").val();
+                    if(groupemail !== ''){
+                        $("#groupemail").removeClass("is-invalid");
+                        $("#cekGroupEmail").text('');
+                    };
+                    break;
+            }
+        }
+        function testEmail(email){
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
         function addGroup() {
             var id = $("#addgroupID").val();
             $.ajax({
@@ -230,11 +372,11 @@
             });
 
             $("#groupname").val('');
-
             $("#add-group").removeClass("d-none");
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
+            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Tambah");
             clearCache();
         }
         function assignSales(data){
@@ -243,15 +385,27 @@
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#idCurrDealer").val(data);
+
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('dealer-update/') }}",
+                data : {
+                    'id' : data,
+                },
+                success : function (res) {
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text(res.dealer_name);
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text('Assign Sales');
+                }
+            });
+
+
             getAssignSalesTable(data,"01");
-            clearCache();
         }
         $("#typeuser").on('change', function() {
             alert( this.value );
         });
         function getAssignSalesTable(data,typeRes){
             var id = $("#idCurrDealer").val();
-            // var typeRes = $("#typeCurrUser").val();
             var select01 = "";
             var select02 = "";
             var select00 = "";
@@ -384,12 +538,13 @@
                     'id' : data,
                 },
                 success : function (res) {
-                    // console.log(res.name);
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Update");
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res.dealer_name);
                     $("#groupid").val(data);
                     $("#groupname").val(res.dealer_name);
                     $("#groupaddress").val(res.address);
                     $("#groupphone").val(res.phone);
-                    $("#groupmobilphone").val(res.mobile_phone);
+                    $("#groupmobilphone").val(res.mobilephone);
                     $("#groupemail").val(res.email);
                 }
             });
@@ -397,14 +552,15 @@
             // $("#groupname").val('');
             $("#hiddendealerid").val(data);
 
+
             $("#add-group").removeClass("d-none");
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#savegroupbutton").addClass('d-none');
             $("#editgroupbutton").removeClass('d-none');
-            clearCache();
         }
+
         $("#resetgroup").on('click', function(){
             var data = $("#hiddendealerid").val()
             $.ajax({
@@ -419,7 +575,7 @@
                     $("#groupname").val(res.dealer_name);
                     $("#groupaddress").val(res.address);
                     $("#groupphone").val(res.phone);
-                    $("#groupmobilphone").val(res.mobile_phone);
+                    $("#groupmobilphone").val(res.mobilephone);
                     $("#groupemail").val(res.email);
                 }
             });
@@ -433,7 +589,7 @@
             var groupemail = $("#groupemail").val();
 
             var required = "Field is required.";
-            if (groupname !== ''){
+            if (validateGroup('update')){
                 $.get("/mockjax");
                 $.ajax({
                     type : "GET",
@@ -449,49 +605,113 @@
                     success : function (res) {
                         if ($.trim(res)){
                             if (res.status === "00"){
+                                $("#resetgroupadd").click();
                                 $('#table-reggroup').DataTable().ajax.reload();
+
+                                $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
+                                $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
+
                                 $("#add-group").removeClass("d-block");
                                 $("#add-group").addClass("d-none");
                                 $("#main-group").removeClass("d-none");
                                 $("#main-group").addClass("d-block");
+                                $("#savegroupbutton").removeClass('d-none');
+                                $("#editgroupbutton").addClass('d-none');
+
                                 $("#update_dealer_notification").text(res.group);
                                 $("#alert-success-update").removeClass("d-none");
                                 $("#alert-success-update").addClass("d-block");
+                                clearCache();
                             }
                         }
                     }
                 });
-            } else{
-                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
             }
-
-            $("#add-group").removeClass("d-none");
-            $("#add-group").addClass("d-block");
-            $("#main-group").removeClass("d-block");
-            $("#main-group").addClass("d-none");
-            $("#savegroupbutton").removeClass('d-none');
-            $("#editgroupbutton").addClass('d-none');
-            clearCache();
         });
         $("#canceleditgroup").on("click", function () {
-            if(confirm("Are u sure dischard changes?")){
-                $("#add-group").removeClass("d-block");
-                $("#add-group").addClass("d-none");
-                $("#main-group").removeClass("d-none");
-                $("#main-group").addClass("d-block");
-            }
+            swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, cancel it!",
+                    cancelButtonText: "No",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
+                        $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
+                        $("#add-group").removeClass("d-block");
+                        $("#add-group").addClass("d-none");
+                        $("#main-group").removeClass("d-none");
+                        $("#main-group").addClass("d-block");
+
+                    }
+                }
+            )
         });
         function clearCache(){
-            var groupname = $("#groupname").val();
-            $("#cekGroupname").text('');$("#groupname").removeClass("is-invalid");
+            $("#hiddendealerid").val('');
+            $("#groupid").val('');
+            $("#groupname").val('');
+            $("#groupaddress").val('');
+            $("#groupphone").val('');
+            $("#groupmobilphone").val('');
+            $("#groupemail").val('');
+
+            $("#cekGroupname").text('');
+            $("#cekGroupId").text('');
+            $("#cekGroupAddress").text('');
+            $("#cekGroupPhone").text('');
+            $("#cekGroupMobilePhone").text('');
+            $("#cekGroupEmail").text('');
+
+            $("#hiddendealerid").removeClass("is-invalid");
+            $("#groupid").removeClass("is-invalid");
+            $("#groupname").removeClass("is-invalid");
+            $("#groupaddress").removeClass("is-invalid");
+            $("#groupphone").removeClass("is-invalid");
+            $("#groupmobilphone").removeClass("is-invalid");
+            $("#groupemail").removeClass("is-invalid");
         }
 
         $("#cancelgroup").on("click", function () {
-            $("#add-group").removeClass("d-block");
-            $("#add-group").addClass("d-none");
-            $("#main-group").removeClass("d-none");
-            $("#main-group").addClass("d-block");
-        });
+            var res =  $("#hiddendealerid").val()+$("#groupid").val()+$("#groupname").val()+$("#groupaddress").val()+$("#groupphone").val()+$("#groupmobilphone").val()+$("#groupemail").val();
+            res = res.trim();
+            if(res.length > 0){
+            swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, cancel it!",
+                    cancelButtonText: "No",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $("#add-group").removeClass("d-block");
+                        $("#add-group").addClass("d-none");
+                        $("#main-group").removeClass("d-none");
+                        $("#main-group").addClass("d-block");
+                        $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+                    }
+                }
+           )
+
+            }else{
+               $("#add-group").removeClass("d-block");
+               $("#add-group").addClass("d-none");
+               $("#main-group").removeClass("d-none");
+               $("#main-group").addClass("d-block");
+                $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+            }
+            });
 
         $("#btn-current1").on("click", function(){
             getGroup();
@@ -540,6 +760,8 @@
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
                         <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
                         <li class="breadcrumb-item active" aria-current="page">Dealer</li>
+                        <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
+                        <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>
                     </ol>
                 </nav>
             </div>
@@ -624,33 +846,33 @@
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer ID</label>
-                                    <input class="form-control col-sm-6" id="groupid" type="text" maxlength="20" placeholder="Please Input" readonly/>
+                                    <input class="form-control col-sm-6" id="groupid" type="text" onchange="changeCheck('groupid')" maxlength="20" placeholder="Dealer ID"/>
                                     <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
 
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Dealer Name" onchange="changeCheck('groupname')" required id="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Address</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupaddress"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Address" required onchange="changeCheck('groupaddress')" id="groupaddress"/>
                                     <label id="cekGroupAddress" class="error invalid-feedback small d-block col-sm-4" for="groupaddress"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Phone</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" maxlength="15" required id="groupphone"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Phone" maxlength="15" onchange="changeCheck('groupphone')" required id="groupphone"/>
                                     <label id="cekGroupPhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Mobile Phone</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" maxlength="15" required id="groupmobilphone"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Mobile Phone" maxlength="15" onchange="changeCheck('groupmobilephone')" required id="groupmobilphone"/>
                                     <label id="cekGroupMobilePhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Email</label>
-                                    <input class="form-control col-sm-6" type="email" placeholder="Please Input" required id="groupemail"/>
+                                    <input class="form-control col-sm-6" type="email" placeholder="Email" onchange="changeCheck('groupemail')" required id="groupemail"/>
                                     <label id="cekGroupEmail" class="error invalid-feedback small d-block col-sm-4" for="groupemail"></label>
                                 </div>
                             </div>
@@ -661,11 +883,12 @@
             <div class="card card-footer">
                 <div class="form-inline justify-content-end" id="savegroupbutton">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroupadd">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelgroup">Cancel</button>
                 </div>
                 <div class="form-inline justify-content-end d-none" id="editgroupbutton">
-                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-success mb-2" type="button" id="updategroup">Update</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceleditgroup">Cancel</button>
                 </div>
             </div>

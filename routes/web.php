@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('delUserGroup', 'UserController@deleteUserGroup');
 
     Route::get('getDataDealer','DealerController@getDealer');
+    Route::get('getDealerId','DealerController@getIdDealer');
     Route::get('dealer-registrasi', 'DealerController@registrasiDealer');
     Route::get('dealer-update', 'DealerController@dealerEdit');
     Route::get('dealer-update/submit', 'DealerController@updateDealer');

@@ -162,6 +162,19 @@ class DealerController extends Controller
 //        return response()->json($dealer);
         return DataTables::of($dealer)->make(true);
     }
+
+    public function getIdDealer(){
+        $id = $_GET['id'];
+        $res = Dealer::where('dealer_id',$id)->count();
+        if($res > 0){
+            $status = "01";
+        }else{
+            $status = "00";
+        }
+        return response()->json([
+            'status' => $status,
+        ]);
+    }
     public function dealerGetSales(){
         $id = $_GET['id'];
         $type = $_GET['type'];

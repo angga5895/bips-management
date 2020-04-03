@@ -60,7 +60,7 @@ class UserController extends Controller
     {
         $usertype = User_type::orderBy('id','ASC')->get();
         $userstatus = User_status::orderBy('id','ASC')->get();
-        $userbips = User::where('user_id',$id)->get();
+        $userbips = DB::select('SELECT * FROM users WHERE user_id = \''.$id.'\'');
 
         $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
 
@@ -340,6 +340,7 @@ class UserController extends Controller
             } else {
                 $status = "01";
                 $user = "";
+                $message = 'Error';
             }
         } catch (QueryException $e){
             $status = '01';
@@ -355,118 +356,40 @@ class UserController extends Controller
     }
 
     public function updateUser(){
-        $id = $_GET['id'];
-        $username = $_GET['username'];
-        $user_type = $_GET['user_type'];
+        $user_id = $_GET['user_id'];
+        $user_name = $_GET['user_name'];
+        $email_address = $_GET['email_address'];
+        $msidn = $_GET['msidn'];
         $user_status = $_GET['user_status'];
-        $expire_date = $_GET['expire_date'];
-        $client_id = $_GET['client_id'];
-        $hclient_id = $_GET['hclient_id'];
-        $ggroup = $_GET['group'];
-        $hgroup = $_GET['hgroup'];
-        $sales_id = '';
 
-        if ($client_id !== $hclient_id) {
-            if ($user_type === '1') {
-                $sales_id = $_GET['client_id'];
-            } else if ($user_type === '3') {
-                $query = 'SELECT "customers".slscode FROM "customers"
-                            WHERE "customers".custcode = \'' . $_GET['client_id'] . '\'';
-                $data = DB::select($query);
-                foreach ($data as $p) {
-                    $sales_id = $p->slscode;
-                }
-            }
+        $updatestatus = '0';
+        $exUpdate = '';
+        try {
+            User::where('user_id', $user_id)->update([
+                'user_name' => $user_name,
+                'email_address' => $email_address,
+                'msidn' => $msidn,
+                'status' => $user_status,
+            ]);
+        } catch (QueryException $ex){
+            $updatestatus = '1';
+            $exUpdate = $ex->getMessage();
         }
 
-        if ($ggroup === ''){
-            $ggroup = null;
-        }
-        if ($hgroup === ''){
-            $hgroup = null;
-        }
-        if ($sales_id === ''){
-            $sales_id = null;
-        }
-
-        $group = null;
-        if ($user_type === '2'){
-            if ($client_id === $hclient_id) {
-                $group = $hgroup;
-            }
+        if ($updatestatus === '1'){
+            $status = '01';
+            $user = $user_name;
+            $message = $exUpdate;
         } else {
-            $group = $ggroup;
-        }
-
-        $expire = explode("/", $expire_date);
-        $exdate = $expire[2]."-".$expire[1]."-".$expire[0]." 00:00:00";
-
-        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = User_bips::where('id', $id)->update([
-            'username' => $username,
-            'user_type' => $user_type,
-            'user_status' => $user_status,
-            'expire_date' => $exdate,
-            'group' => $group,
-            'client_id' => $client_id,
-            'sales_id' => $sales_id,
-            'updated_at' => $current_time,
-        ]);
-
-        if ($query){
-            if ($group === $hgroup){
-                $status = "00";
-                $user = $username;
-                if ($hclient_id !== $client_id){
-                    User_group::where('user_id',$id)->delete();
-                }
-            } else {
-                User_group::where('user_id',$id)->delete();
-                if ($group === null || $group === ''){
-                    $status = "00";
-                    $user = $username;
-                } else{
-                    $cekgroup = $group;
-                    $arrgroup = [];
-
-                    if($this->isprime($cekgroup) == true){
-                        array_push($arrgroup,$cekgroup);
-                    } else{
-                        for($i = 1; $i < $cekgroup; $i++){
-                            if($cekgroup % $i == 0){
-                                $prime = $this->isprime($i);
-                                if($prime==true) {
-                                    array_push($arrgroup,$i);
-                                }
-                            }
-                        }
-                    }
-
-                    $isCount = count($arrgroup);
-                    for($itr = 0; $itr<$isCount; $itr++){
-                        $sql = User_group::create([
-                            'user_id' => $id,
-                            'group_id' => $arrgroup[$itr],
-                        ]);
-                    }
-
-                    if ($sql){
-                        $status = "00";
-                        $user = $username;
-                    } else{
-                        $status = "01";
-                        $user = "Gagal Insert User Group Baru";
-                    }
-                }
-            }
-        } else {
-            $status = "01";
-            $user = "Gagal Update User";
+            $status = '00';
+            $user = $user_name;
+            $message = 'Success';
         }
 
         return response()->json([
             'status' => $status,
-            'user' => $user
+            'user' => $user,
+            'message' => $message
         ]);
     }
 
@@ -474,14 +397,30 @@ class UserController extends Controller
         $requestData = $request->all();
 
         $userID = $requestData['search_param']['userID'];
+        $userType = $requestData['search_param']['userType'];
+        $userStatus = $requestData['search_param']['userStatus'];
+
         $where_userID = "";
         if ($userID != ""){
-            $where_userID = 'WHERE "users".user_id LIKE "lower"(\'%'.$userID.'%\') OR "users".user_id LIKE "upper"(\'%'.$userID.'%\')';
+            $where_userID = ' AND ("users".user_id LIKE "lower"(\'%'.$userID.'%\') OR "users".user_id LIKE "upper"(\'%'.$userID.'%\')) ';
+        }
+
+        $where_userType = "";
+        if ($userType != ""){
+            $where_userType = ' AND "users".user_type = \''.$userType.'\' ';
+        }
+
+        $where_userStatus = "";
+        if ($userStatus != ""){
+            $where_userStatus = ' AND "users".status = \''.$userStatus.'\' ';
         }
 
         $query = 'SELECT "users".*, user_status."name" as userstatus, user_type."name" as usertype from "users"
                   JOIN user_status ON user_status."id" = "users".status
                   JOIN user_type ON user_type."id" = "users".user_type
+                  WHERE users.user_id is NOT NULL
+                  '.$where_userType.'
+                  '.$where_userStatus.'
                   '.$where_userID;
         $data = DB::select($query);
         return DataTables::of($data)->make(true);

@@ -192,7 +192,9 @@
                 ajax : {
                     url: '{{ url("get-dataRegistrasi/get") }}',
                     data: function (d) {
-                        var search_data = {userID:""};
+                        var search_data = {userID:"",
+                            userStatus:"",
+                            userType:""};
                         d.search_param = search_data;
                     }
                 },
@@ -233,7 +235,11 @@
                 ajax : {
                     url: '{{ url("get-dataRegistrasi/get") }}',
                     data: function (d) {
-                        var search_data = {userID:$("#userID").val()};
+                        var search_data = {
+                            userID:$("#userID").val(),
+                            userStatus:$("#userStatus").val(),
+                            userType:$("#userType").val()
+                        };
                         d.search_param = search_data;
                     }
                 },
@@ -241,10 +247,10 @@
                     {data : 'user_id', name : 'user_id'},
                     {data : 'user_name', name: 'user_name'},
                     {data : 'email_address', name: 'email_address'},
-                    {data : 'msidn', name: 'msidn'},
+                    /*{data : 'msidn', name: 'msidn'},*/
                     {data : 'usertype', name: 'usertype'},
                     {data : 'userstatus', name: 'userstatus'},
-                    {data : 'last_login', name: 'last_login'},
+                    /*{data : 'last_login', name: 'last_login'},*/
                     {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
@@ -260,24 +266,24 @@
                     render : function (data, type, row) {
                         return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
                     }
-                },{
+                },/*{
+                    targets : [3],
+                    searchable : true,
+                },*/{
                     targets : [3],
                     searchable : true,
                 },{
+                    searchable : true,
                     targets : [4],
-                    searchable : true,
-                },{
-                    searchable : true,
-                    targets : [5],
-                },{
+                },/*{
                     searchable : true,
                     targets : [6],
                     render : function (data, type, row) {
                         return getDateBips(data)
                     }
-                },{
+                },*/{
                     searchable : true,
-                    targets : [7],
+                    targets : [5],
                     render : function (data, type, row) {
                         return '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
                             '<i class="fa fa-pen"></i>' +
@@ -531,9 +537,17 @@
             var emailaddress = $("#email_address");
             var hashpin = $("#pin");
             var hashpinconfirm = $("#pin-confirm");
+            var hashpassword = $("#password");
+            var hashpasswordconfirm = $("#password-confirm");
+            var username = $("#user_name");
+            var usertype = $("#user_type");
+            var userstatus = $("#user_status");
+            var userid = $("#user_id");
+            var msidn_no = $("#msidn");
 
-            if (user_name !== '' && user_type !== null && user_status !== null && password !== '' && cpassword !== ''
-                && pin !== '' && cpin !== '' && user_id !== '' && msidn !== '' && email_address !== ''
+            /*&& user_type !== null && user_status !== null*/
+            if (username[0].checkValidity() && hashpassword[0].checkValidity() && hashpasswordconfirm[0].checkValidity()
+                && userid[0].checkValidity() && msidn_no[0].checkValidity() && usertype[0].checkValidity() && userstatus[0].checkValidity()
                 && emailaddress[0].checkValidity() && hashpin[0].checkValidity() && hashpinconfirm[0].checkValidity()
             ){
                 $.get("/mockjax");
@@ -581,6 +595,12 @@
         });
 
         $("#btn-current").on("click", function(){
+            $("#userID").val('');
+            $("#usernameGet").val('');
+            $("[id=userType]").val('');
+            $("[data-id=userType] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('All User Type');
+            $("[id=userStatus]").val('');
+            $("[data-id=userStatus] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('All User Status');
             getUsername();
         });
 
@@ -625,8 +645,7 @@
                     $("#cekUser_type").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();
                 });
             } else {
-                // if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
-                if (usertype === 'C'){
+                if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
                     clientlist();
                 } else {
                     swal({
@@ -662,12 +681,25 @@
 
     <div class="card shadow" id="main-user">
         <div class="card card-header">
+            <label class="form-control-label pr-5 mb-2">Filtered by :</label>
             <form class="form-inline">
-                <label class="form-control-label pr-5 mb-2">User ID</label>
                 <input class="form-control mb-2" placeholder="Input ID User" id="userID" onchange="getUsername()">
                 <input class="form-control mb-2 ml-input-2" placeholder="Name Of User" id="usernameGet" readonly>
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal1" onclick="refreshTablemember()"><i class="fa fa-search"></i></button>
-                <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current">Search</button>
+                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="userType" required onchange="getUsername()">
+                    <option value="" selected>All User Type</option>
+                    @foreach($usertype as $p)
+                        <option value="{{ $p->id }}">{{ $p->name }}</option>
+                    @endforeach
+                </select>
+                &nbsp;&nbsp;
+                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="userStatus" required onchange="getUsername()">
+                    <option value="" selected>All User Status</option>
+                    @foreach($userstatus as $p)
+                        <option value="{{ $p->id }}">{{ $p->name }}</option>
+                    @endforeach
+                </select>
+                <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current">All Data</button>
             </form>
         </div>
 
@@ -704,10 +736,10 @@
                                         <th>User ID</th>
                                         <th>User Name</th>
                                         <th>Email</th>
-                                        <th>MSIDN</th>
+                                        {{--<th>MSIDN</th>--}}
                                         <th>User Type</th>
                                         <th>Status</th>
-                                        <th>Last Login</th>
+                                        {{--<th>Last Login</th>--}}
                                         <th>Action</th>
                                     </tr>
                                     </thead>
@@ -745,7 +777,7 @@
                                     <div class="col-sm-6">
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
-                                            <div class="col-sm-9 px-0 row" id="useridCDS">
+                                            <div class="col-sm-9 pr-0 row" id="useridCDS">
                                                 <div class="input-group col-sm-12 px-0">
                                                     <input class="form-control readonly" type="text" placeholder="User ID" id="client_id" required/>
                                                     <input class="form-control" type="hidden" id="user_id" required/>
@@ -764,21 +796,21 @@
                                         </div>
                                         <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
-                                            <div class="col-sm-9 px-0 row">
+                                            <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="text" placeholder="User Name" id="user_name" onchange="checking(this)" required/>
                                                 <label id="cekUser_name" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_name"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>
-                                            <div class="col-sm-9 px-0 row">
+                                            <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="email" placeholder="Email" id="email_address" onchange="checking(this)" required/>
                                                 <label id="cekEmail_address" class="error invalid-feedback small d-block col-sm-12 px-0" for="email_address"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">MSIDN</label>
-                                            <div class="col-sm-9 px-0 row">
+                                            <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="text" placeholder="MSIDN" id="msidn" onchange="checking(this)" required/>
                                                 <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
                                             </div>
@@ -787,28 +819,28 @@
                                     <div class="col-sm-6">
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Password</label>
-                                            <div class="col-sm-9 px-0 row">
+                                            <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="password" onchange="checking(this)" required/>
                                                 <label id="cekPassword" class="error invalid-feedback small d-block col-sm-12 px-0" for="password"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Confirm Password</label>
-                                            <div class="col-sm-9 px-0 row">
+                                            <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="password-confirm" onchange="checking(this)" required/>
                                                 <label id="cekPassword-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="password-confirm"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">PIN</label>
-                                            <div class="col-sm-9 px-0 row">
+                                            <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required/>
                                                 <label id="cekPin" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Confirm PIN</label>
-                                            <div class="col-sm-9 px-0 row">
+                                            <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin-confirm" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required/>
                                                 <label id="cekPin-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin-confirm"></label>
                                             </div>

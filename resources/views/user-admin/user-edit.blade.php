@@ -4,239 +4,132 @@
     <script>
         $(document).ready(function () {
             $('.bootstrap-select').selectpicker();
-            var usertype = $("#user_type").val();
-            if(usertype !== '2'){
-                $("#hidden-usertype").removeClass("d-none");
-            }
-            if(usertype === '2'){
-                $("#hidden-usertype").addClass("d-none");
-            }
+            $(".readonly").on('keydown paste mousedown mouseup drop', function(e){
+                e.preventDefault();
+            });
         });
+
+        function checking(these) {
+            if ($(these).val() !== ''){
+                var str = $(these).attr("id");
+                str = str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                    return letter.toUpperCase();
+                });
+
+                $("#cek"+str).text('');
+
+                if (str === 'User_type'){
+                    $(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
+                }
+
+                if (str === 'User_status'){
+                    $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
+                }
+            }
+        }
+
+        function checkCache(){
+            var user_name = $("#user_name");
+            var email_address = $("#email_address");
+            var msidn = $("#msidn");
+            var user_status = $("#user_status");
+
+            //lbl
+            var cekUser_name = $("#cekUser_name");
+            var cekEmail_address = $("#cekEmail_address");
+            var cekMsidn = $("#cekMsidn");
+            var cekUser_status = $("#cekUser_status");
+
+            if(!user_status[0].checkValidity()){cekUser_status.text(user_status[0].validationMessage);$(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");user_status.focus();}
+            else {cekUser_status.text('');$(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");}
+
+            if(!user_name[0].checkValidity()){cekUser_name.text(user_name[0].validationMessage);user_name.addClass("is-invalid");user_name.focus();}
+            else {cekUser_name.text('');user_name.removeClass("is-invalid");}
+
+            if(!email_address[0].checkValidity()){cekEmail_address.text(email_address[0].validationMessage);email_address.addClass("is-invalid");email_address.focus();}
+            else {cekEmail_address.text('');email_address.removeClass("is-invalid");}
+
+            if(!msidn[0].checkValidity()){cekMsidn.text(msidn[0].validationMessage);msidn.addClass("is-invalid");msidn.focus();}
+            else {cekMsidn.text('');msidn.removeClass("is-invalid");}
+        }
 
         $("#canceluser").on("click", function () {
-            $("#add-user").removeClass("d-block");
-            $("#add-user").addClass("d-none");
-            $("#main-user").removeClass("d-none");
-            $("#main-user").addClass("d-block");
-        });
-
-        function cekUsername() {
-            var us = $("#username").val();
-            var ushidden = $("#husername").val();
-
-            if(us !== ''){$("#cekUsername").text('');$("#username").removeClass("is-invalid");}
-
-            if (us !== ushidden){
-                $.ajax({
-                    type : "GET",
-                    url  : "{{ url('username-unique') }}",
-                    data : {'username' : us},
-                    success : function (res) {
-                        if ($.trim(res)){
-                            $("#username").val('');
-                            $("#username").addClass("is-invalid");
-                            $("#username").focus();
-                            $("#cekUsername").text('Username already exist.');
-                        }
-                    }
-                });
-            }
-        }
-
-        function clickOKClient(id,group) {
-            $("#groupID").val(group);
-            $("#client_id").val(id);
-            $("#cekClientID").text('');$("#client_id").removeClass("is-invalid");
-        }
-
-        function clientlist(){
-            $('#exampleModal2').modal('show', function () {
-                $('#table-listclient').DataTable().ajax.reload();
-            });
-            tableClient();
-        }
-
-        function tableClient() {
-            var usertype = $("#user_type").val();
-
-            if(usertype === '1'){
-                var id = 'slscode';
-                var name = 'slsname';
-                $("#exampleModalLabel2").text('Trader List');
-                $("#idClident").text('Sales Code');
-                $("#nameClient").text('Sales Name');
-            } else if(usertype === '2'){
-                var id = 'dlrcode';
-                var name = 'dlrname';
-                $("#exampleModalLabel2").text('Dealer List');
-                $("#idClident").text('Dealer Code');
-                $("#nameClient").text('Dealer Name');
-            } else if(usertype === '3'){
-                var id = 'custcode';
-                var name = 'custname';
-                $("#exampleModalLabel2").text('Customers List');
-                $("#idClident").text('Customer Code');
-                $("#nameClient").text('Customer Name');
-            } else{
-                var id = '';
-                var name = '';
-            }
-
-            $("#table-listclient").DataTable({
-                destroy: true,
-                /*processing: true,
-                serverSide: true,*/
-                ajax : {
-                    url: '{{ url("get-dataClient/get") }}',
-                    data: function (d) {
-                        var search_data = {userType:usertype};
-                        d.search_param = search_data;
-                    }
+            swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, cancel it!",
+                    cancelButtonText: "No",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
                 },
-                columns : [
-                    {data : id, name : id},
-                    {data : name, name: name},
-                    {data : id, name: id},
-                ],
-                columnDefs: [{
-                    targets : [0],
-                    searchable : true
-                },{
-                    targets : [1],
-                    orderable : true,
-                    searchable : false,
-                },{
-                    targets : [2],
-                    orderable:false,
-                    searchable : false,
-                    render : function (data, type, row) {
-                        var groupid = row.groupid;
-
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKClient(\''+data+'\',\''+groupid+'\')">OK</button>'
+                function(isConfirm) {
+                    if (isConfirm) {
+                        window.location.href="{{ route('useradmin.user') }}"
                     }
-                }]
-            });
-        }
-
-        function checkUserType() {
-            var usertype = $("#user_type").val();
-            if(usertype !== null){$("#cekUsertype").text('');$(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
-                $("#cekClientID").text('');$("#client_id").removeClass("is-invalid");
-                $("#client_id").val('');
-                $("#groupID").val('');
-            }
-            if(usertype !== '2'){
-                $("#hidden-usertype").removeClass("d-none");
-            }
-            if(usertype === '2'){
-                $("#hidden-usertype").addClass("d-none");
-            }
-        }
-
-        function checking() {
-            var usertype = $("#user_type").val();
-            var userstatus = $("#user_status").val();
-            var expire = $("#datepicker-base").val();
-            var clientid = $("#client_id").val();
-
-            if(usertype !== null){$("#cekUsertype").text('');$(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");}
-            if(userstatus !== null){$("#cekUserstatus").text('');$(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");}
-            if(expire !== ''){$("#cekExpire").text('');$("#errExpire").removeClass("d-border-error");}
-        }
+                }
+            );
+        });
 
         $("#saveuser").on("click", function () {
-            var id = $("#userID").val();
-            var username = $("#username").val();
-            var usertype = $("#user_type").val();
-            var userstatus = $("#user_status").val();
-            var expire = $("#datepicker-base").val();
-            var groupid = $("#groupID").val();
-            var hgroupid = $("#hgroupID").val();
-            var clientid = $("#client_id").val();
-            var hclientid = $("#hclient_id").val();
-            var salesid = $("#sales_id").val();
+            var user_name = $("#user_name").val();
+            var email_address = $("#email_address").val();
+            var msidn = $("#msidn").val();
+            var user_status = $("#user_status").val();
 
-            var required = "Field is required.";
 
-            if (username !== '' && usertype !== null && userstatus !== null && expire !== ''){
-                if((usertype === '1' || usertype === '2' || usertype === '3') && clientid === ''){
-                    $("#cekClientID").text(required);$("#client_id").addClass("is-invalid");$("#client_id").focus();
-                } else {
-                    $.get("/mockjax");
+            var username = $("#user_name");
+            var emailaddress = $("#email_address");
+            var msidn_no = $("#msidn");
+            var userstatus = $("#user_status");
 
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ url('username-update') }}",
-                        data: {
-                            'id': id,
-                            'username': username,
-                            'user_type': usertype,
-                            'user_status': userstatus,
-                            'expire_date': expire,
-                            'group': groupid,
-                            'client_id': clientid,
-                            'hclient_id': hclientid,
-                            'sales_id': salesid,
-                            'hgroup': hgroupid,
-                        },
-                        success: function (res) {
-                            if ($.trim(res)) {
-                                if (res.status === "00") {
-                                    swal({
-                                        title: res.user,
-                                        text: "Has Updated",
-                                        type: "success",
-                                        showCancelButton: false,
-                                        confirmButtonClass: 'btn-success',
-                                        confirmButtonText: 'OK'
-                                    }, function () {
-                                        window.location.href = "{{route('useradmin.user')}}";
-                                    });
-                                }
+            if (username[0].checkValidity() && msidn_no[0].checkValidity()
+                && userstatus[0].checkValidity() && emailaddress[0].checkValidity()
+            ){
+                $.get("/mockjax");
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('username-update') }}",
+                    data: {
+                        'user_id' : "@foreach($userbips as $p){{ $p->user_id }}@endforeach",
+                        'user_name' : user_name,
+                        'email_address' : email_address,
+                        'msidn' : msidn,
+                        'user_status' : user_status,
+                    },
+                    success: function (res) {
+                        if ($.trim(res)) {
+                            if (res.status === "00") {
+                                swal({
+                                    title: res.user,
+                                    text: "Has Updated",
+                                    type: "success",
+                                    showCancelButton: false,
+                                    confirmButtonClass: 'btn-success',
+                                    confirmButtonText: 'OK'
+                                }, function () {
+                                    window.location.href = "{{ route('useradmin.user') }}";
+                                });
+                            } else {
+                                swal({
+                                    title: res.user,
+                                    text: res.message,
+                                    type: "warning",
+                                    showCancelButton: false,
+                                    confirmButtonClass: 'btn-danger',
+                                    confirmButtonText: 'OK'
+                                }, function () {
+                                    window.location.href = "{{ route('useradmin.user') }}";
+                                });
                             }
                         }
-                    });
-                }
-            } else {
-                if(username === ''){$("#cekUsername").text(required);$("#username").addClass("is-invalid");$("#username").focus();}
-                if(usertype === null){$("#cekUsertype").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();}
-                if(userstatus === null){$("#cekUserstatus").text(required);$(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_status").focus();}
-                if(expire === ''){$("#cekExpire").text(required);$("#errExpire").addClass("d-border-error");$("#datepicker-base").focus();}
-
-                if(usertype === '1' || usertype === '2' || usertype === '3'){
-                    if(clientid === ''){$("#cekClientID").text(required);$("#client_id").addClass("is-invalid");$("#client_id").focus();}
-                }
-            }
-        });
-
-        $("#btn-clientid").on("click", function () {
-            var usertype = $("#user_type").val();
-
-            if (usertype === '' || usertype === null){
-                swal({
-                    title: "User type is empty!",
-                    text: "Please select user type before.",
-                    type: "warning",
-                    showCancelButton: false,
-                    confirmButtonClass: 'btn-warning',
-                    confirmButtonText: 'OK'
-                }, function () {
-                    var required = "Field is required.";
-                    $("#cekUsertype").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();
+                    }
                 });
             } else {
-                if (usertype === '1' || usertype === '2' || usertype === '3'){
-                    clientlist();
-                } else {
-                    swal({
-                        title: "Not Available",
-                        text: "",
-                        type: "error",
-                        showCancelButton: false,
-                        confirmButtonClass: 'btn-danger',
-                        confirmButtonText: 'OK'
-                    });
-                }
+                checkCache();
             }
         });
     </script>
@@ -273,32 +166,9 @@
                         <div class="box-body">
                             @foreach($userbips as $p)
                                 <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                                    <div class="form-group form-inline">
-                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User ID</label>
-                                        <input class="form-control col-sm-6" type="text" placeholder="User ID" readonly id="userID" value="{{ $p->user_id }}"/>
-                                    </div>
-                                    <div class="form-group form-inline">
-                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Name</label>
-                                        <input class="form-control col-sm-6" type="text" placeholder="Please Input username" id="username" onchange="cekUsername()" value="{{ $p->user_name }}" readonly/>
-                                        <input type="hidden" id="husername" value="{{ $p->user_name }}"/>
-                                        <label id="cekUsername" class="error invalid-feedback small d-block col-sm-4" for="username"></label>
-                                    </div>
-
-                                    <div class="form-group form-inline">
-                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Email</label>
-                                        <input class="form-control col-sm-6" type="email" placeholder="Please Input Email" id="email" value="{{ $p->email_address }}" readonly/>
-                                        <input type="hidden" id="hemail" value="{{ $p->email_address }}"/>
-                                    </div>
-
-                                    <div class="form-group form-inline">
-                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">MSIDN</label>
-                                        <input class="form-control col-sm-6" type="text" placeholder="Please Input MSIDN" id="msidn" value="{{ $p->msidn }}" readonly/>
-                                        <input type="hidden" id="hemail" value="{{ $p->msidn }}"/>
-                                    </div>
-
                                     <div class="form-group form-inline lbl-user-type">
                                         <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Type</label>
-                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_type" onchange="checkUserType()" disabled>
+                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_type" disabled>
                                             <option value="" disabled>Choose User Type</option>
                                             @foreach($usertype as $r)
                                                 <option @if($p->user_type === $r->id) selected="selected" @endif value={{ $r->id }}>{{ $r->name }}</option>
@@ -307,15 +177,52 @@
                                         <label id="cekUsertype" class="error invalid-feedback small d-block col-sm-4" for="user_type"></label>
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-sm-6">
+
+                                            <div class="form-group form-inline">
+                                                <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
+                                                <div class="col-sm-9 pr-0 row">
+                                                    <input class="form-control col-sm-12 readonly" type="text" placeholder="User ID" readonly id="userID" value="{{ $p->user_id }}"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-inline lbl-group">
+                                                <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
+                                                <div class="col-sm-9 pr-0 row">
+                                                    <input class="form-control col-sm-12" type="text" placeholder="User Name" id="user_name" value="{{ $p->user_name }}" onchange="checking(this)" required/>
+                                                    <label id="cekUser_name" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_name"></label>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group form-inline lbl-group">
+                                                <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>
+                                                <div class="col-sm-9 pr-0 row">
+                                                    <input class="form-control col-sm-12" type="email" placeholder="Email" id="email_address" value="{{ $p->email_address }}" onchange="checking(this)" required/>
+                                                    <label id="cekEmail_address" class="error invalid-feedback small d-block col-sm-12 px-0" for="email_address"></label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group form-inline lbl-group">
+                                                <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">MSIDN</label>
+                                                <div class="col-sm-9 pr-0 row">
+                                                    <input class="form-control col-sm-12" type="text" placeholder="MSIDN" id="msidn" value="{{ $p->msidn }}" onchange="checking(this)" required/>
+                                                    <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     <div class="form-group form-inline lbl-user-status">
                                         <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Status</label>
-                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking()">
+                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking(this)">
                                             <option value="" disabled>Choose User Status</option>
                                             @foreach($userstatus as $r)
-                                                <option @if($p->user_status === $r->id) selected="selected" @endif value="{{ $r->id }}">{{ $r->name }}</option>
+                                                <option @if($p->status === $r->id) selected="selected" @endif value="{{ $r->id }}">{{ $r->name }}</option>
                                             @endforeach
                                         </select>
-                                        <label id="cekUserstatus" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
+                                        <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
                                     </div>
                                 </div>
                             @endforeach
@@ -326,39 +233,9 @@
             <div class="card card-footer">
                 <div class="form-inline justify-content-end">
                     <button class="form-control-btn btn btn-success mb-2" type="button" id="saveuser">Update</button>
-                    <a class="form-control-btn btn btn-danger mb-2" type="button" id="canceluser" href="{{ route('useradmin.user') }}">Cancel</a>
+                    <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceluser">Cancel</button>
                 </div>
             </div>
         </form>
-    </div>
-    <!-- Modal Client List -->
-    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content shadow">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel2"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="table-listclient">
-                            <thead class="bg-gradient-primary text-lighter">
-                            <tr>
-                                <th id="idClident"></th>
-                                <th id="nameClient"></th>
-                                <th>#</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
-                {{--<div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>--}}
-            </div>
-        </div>
     </div>
 @endsection

@@ -220,3 +220,9 @@ table.dataTable tbody tr.selected {
     display: inline-block;
     float:right;
 }
+
+.table th, .table td{
+    padding-top:.3rem;
+    padding-bottom:.3rem;
+    vertical-align: middle!important;
+}

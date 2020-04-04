@@ -49,7 +49,7 @@ class UserController extends Controller
             $countpermission = $p->count;
         }
 
-        if ($countpermission === '0'){
+        if ($countpermission === 0){
             return view('permission');
         } else {
             return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp'), ['title' => 'User']);
@@ -75,7 +75,7 @@ class UserController extends Controller
             $countpermission = $p->count;
         }
 
-        if ($countpermission === '0'){
+        if ($countpermission === 0){
             return view('permission');
         } else {
             return view('user-admin.user-edit', compact('usertype', 'userstatus', 'userbips', 'clapp'), ['title' => 'Edit User']);

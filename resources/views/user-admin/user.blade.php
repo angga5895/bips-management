@@ -874,7 +874,7 @@
                                                 </div>
                                                 <label id="cekClient_id" class="error invalid-feedback small col-sm-12 px-0" for="client_id" style="justify-content: flex-start;"></label>
                                             </div>
-                                            <div class="col-sm-9 px-0 d-none row" id="useridT">
+                                            <div class="col-sm-9 pr-0 d-none row" id="useridT">
                                                 <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required/>
                                                 <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
                                             </div>

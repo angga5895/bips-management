@@ -31,7 +31,7 @@ class AssignController extends Controller
             $countpermission = $p->count;
         }
 
-        if ($countpermission === 0){
+        if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
             return view('user-admin.assign', ['title' => 'Assign Group', 'countgroup' => $countgroup, 'clapp' => $clapp]);

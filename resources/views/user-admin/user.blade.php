@@ -328,10 +328,10 @@
                             '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
                             '<i class="fa fa-pen"></i>' +
                             '</a>' +
-                            '<a class="btn btn-sm btn-facebook" href="/user" data-toggle="tooltip" data-placement="top" title="Reset Password">' +
+                            '<a class="btn btn-sm btn-facebook" href="/user/'+data+'/reset/password" data-toggle="tooltip" data-placement="top" title="Reset Password">' +
                             '<i class="fa fa-lock-open"></i>' +
                             '</a>' +
-                            '<a class="btn btn-sm btn-dark" href="/user" data-toggle="tooltip" data-placement="top" title="Reset PIN">' +
+                            '<a class="btn btn-sm btn-dark" href="/user/'+data+'/reset/pin" data-toggle="tooltip" data-placement="top" title="Reset PIN">' +
                             '<i class="fa fa-qrcode"></i>' +
                             '</a>'
                     }

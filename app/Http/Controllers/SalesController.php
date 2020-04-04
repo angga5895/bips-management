@@ -36,7 +36,7 @@ class SalesController extends Controller
             $countpermission = $p->count;
         }
 
-        if ($countpermission === 0){
+        if ($countpermission === 0 || $countpermission === '0'){
             return view('permission');
         } else {
             return view('user-admin/sales',

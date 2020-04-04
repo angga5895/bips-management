@@ -49,7 +49,7 @@ class UserController extends Controller
             $countpermission = $p->count;
         }
 
-        if ($countpermission === 0){
+        if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
             return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp'), ['title' => 'User']);
@@ -75,10 +75,58 @@ class UserController extends Controller
             $countpermission = $p->count;
         }
 
-        if ($countpermission === 0){
+        if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
             return view('user-admin.user-edit', compact('usertype', 'userstatus', 'userbips', 'clapp'), ['title' => 'Edit User']);
+        }
+    }
+
+    public function userResetPassword($id)
+    {
+        $userbips = DB::select('SELECT * FROM users WHERE user_id = \''.$id.'\'');
+
+        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
+
+        $role_app = Auth::user()->role_app;
+        $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
+                            JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
+                            JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                            WHERE cl_module.clm_slug = \'user\' AND cl_permission_app_mod.clp_role_app = '.$role_app);
+
+        $countpermission = 0;
+        foreach ($permission as $p){
+            $countpermission = $p->count;
+        }
+
+        if ($countpermission === 0  || $countpermission === '0'){
+            return view('permission');
+        } else {
+            return view('user-admin.user-reset-password', compact('userbips', 'clapp'), ['title' => 'Reset Password User']);
+        }
+    }
+
+    public function userResetPIN($id)
+    {
+        $userbips = DB::select('SELECT * FROM users WHERE user_id = \''.$id.'\'');
+
+        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
+
+        $role_app = Auth::user()->role_app;
+        $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
+                            JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
+                            JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                            WHERE cl_module.clm_slug = \'user\' AND cl_permission_app_mod.clp_role_app = '.$role_app);
+
+        $countpermission = 0;
+        foreach ($permission as $p){
+            $countpermission = $p->count;
+        }
+
+        if ($countpermission === 0  || $countpermission === '0'){
+            return view('permission');
+        } else {
+            return view('user-admin.user-reset-pin', compact('userbips', 'clapp'), ['title' => 'Reset PIN User']);
         }
     }
 
@@ -159,7 +207,7 @@ class UserController extends Controller
                     }
 
                     $statusaccount = '0';
-                    if ($isaccount === 0) {
+                    if ($isaccount === 0 || $isaccount === '0') {
                         $sid = Customer::where('custcode', $custcode)->pluck('sid');
                         try {
                             Account::create([
@@ -219,7 +267,7 @@ class UserController extends Controller
                             foreach ($selectdealer as $psd){
                                 $cekDealer = User::where('user_id', $psd->dealer_id)->get();
                                 $countDealer = $cekDealer->count();
-                                if ($countDealer !== 0) {
+                                if ($countDealer !== 0 || $countDealer !== '0') {
                                     try {
                                         UserAccount::create([
                                             'user_id' => $psd->dealer_id,

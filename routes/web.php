@@ -35,6 +35,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('username-update', 'UserController@updateUser');
     Route::get('get-dataRegistrasi/{id}', 'UserController@dataRegistrasi')->name('data-registrasi');
     Route::get('/user/{id}/edit', 'UserController@userEdit')->name('useradmin.user-edit');
+    Route::get('/user/{id}/reset/password', 'UserController@userResetPassword')->name('useradmin.user-reset-password');
+    Route::get('/user/{id}/reset/pin', 'UserController@userResetPIN')->name('useradmin.user-reset-pin');
     Route::get('get-dataClient/{id}', 'UserController@dataClient')->name('data-client');
     Route::get('get-dataAOList/{id}', 'UserController@getListAO');
 

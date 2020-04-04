@@ -159,7 +159,7 @@ class UserController extends Controller
                     }
 
                     $statusaccount = '0';
-                    if ($isaccount === '0') {
+                    if ($isaccount === 0) {
                         $sid = Customer::where('custcode', $custcode)->pluck('sid');
                         try {
                             Account::create([
@@ -189,7 +189,6 @@ class UserController extends Controller
 
                     if ($statusaccount === '0'){
                         $insertuseraccountcust = '0';
-                        $salesid = Customer::where('custcode', $custcode)->pluck('sales_id');
                         try{
                             UserAccount::create([
                                 'user_id' => $user_id,
@@ -211,14 +210,19 @@ class UserController extends Controller
                         if ($insertuseraccountcust === '0'){
                             $insertuseraccountdealer = '0';
                             $exDealer = '';
-                            $selectdealer = DealerSales::where('sales_id', $salesid)->get();
-                            foreach ($selectdealer as $p){
-                                $cekDealer = User::where('user_id', $p->dealer_id)->get();
+                            $selectsalesid = DB::select('SELECT sales_id FROM "customer" WHERE custcode = \''.$custcode.'\'');
+                            foreach ($selectsalesid as $psalesid){
+                                $salesid = $psalesid -> sales_id;
+                            }
+
+                            $selectdealer = DB::select('SELECT * FROM dealer_sales WHERE sales_id = \''.$salesid.'\'');
+                            foreach ($selectdealer as $psd){
+                                $cekDealer = User::where('user_id', $psd->dealer_id)->get();
                                 $countDealer = $cekDealer->count();
                                 if ($countDealer !== 0) {
                                     try {
                                         UserAccount::create([
-                                            'user_id' => $p->dealer_id,
+                                            'user_id' => $psd->dealer_id,
                                             'account_no' => $custcode,
                                             'access_flag' => 'T',
                                         ]);

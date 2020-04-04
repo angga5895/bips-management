@@ -267,7 +267,7 @@ class UserController extends Controller
                             foreach ($selectdealer as $psd){
                                 $cekDealer = User::where('user_id', $psd->dealer_id)->get();
                                 $countDealer = $cekDealer->count();
-                                if ($countDealer !== 0 || $countDealer !== '0') {
+                                if ($countDealer > 0) {
                                     try {
                                         UserAccount::create([
                                             'user_id' => $psd->dealer_id,

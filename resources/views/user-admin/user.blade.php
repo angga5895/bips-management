@@ -661,6 +661,8 @@
                                 $("#regisuser").text(res.user);
                                 $("#alert-success-registrasi").removeClass("d-none");
                                 $("#alert-success-registrasi").addClass("d-block");
+                                $("#alert-error-registrasi").removeClass("d-block");
+                                $("#alert-error-registrasi").addClass("d-none");
                             } else {
                                 $('#table-reggroup').DataTable().ajax.reload();
                                 $("#add-user").removeClass("d-block");
@@ -670,6 +672,8 @@
                                 $("#messageuser").text(res.message);
                                 $("#alert-error-registrasi").removeClass("d-none");
                                 $("#alert-error-registrasi").addClass("d-block");
+                                $("#alert-success-registrasi").removeClass("d-block");
+                                $("#alert-success-registrasi").addClass("d-none");
                             }
                         }
                     }

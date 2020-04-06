@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\GroupDealer;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -64,5 +66,140 @@ class AssignController extends Controller
                 WHERE users.user_type = \'D\' AND group_dealer.group_id = \''.$groupID.'\'';
         $data = DB::select($query);
         return DataTables::of($data)->make(true);
+    }
+
+    public function addUserGroup(){
+        $id = $_GET['id'];
+        $group_id = $_GET['group_id'];
+        // select
+        $user = $id;
+        if($this->_find_user_group($id,$group_id)){
+            return response()->json([
+                'status' => '01',
+                'message' => 'User has registered in this group.',
+            ]);
+        } else{
+            $updatestatus = '0';
+            $exUpdate = '';
+            try {
+                GroupDealer::create([
+                    'group_id' => $group_id,
+                    'dealer_id' => $user,
+                ]);
+            } catch (QueryException $ex){
+                $updatestatus = '1';
+                $exUpdate = $ex->getMessage();
+            }
+
+            if ($updatestatus === '1'){
+                $status = '01';
+                $message = $exUpdate;
+            } else {
+                $status = '00';
+                $message = 'Successfully added user to group.';
+            }
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
+    }
+
+    public function deleteUserGroup(){
+        $id = $_GET['id'];
+        $group_id = $_GET['group_id'];
+
+        if(!$this->_find_user_group($id,$group_id)){
+            return response()->json([
+                'status' => '03',
+                'message' => 'Delete failed, user unregistered in this group.'
+            ]);
+        }else{
+            $updatestatus = '0';
+            $exUpdate = '';
+            try{
+                GroupDealer::where([
+                    'group_id'=>$group_id,
+                    'dealer_id'=>$id,
+                ])->delete();
+            } catch (QueryException $ex){
+                $updatestatus = '1';
+                $exUpdate = $ex->getMessage();
+            }
+
+            if ($updatestatus === '1'){
+                $status = '03';
+                $message = $exUpdate;
+            } else {
+                $status = '00';
+                $message = 'Successfully delete user from group.';
+            }
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
+    }
+
+    private function _find_user_group($id,$group_id){
+        $match = [
+            'group_id'=>$group_id,
+            'dealer_id'=>$id,
+        ];
+        $result = GroupDealer::where($match)->get();
+        if($result->count() > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function deleteAllUserGroup(){
+        $group_id = $_GET['group_id'];
+
+        if(!$this->_find_user_group_all($group_id)){
+            return response()->json([
+                'status' => '03',
+                'message' => 'Delete failed, members in this group is empty.'
+            ]);
+        }else{
+            $updatestatus = '0';
+            $exUpdate = '';
+            try{
+                GroupDealer::where([
+                    'group_id'=>$group_id,
+                ])->delete();
+            } catch (QueryException $ex){
+                $updatestatus = '1';
+                $exUpdate = $ex->getMessage();
+            }
+
+            if ($updatestatus === '1'){
+                $status = '03';
+                $message = $exUpdate;
+            } else {
+                $status = '00';
+                $message = 'Successfully delete all user from group.';
+            }
+
+            return response()->json([
+                'status' => $status,
+                'message' => $message,
+            ]);
+        }
+    }
+
+    private function _find_user_group_all($group_id){
+        $match = [
+            'group_id'=>$group_id
+        ];
+        $result = GroupDealer::where($match)->get();
+        if($result->count() > 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

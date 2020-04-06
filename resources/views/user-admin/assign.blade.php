@@ -57,6 +57,13 @@
             });
         }
 
+        function resetApp(){
+            $("#grpname").val('');
+            $("#group_hidden").val('');
+            $("#aoid_us").val('');
+            $("#aoid_id").val('');
+        }
+
         function clickOKUserAO(id,username) {
             $("#aoid_id").val(id);
             $("#aoid_us").val(username);
@@ -76,6 +83,10 @@
         function getGroupId(){
             var tableListMember = $("#table-listmember").DataTable({
                 destroy: true,
+                dom: 'l<"toolbar">frtip',
+                initComplete: function(){
+                    $("div.toolbar").html('<button class="form-control-btn-0 btn btn-sm btn-danger mb-2" type="button" onclick="delAllUser()">Delete All Member</button>');
+                },
                 ajax : {
                     url: '{{ url("getGroupUser/get") }}',
                     data: function (d) {
@@ -206,6 +217,7 @@
                 $("#cekUser").text("");
                 $("#grpname").removeClass("is-invalid");
                 $("#grpname").val(data.name);
+                $("#nameofgroup").text(data.name);
             } );
         }
 
@@ -238,6 +250,68 @@
             }
         }
 
+        function delAllUser(){
+            var groupid = $("#group_hidden").val();
+
+            if (groupid === ''){
+                swal({
+                    title: "Error",
+                    text: "Please, choose the group for delete all members.",
+                    type: "error",
+                    showCancelButton: false,
+                    confirmButtonClass: 'btn-danger',
+                    confirmButtonText: 'OK',
+                });
+            } else {
+                swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover this imaginary file!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel!",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ url('delAllUserGroup') }}",
+                            data: {
+                                'group_id': groupid,
+                            },
+                            success: function (res) {
+                                if ($.trim(res)) {
+                                    if (res.status === "00") {
+                                        $('#table-listmember').DataTable().ajax.reload();
+                                        swal({
+                                            title: "Success",
+                                            text: res.message,
+                                            type: "success",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-success',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    } else if (res.status === "03") {
+                                        swal({
+                                            title: "Failed",
+                                            text: res.message,
+                                            type: "warning",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-danger',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
         $("#add-btn").on("click", function () {
             var user = $("#grpname").val();
             var aoid = $("#aoid_us").val();
@@ -245,13 +319,16 @@
             var userid = $("#aoid_id").val();
             var groupid = $("#group_hidden").val();
 
+            var iduser = $("#grpname");
+            var idaoid = $("#aoid_us");
+
             var required = "Field is required.";
             var clicktable = "Click Table Group Before.";
-            var clickaoid = "Please Choose AOID Before.";
+            var clickaoid = "Please Choose List Dealer Before.";
 
-            if (user === '' || aoid === ''){
-                if (user === ''){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");$("#grpname").focus();}
-                if(aoid === ''){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");$("#aoid_us").focus();}
+            if (!iduser[0].checkValidity() || !idaoid[0].checkValidity()){
+                if (!iduser[0].checkValidity()){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");iduser.focus();}
+                if (!idaoid[0].checkValidity()){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");idaoid.focus();}
             } else {
                 $.ajax({
                     type: "GET",
@@ -266,7 +343,7 @@
                                 $('#table-listmember').DataTable().ajax.reload();
                                 swal({
                                     title: "Success",
-                                    text: "Berhasil menambahkan user ke grup baru",
+                                    text: res.message,
                                     type: "success",
                                     showCancelButton: false,
                                     confirmButtonClass: 'btn-success',
@@ -275,10 +352,10 @@
                             }else if(res.status === "01"){
                                 swal({
                                     title: "Failed",
-                                    text: "User telah bergabung dengan grup ini",
+                                    text: res.message,
                                     type: "warning",
                                     showCancelButton: false,
-                                    confirmButtonClass: 'btn-success',
+                                    confirmButtonClass: 'btn-danger',
                                     confirmButtonText: 'OK',
                                 });
                             }
@@ -299,67 +376,69 @@
                     cancelButtonText: "No, cancel!",
                     closeOnConfirm: true,
                     closeOnCancel: true
-                },
-                function(isConfirm) {
-                    if (isConfirm) {
-                        var user = $("#grpname").val();
-                        var aoid = $("#aoid_us").val();
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    var user = $("#grpname").val();
+                    var aoid = $("#aoid_us").val();
 
-                        var userid = $("#aoid_id").val();
-                        var groupid = $("#group_hidden").val();
+                    var userid = $("#aoid_id").val();
+                    var groupid = $("#group_hidden").val();
 
-                        var required = "Field is required.";
-                        var clicktable = "Click Table Group Before.";
-                        var clickaoid = "Please Choose Username AO Before.";
+                    var iduser = $("#grpname");
+                    var idaoid = $("#aoid_us");
 
-                        if (user === '' || aoid === ''){
-                            if (user === '') {
-                                $("#cekUser").text(required + ' ' + clicktable);
-                                $("#grpname").addClass("is-invalid");
-                                $("#grpname").focus();
-                            }
-                            if (aoid === '') {
-                                $("#cekAoid").text(required + ' ' + clickaoid);
-                                $("#aoid_us").addClass("is-invalid");
-                                $("#aoid_us").focus();
-                            }
-                        } else {
-                            $.ajax({
-                                type: "GET",
-                                url: "{{ url('delUserGroup') }}",
-                                data: {
-                                    'id': userid,
-                                    'group_id': groupid,
-                                },
-                                success: function (res) {
-                                    console.log(res.napa);
-                                    if ($.trim(res)) {
-                                        if (res.status === "00") {
-                                            $('#table-listmember').DataTable().ajax.reload();
-                                            swal({
-                                                title: "Success",
-                                                text: "Berhasil menghapus user",
-                                                type: "success",
-                                                showCancelButton: false,
-                                                confirmButtonClass: 'btn-success',
-                                                confirmButtonText: 'OK',
-                                            });
-                                        } else if (res.status === "03") {
-                                            swal({
-                                                title: "Failed",
-                                                text: "User tidak bergabung dengan grup",
-                                                type: "warning",
-                                                showCancelButton: false,
-                                                confirmButtonClass: 'btn-success',
-                                                confirmButtonText: 'OK',
-                                            });
-                                        }
+                    var required = "Field is required.";
+                    var clicktable = "Click Table Group Before.";
+                    var clickaoid = "Please Choose List Dealer Before.";
+
+                    if (!iduser[0].checkValidity() || !idaoid[0].checkValidity()){
+                        if (!iduser[0].checkValidity()) {
+                            $("#cekUser").text(required + ' ' + clicktable);
+                            $("#grpname").addClass("is-invalid");
+                            $("#grpname").focus();
+                        }
+                        if (!idaoid[0].checkValidity()) {
+                            $("#cekAoid").text(required + ' ' + clickaoid);
+                            $("#aoid_us").addClass("is-invalid");
+                            $("#aoid_us").focus();
+                        }
+                    } else {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ url('delUserGroup') }}",
+                            data: {
+                                'id': userid,
+                                'group_id': groupid,
+                            },
+                            success: function (res) {
+                                if ($.trim(res)) {
+                                    if (res.status === "00") {
+                                        $('#table-listmember').DataTable().ajax.reload();
+                                        swal({
+                                            title: "Success",
+                                            text: res.message,
+                                            type: "success",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-success',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    } else if (res.status === "03") {
+                                        swal({
+                                            title: "Failed",
+                                            text: res.message,
+                                            type: "warning",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-danger',
+                                            confirmButtonText: 'OK',
+                                        });
                                     }
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
-                });
+                }
+            });
         });
 
     </script>
@@ -413,7 +492,10 @@
                             </div>
                         </div>
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                            <label class="form-control-label">List Member Account Officer</label>
+                            <label class="form-control-label">
+                                List Member Group :&nbsp;
+                                <strong id="nameofgroup">-</strong>
+                            </label>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="table-listmember">
                                     <thead class="bg-gradient-primary text-lighter">
@@ -484,6 +566,7 @@
                                 <div class="form-group form-inline justify-content-end mb-0">
                                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="add-btn">Add</button>
                                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="del-btn">Delete</button>
+                                    <button class="form-control-btn btn btn-info mb-2" type="button" onclick="resetApp()">Reset</button>
                                 </div>
                             </form>
                         </div>

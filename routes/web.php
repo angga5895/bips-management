@@ -49,8 +49,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('group-update/submit', 'GroupController@updateGroup');
     Route::get('getGroupUser/{id}','AssignController@getGroupUser');
 
-    Route::get('addNewUserGroup', 'UserController@addUserGroup');
-    Route::get('delUserGroup', 'UserController@deleteUserGroup');
+    Route::get('addNewUserGroup', 'AssignController@addUserGroup');
+    Route::get('delUserGroup', 'AssignController@deleteUserGroup');
+    Route::get('delAllUserGroup', 'AssignController@deleteAllUserGroup');
 
     Route::get('getDataDealer','DealerController@getDealer');
     Route::get('getDealerId','DealerController@getIdDealer');

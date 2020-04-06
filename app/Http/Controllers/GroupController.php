@@ -191,7 +191,7 @@ class GroupController extends Controller
         $groupID = $requestData['search_param']['groupID'];
         $where_groupID = "";
         if ($groupID != ""){
-            $where_groupID = ' WHERE "group".group_id = '.$groupID;
+            $where_groupID = " WHERE group_id = '$groupID'";
         }
 
         $query = 'SELECT * from "group"

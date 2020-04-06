@@ -195,6 +195,8 @@
                                 $("#regisgroup").text(res.group);
                                 $("#alert-success-registrasi").removeClass("d-none");
                                 $("#alert-success-registrasi").addClass("d-block");
+                                $("#alert-success-update").removeClass("d-block");
+                                $("#alert-success-update").addClass("d-none");
                             }
                         }
                     }
@@ -610,6 +612,8 @@
                                 $("#update_dealer_notification").text(res.group);
                                 $("#alert-success-update").removeClass("d-none");
                                 $("#alert-success-update").addClass("d-block");
+                                $("#alert-success-registrasi").removeClass("d-block");
+                                $("#alert-success-registrasi").addClass("d-none");
                                 clearCache();
                             }
                         }
@@ -955,7 +959,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Group List</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Dealer List</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

@@ -85,7 +85,7 @@
                     searchable : true,
                     targets : [2],
                     render : function (data, type, row) {
-                        return  '<button class="btn btn-sm btn-warning fa fa-pen" type="button" onclick="addGroup()" data-dismiss= "modal")"></button>'
+                      return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+row.group_id+')">OK</button>'
                     }
                 }]
             });
@@ -171,8 +171,12 @@
                                 $("#main-group").removeClass("d-none");
                                 $("#main-group").addClass("d-block");
                                 $("#regisgroup").text(res.group);
+                                $("#update_group_notification").text();
                                 $("#alert-success-registrasi").removeClass("d-none");
                                 $("#alert-success-registrasi").addClass("d-block");
+
+                                $("#alert-success-update").removeClass("d-block");
+                                $("#alert-success-update").addClass("d-none");
                             }
                         }
                     }
@@ -278,11 +282,18 @@
 
             $("#groupname").val('');
 
+            $("#groupid").attr('readonly',false);
             $("#add-group").removeClass("d-none");
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
+            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Tambah");
+            $("#savegroupbutton").removeClass('d-none');
+            $("#savegroupbutton").addClass('d-block');
+            $("#editgroupbutton").removeClass('d-block');
+            $("#editgroupbutton").addClass('d-none');
             clearCache();
+
         }
         function editGroup(data){
             $.ajax({
@@ -298,6 +309,8 @@
                     $("#groupname").val(res.name);
                     $("#grouphead").val(res.head_id);
                     $("#groupheadname").val(res.head_name);
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res.name);
                 }
             });
 
@@ -309,8 +322,11 @@
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#savegroupbutton").addClass('d-none');
+            $("#savegroupbutton").removeClass('d-block');
             $("#editgroupbutton").removeClass('d-none');
+            $("#editgroupbutton").addClass('d-block');
             clearCache();
+
         }
         $("#updategroup").on("click", function () {
             var groupid = $("#hiddengroupid").val();
@@ -341,6 +357,8 @@
                                 $("#update_group_notification").text(res.group);
                                 $("#alert-success-update").removeClass("d-none");
                                 $("#alert-success-update").addClass("d-block");
+                                $("#alert-success-registrasi").removeClass("d-block");
+                                $("#alert-success-registrasi").addClass("d-none");
                                 clearCache();
                             }
                         }
@@ -367,24 +385,82 @@
             });
         });
         $("#canceleditgroup").on("click", function () {
-            if(confirm("Are u sure dischard changes?")){
+            swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, cancel it!",
+                    cancelButtonText: "No",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $("#add-group").removeClass("d-block");
+                        $("#add-group").addClass("d-none");
+                        $("#main-group").removeClass("d-none");
+                        $("#main-group").addClass("d-block");
+                        $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+                        $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text("");
+                    }
+                }
+            )
+        });
+
+        function clearCache(){
+            $("#groupid").val('');
+            $("#groupname").val('');
+            $("#grouphead").val('');
+            $("#groupheadname").val('');
+
+            $("#cekGroupname").text('');
+            $("#cekGroupId").text('');
+            $("#cekGrouphead").text('');
+            $("#cekGroupHeadName").text('');
+
+            $("#groupid").removeClass("is-invalid");
+            $("#groupname").removeClass("is-invalid");
+            $("#grouphead").removeClass("is-invalid");
+            $("#groupheadname").removeClass("is-invalid");
+        }
+
+        $("#cancelgroup").on("click", function () {
+            var res =  $("#hiddengroupid").val()+$("#groupid").val()+$("#groupname").val()+$("#grouphead").val()+$("#groupheadname").val();
+            res = res.trim();
+            if(res.length > 0){
+                swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover this!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, cancel it!",
+                        cancelButtonText: "No",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            $("#add-group").removeClass("d-block");
+                            $("#add-group").addClass("d-none");
+                            $("#main-group").removeClass("d-none");
+                            $("#main-group").addClass("d-block");
+                            $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+                            clearCache();
+                        }
+                    }
+                )
+
+            }else{
                 $("#add-group").removeClass("d-block");
                 $("#add-group").addClass("d-none");
                 $("#main-group").removeClass("d-none");
                 $("#main-group").addClass("d-block");
+                $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+                clearCache();
             }
-        });
-
-        function clearCache(){
-            var groupname = $("#groupname").val();
-            $("#cekGroupname").text('');$("#groupname").removeClass("is-invalid");
-        }
-
-        $("#cancelgroup").on("click", function () {
-            $("#add-group").removeClass("d-block");
-            $("#add-group").addClass("d-none");
-            $("#main-group").removeClass("d-none");
-            $("#main-group").addClass("d-block");
         });
 
         $("#btn-current1").on("click", function(){
@@ -429,6 +505,8 @@
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
                         <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
                         <li class="breadcrumb-item active" aria-current="page">Group</li>
+                        <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
+                        <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>
                     </ol>
                 </nav>
             </div>
@@ -439,9 +517,9 @@
     <div class="card shadow" id="main-group">
         <div class="card card-header">
             <form class="form-inline">
-                <label class="form-control-label pr-5 mb-2">Dealer Group ID</label>
-                <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="groupID" onchange="getGroup()">
-                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Dealer Group" readonly id="groupGet">
+                <label class="form-control-label pr-5 mb-2">Group ID</label>
+                <input class="form-control mb-2" placeholder="Input ID Group" id="groupID" onchange="getGroup()">
+                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Group" readonly id="groupGet">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
             </form>
@@ -532,7 +610,7 @@
                     </div>
                 </section>
             </div>
-            <div class="card card-footer">
+            <div class="card card-footer text-right">
                 <div class="form-inline justify-content-end" id="savegroupbutton">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
                     <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>

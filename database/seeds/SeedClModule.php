@@ -13,7 +13,7 @@ class SeedClModule extends Seeder
     {
         $arr = [
             [
-                'clm_name' => 'Assign Group',
+                'clm_name' => 'Group Dealer',
                 'clm_slug' => 'assign',
                 'clm_order' => 1,
                 'clm_routename' => 'useradmin.assign',

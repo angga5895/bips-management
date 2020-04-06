@@ -11,6 +11,9 @@
                 placeholder: 'AOID'
             });
             $('.bootstrap-select').selectpicker();
+            $(".readonly").on('keydown paste mousedown mouseup drop', function(e){
+                e.preventDefault();
+            });
         });
 
         function getTableGroupUserAO() {
@@ -24,10 +27,10 @@
                     }
                 },
                 columns : [
-                    {data : 'client_id', name: 'client_id'},
-                    {data : 'dlrname', name: 'dlrname'},
-                    {data : 'username', name: 'username'},
-                    {data : 'client_id', name: 'client_id'},
+                    {data : 'user_id', name: 'user_id'},
+                    {data : 'user_name', name: 'user_name'},
+                    {data : 'dealer_id', name: 'dealer_id'},
+                    {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -45,13 +48,20 @@
                     searchable : true,
                     targets : [3],
                     render : function (data, type, row) {
-                        var id = row.id;
-                        var username = row.username;
+                        var id = row.user_id;
+                        var username = row.user_name;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKUserAO(\''+id+'\',\''+username+'\')">OK</button>'
                     }
                 }]
             });
+        }
+
+        function resetApp(){
+            $("#grpname").val('');
+            $("#group_hidden").val('');
+            $("#aoid_us").val('');
+            $("#aoid_id").val('');
         }
 
         function clickOKUserAO(id,username) {
@@ -73,6 +83,10 @@
         function getGroupId(){
             var tableListMember = $("#table-listmember").DataTable({
                 destroy: true,
+                dom: 'l<"toolbar">frtip',
+                initComplete: function(){
+                    $("div.toolbar").html('<button class="form-control-btn-0 btn btn-sm btn-danger mb-2" type="button" onclick="delAllUser()">Delete All Member</button>');
+                },
                 ajax : {
                     url: '{{ url("getGroupUser/get") }}',
                     data: function (d) {
@@ -82,9 +96,9 @@
                 },
                 columns : [
                     {data : 'sequence_no', name: 'sequence_no'},
-                    {data : 'client_id', name: 'client_id'},
-                    {data : 'dlrname', name: 'dlrname'},
-                    {data : 'username', name: 'username'},
+                    {data : 'user_id', name: 'user_id'},
+                    {data : 'user_name', name: 'user_name'},
+                    {data : 'dealer_id', name: 'dealer_id'},
                     /*{data : 'client_id', name: 'client_id'},*/
                 ],
                 columnDefs: [
@@ -117,8 +131,8 @@
 
             $('#table-listmember tbody').on('click', 'tr', function () {
                 var data = tableListMember.row( this ).data();
-                var aoid = data.user_id;
-                var aoname = data.username;
+                var aoid = data.dealer_id;
+                var aoname = data.user_name;
                 tableListMember.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
 
@@ -159,7 +173,7 @@
                     render : function (data, type, row) {
                         var id = row.group_id;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+id+'\')">OK</button>'
                     }
                 }]
             });
@@ -203,6 +217,7 @@
                 $("#cekUser").text("");
                 $("#grpname").removeClass("is-invalid");
                 $("#grpname").val(data.name);
+                $("#nameofgroup").text(data.name);
             } );
         }
 
@@ -235,6 +250,68 @@
             }
         }
 
+        function delAllUser(){
+            var groupid = $("#group_hidden").val();
+
+            if (groupid === ''){
+                swal({
+                    title: "Error",
+                    text: "Please, choose the group for delete all members.",
+                    type: "error",
+                    showCancelButton: false,
+                    confirmButtonClass: 'btn-danger',
+                    confirmButtonText: 'OK',
+                });
+            } else {
+                swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover this imaginary file!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel!",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ url('delAllUserGroup') }}",
+                            data: {
+                                'group_id': groupid,
+                            },
+                            success: function (res) {
+                                if ($.trim(res)) {
+                                    if (res.status === "00") {
+                                        $('#table-listmember').DataTable().ajax.reload();
+                                        swal({
+                                            title: "Success",
+                                            text: res.message,
+                                            type: "success",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-success',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    } else if (res.status === "03") {
+                                        swal({
+                                            title: "Failed",
+                                            text: res.message,
+                                            type: "warning",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-danger',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
         $("#add-btn").on("click", function () {
             var user = $("#grpname").val();
             var aoid = $("#aoid_us").val();
@@ -242,13 +319,16 @@
             var userid = $("#aoid_id").val();
             var groupid = $("#group_hidden").val();
 
+            var iduser = $("#grpname");
+            var idaoid = $("#aoid_us");
+
             var required = "Field is required.";
             var clicktable = "Click Table Group Before.";
-            var clickaoid = "Please Choose AOID Before.";
+            var clickaoid = "Please Choose List Dealer Before.";
 
-            if (user === '' || aoid === ''){
-                if (user === ''){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");$("#grpname").focus();}
-                if(aoid === ''){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");$("#aoid_us").focus();}
+            if (!iduser[0].checkValidity() || !idaoid[0].checkValidity()){
+                if (!iduser[0].checkValidity()){ $("#cekUser").text(required+' '+clicktable);$("#grpname").addClass("is-invalid");iduser.focus();}
+                if (!idaoid[0].checkValidity()){$("#cekAoid").text(required+' '+clickaoid);$("#aoid_us").addClass("is-invalid");idaoid.focus();}
             } else {
                 $.ajax({
                     type: "GET",
@@ -263,7 +343,7 @@
                                 $('#table-listmember').DataTable().ajax.reload();
                                 swal({
                                     title: "Success",
-                                    text: "Berhasil menambahkan user ke grup baru",
+                                    text: res.message,
                                     type: "success",
                                     showCancelButton: false,
                                     confirmButtonClass: 'btn-success',
@@ -272,10 +352,10 @@
                             }else if(res.status === "01"){
                                 swal({
                                     title: "Failed",
-                                    text: "User telah bergabung dengan grup ini",
+                                    text: res.message,
                                     type: "warning",
                                     showCancelButton: false,
-                                    confirmButtonClass: 'btn-success',
+                                    confirmButtonClass: 'btn-danger',
                                     confirmButtonText: 'OK',
                                 });
                             }
@@ -296,67 +376,69 @@
                     cancelButtonText: "No, cancel!",
                     closeOnConfirm: true,
                     closeOnCancel: true
-                },
-                function(isConfirm) {
-                    if (isConfirm) {
-                        var user = $("#grpname").val();
-                        var aoid = $("#aoid_us").val();
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    var user = $("#grpname").val();
+                    var aoid = $("#aoid_us").val();
 
-                        var userid = $("#aoid_id").val();
-                        var groupid = $("#group_hidden").val();
+                    var userid = $("#aoid_id").val();
+                    var groupid = $("#group_hidden").val();
 
-                        var required = "Field is required.";
-                        var clicktable = "Click Table Group Before.";
-                        var clickaoid = "Please Choose Username AO Before.";
+                    var iduser = $("#grpname");
+                    var idaoid = $("#aoid_us");
 
-                        if (user === '' || aoid === ''){
-                            if (user === '') {
-                                $("#cekUser").text(required + ' ' + clicktable);
-                                $("#grpname").addClass("is-invalid");
-                                $("#grpname").focus();
-                            }
-                            if (aoid === '') {
-                                $("#cekAoid").text(required + ' ' + clickaoid);
-                                $("#aoid_us").addClass("is-invalid");
-                                $("#aoid_us").focus();
-                            }
-                        } else {
-                            $.ajax({
-                                type: "GET",
-                                url: "{{ url('delUserGroup') }}",
-                                data: {
-                                    'id': userid,
-                                    'group_id': groupid,
-                                },
-                                success: function (res) {
-                                    console.log(res.napa);
-                                    if ($.trim(res)) {
-                                        if (res.status === "00") {
-                                            $('#table-listmember').DataTable().ajax.reload();
-                                            swal({
-                                                title: "Success",
-                                                text: "Berhasil menghapus user",
-                                                type: "success",
-                                                showCancelButton: false,
-                                                confirmButtonClass: 'btn-success',
-                                                confirmButtonText: 'OK',
-                                            });
-                                        } else if (res.status === "03") {
-                                            swal({
-                                                title: "Failed",
-                                                text: "User tidak bergabung dengan grup",
-                                                type: "warning",
-                                                showCancelButton: false,
-                                                confirmButtonClass: 'btn-success',
-                                                confirmButtonText: 'OK',
-                                            });
-                                        }
+                    var required = "Field is required.";
+                    var clicktable = "Click Table Group Before.";
+                    var clickaoid = "Please Choose List Dealer Before.";
+
+                    if (!iduser[0].checkValidity() || !idaoid[0].checkValidity()){
+                        if (!iduser[0].checkValidity()) {
+                            $("#cekUser").text(required + ' ' + clicktable);
+                            $("#grpname").addClass("is-invalid");
+                            $("#grpname").focus();
+                        }
+                        if (!idaoid[0].checkValidity()) {
+                            $("#cekAoid").text(required + ' ' + clickaoid);
+                            $("#aoid_us").addClass("is-invalid");
+                            $("#aoid_us").focus();
+                        }
+                    } else {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ url('delUserGroup') }}",
+                            data: {
+                                'id': userid,
+                                'group_id': groupid,
+                            },
+                            success: function (res) {
+                                if ($.trim(res)) {
+                                    if (res.status === "00") {
+                                        $('#table-listmember').DataTable().ajax.reload();
+                                        swal({
+                                            title: "Success",
+                                            text: res.message,
+                                            type: "success",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-success',
+                                            confirmButtonText: 'OK',
+                                        });
+                                    } else if (res.status === "03") {
+                                        swal({
+                                            title: "Failed",
+                                            text: res.message,
+                                            type: "warning",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-danger',
+                                            confirmButtonText: 'OK',
+                                        });
                                     }
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
-                });
+                }
+            });
         });
 
     </script>
@@ -410,15 +492,18 @@
                             </div>
                         </div>
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                            <label class="form-control-label">List Member Account Officer</label>
+                            <label class="form-control-label">
+                                List Member Group :&nbsp;
+                                <strong id="nameofgroup">-</strong>
+                            </label>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="table-listmember">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         <th>Seq</th>
-                                        <th>AO ID</th>
-                                        <th>AO Name</th>
-                                        <th>Username</th>
+                                        <th>User ID</th>
+                                        <th>User Name</th>
+                                        <th>Dealer ID</th>
                                         {{--<th>#</th>--}}
                                     </tr>
                                     </thead>
@@ -460,14 +545,14 @@
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">Group Name</label>
                                     <input class="form-control" type="hidden" placeholder="ID Group" required id="group_hidden"/>
-                                    <input class="form-control col-sm-5" type="text" placeholder="Please Click Table Group" readonly id="grpname"/>
+                                    <input class="form-control col-sm-5 readonly" type="text" placeholder="Please Click Table Group" id="grpname" required/>
                                     <label id="cekUser" class="error invalid-feedback small d-block col-sm-5" for="grpname"></label>
                                 </div>
 
                                 <div class="form-group form-inline lbl-user-aoid">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">Username AO</label>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">User Name</label>
                                     <div class="input-group col-sm-5 px-0">
-                                        <input class="form-control form-control-input col-sm-12 mb-0 mx-0" placeholder="Username Account Officer" readonly id="aoid_us" value=""/>
+                                        <input class="form-control form-control-input col-sm-12 mb-0 mx-0 readonly" placeholder="Username Dealer" id="aoid_us" value="" required/>
                                         <div class="input-group-append">
                                             <span class="input-group-text btn btn-default" data-toggle="modal" data-target="#exampleModal1">
                                                 <i class="fa fa-search"></i>
@@ -481,6 +566,7 @@
                                 <div class="form-group form-inline justify-content-end mb-0">
                                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="add-btn">Add</button>
                                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="del-btn">Delete</button>
+                                    <button class="form-control-btn btn btn-info mb-2" type="button" onclick="resetApp()">Reset</button>
                                 </div>
                             </form>
                         </div>

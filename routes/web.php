@@ -38,7 +38,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/user/{id}/reset/password', 'UserController@userResetPassword')->name('useradmin.user-reset-password');
     Route::get('/user/{id}/reset/pin', 'UserController@userResetPIN')->name('useradmin.user-reset-pin');
     Route::get('get-dataClient/{id}', 'UserController@dataClient')->name('data-client');
-    Route::get('get-dataAOList/{id}', 'UserController@getListAO');
+    Route::get('get-dataAOList/{id}', 'AssignController@getListAO');
 
     Route::get('group-registrasi', 'GroupController@registrasiGroup');
     Route::get('group-get', 'GroupController@getGroup');
@@ -47,10 +47,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/group/{id}', 'GroupController@groupEdit')->name('group-edit');
     Route::get('group-update', 'GroupController@groupEdit');
     Route::get('group-update/submit', 'GroupController@updateGroup');
-    Route::get('getGroupUser/{id}','GroupController@getGroupUser');
+    Route::get('getGroupUser/{id}','AssignController@getGroupUser');
 
-    Route::get('addNewUserGroup', 'UserController@addUserGroup');
-    Route::get('delUserGroup', 'UserController@deleteUserGroup');
+    Route::get('addNewUserGroup', 'AssignController@addUserGroup');
+    Route::get('delUserGroup', 'AssignController@deleteUserGroup');
+    Route::get('delAllUserGroup', 'AssignController@deleteAllUserGroup');
 
     Route::get('getDataDealer','DealerController@getDealer');
     Route::get('getDealerId','DealerController@getIdDealer');

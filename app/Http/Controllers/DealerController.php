@@ -163,7 +163,8 @@ class DealerController extends Controller
 
         $where_groupID = "";
         if ($dealerID != ""){
-            $where_groupID = " WHERE dealer_id = '$dealerID'";
+            $where_groupID = ' WHERE "lower"(dealer_id) LIKE \'%'.strtolower($dealerID).'%\'';
+
         }
 
         $query = 'SELECT *,dealer.dealer_id as dlr from "dealer"

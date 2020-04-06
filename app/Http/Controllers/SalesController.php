@@ -167,7 +167,7 @@ class SalesController extends Controller
 
         $where_groupID = "";
         if ($salesID != ""){
-            $where_groupID = " WHERE sales_id = '$salesID'";
+            $where_groupID = ' WHERE "lower"(sales_id) LIKE \'%'.strtolower($salesID).'%\'';
         }
 
         $query = 'SELECT *,sales.sales_id as sls from "sales"

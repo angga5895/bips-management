@@ -53,7 +53,7 @@
         }
 
         function clickOK(id) {
-            $("#groupID").val(id);
+            $("#dealerID").val(id);
             getGroup();
         }
 
@@ -63,15 +63,16 @@
                 serverSide: true,*/
                 ajax : {
                     url: '{{ url("getDataDealer") }}',
-
+                    data: function (d) {
+                        var search_data = {
+                            dealerId: $("#dealerID").val(),
+                        };
+                        d.search_param = search_data;
+                    },
                 },
                 columns : [
                     {data : 'dealer_id', name: 'dealer_id'},
                     {data : 'dealer_name', name: 'dealer_name'},
-                    {data : 'address', name: 'address'},
-                    {data : 'phone', name: 'phone'},
-                    {data : 'mobilephone', name: 'mobilephone'},
-                    {data : 'email', name: 'email'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -82,36 +83,17 @@
                     orderable : true,
                     searchable : true,
                 },{
+                    searchable : true,
                     targets : [2],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [3],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [4],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [5],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    searchable : true,
-                    targets : [6],
                     render : function (data, type, row) {
-                        var id = row.group_id;
-                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
                         return '' +
-                            '<button class="btn btn-sm btn-primary fa fa-trash" type="button" data-dismiss= "modal" onclick="clickOK('+id+')"></button>'
+                            '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+row.dealer_id+')">OK</button>'
                     }
                 }]
             });
         }
 
-        function
-        getTableGroup(){
+        function getTableGroup(){
             var tableGroup = $("#table-reggroup").DataTable({
                 /*processing: true,
                 serverSide: true,*/
@@ -122,7 +104,14 @@
                 },
                 ajax : {
                     url: '{{ url("getDataDealer") }}',
+                    data: function (d) {
+                        var search_data = {
+                            dealerId: $("#dealerID").val(),
+                        };
+                        d.search_param = search_data;
+                    },
                 },
+
                 columns : [
                     {data : 'dealer_id', name: 'dealer_id'},
                     {data : 'dealer_name', name: 'dealer_name'},
@@ -538,7 +527,7 @@
                     'id' : data,
                 },
                 success : function (res) {
-                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Update");
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
                     $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res.dealer_name);
                     $("#groupid").val(data);
                     $("#groupname").val(res.dealer_name);
@@ -718,7 +707,7 @@
         });
 
         function getGroup() {
-            var id = $("#groupID").val();
+            var id = $("#dealerID").val();
 
             if(id === ''){
                 $("#groupGet").val('');
@@ -726,13 +715,13 @@
             } else {
                 $.ajax({
                     type : "GET",
-                    url  : "{{ url('group-get') }}",
+                    url  : "{{ url('dealerGetName') }}",
                     data : {
                         'id' : id,
                     },
                     success : function (res) {
                         if ($.trim(res)){
-                            $("#groupGet").val(res[0].name);
+                            $("#groupGet").val(res[0].dealer_name);
                         } else {
                             $("#groupGet").val('');
                         }
@@ -773,7 +762,7 @@
         <div class="card card-header">
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Dealer ID</label>
-                <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="groupID" onchange="getGroup()">
+                <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="dealerID" onchange="getGroup()">
                 <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Dealer Group" readonly id="groupGet">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
@@ -976,17 +965,12 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Id</th>
-                                <th>Group Name</th>
+                                <th>Dealer Id</th>
+                                <th>Dealer Name</th>
                                 <th>#</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>10002</td>
-                                <td>Trader</td>
-                                <td><button class="btn btn-sm btn-success" type="button">OK</button></td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>

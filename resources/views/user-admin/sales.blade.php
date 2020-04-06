@@ -52,10 +52,6 @@
             $('#table-grouplist').DataTable().ajax.reload();
         }
 
-        function clickOK(id) {
-            $("#groupID").val(id);
-            getGroup();
-        }
 
         function getTableList() {
             $("#table-grouplist").DataTable({
@@ -63,57 +59,39 @@
                 serverSide: true,*/
                 ajax : {
                     url: '{{ url("getDataSales") }}',
-
+                    data: function (d) {
+                        var search_data = {
+                            salesID:'',
+                        };
+                        d.search_param = search_data;
+                    },
                 },
                 columns : [
-                    {data : 'sales_id', name: 'sales_id'},
+                    {data : 'sls', name: 'sls'},
                     {data : 'sales_name', name: 'sales_name'},
-                    {data : 'address', name: 'address'},
-                    {data : 'phone', name: 'phone'},
-                    {data : 'mobilephone', name: 'mobilephone'},
-                    {data : 'email', name: 'email'},
+                    {data : 'sls', name: 'sls'},
                 ],
                 columnDefs: [{
                     targets : [0],
                     orderable : true,
                     searchable : false,
-
+                }, {
+                    targets: [1],
+                    orderable: true,
+                    searchable: true,
                 },{
-                    targets : [1],
-                    orderable : true,
                     searchable : true,
-                },{
                     targets : [2],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [3],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [4],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [5],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [6],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    searchable : true,
-                    targets : [7],
                     render : function (data, type, row) {
-                        var id = row.group_id;
-                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '' +
-                            '<button class="btn btn-sm btn-primary fa fa-trash" type="button" data-dismiss= "modal" onclick="clickOK('+id+')"></button>' +
-                            '<button class="btn btn-sm btn-primary fa fa-pencil" type="button" data-dismiss= "modal" onclick="clickOK(\'+id+\')">OK</button>'
-                    }
+                        return '<i class="text-center">' +
+                            '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+data+'\')">OK</button></i>'}
                 }]
             });
+        }
+        function clickOK(id) {
+            $("#salesID").val(id);
+            // alert($("#salesID").val());
+            getGroup();
         }
 
         function getTableGroup(){
@@ -127,16 +105,21 @@
                 },
                 ajax : {
                     url: '{{ url("getDataSales") }}',
-
+                    data: function (d) {
+                        var search_data = {
+                            salesID: $("#salesID").val(),
+                        };
+                        d.search_param = search_data;
+                    },
                 },
                 columns : [
-                    {data : 'user_id', name: 'user_id'},
+                    {data : 'sls', name: 'sls'},
                     {data : 'sales_name', name: 'sales_name'},
                     {data : 'address', name: 'address'},
                     {data : 'phone', name: 'phone'},
                     {data : 'mobilephone', name: 'mobilephone'},
                     {data : 'email', name: 'email'},
-                    {data : 'user_id', name: 'user_id'},
+                    {data : 'sls', name: 'sls'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -181,7 +164,7 @@
             var groupemail = $("#groupemail").val();
 
             var required = "Field is required.";
-            if (groupname !== ''){
+            if (validateGroup('save')){
                 $.get("/mockjax");
 
                 $.ajax({
@@ -210,16 +193,155 @@
                         }
                     }
                 });
-            } else{
-                if(groupemail === ''){$("#cekGroupEmail").text(required);$("#groupemail").addClass("is-invalid");$("#groupemail").focus();}
-                if(groupmobile === ''){$("#cekGroupMobilePhone").text(required);$("#groupmobilphone").addClass("is-invalid");$("#groupmobilphone").focus();}
-                if(groupphone === ''){$("#cekGroupPhone").text(required);$("#groupphone").addClass("is-invalid");$("#groupphone").focus();}
-                if(groupaddress === ''){$("#cekGroupAddress").text(required);$("#groupaddress").addClass("is-invalid");$("#groupaddress").focus();}
-                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
-                if(groupid === ''){$("#cekGroupId").text(required);$("#groupid").addClass("is-invalid");$("#groupid").focus();}
             }
         });
+        function validateGroup(typeData){
+            var res = true;
+            var required = "Field is required.";
 
+            var groupname = $("#groupname").val();
+            var groupid = $("#groupid").val();
+            var groupaddress = $("#groupaddress").val();
+            var groupmobile = $("#groupmobilphone").val();
+            var groupphone = $("#groupphone").val();
+            var groupemail = $("#groupemail").val();
+
+            if (testEmail(groupemail) === false){
+                $("#cekGroupEmail").text('Email not valid');
+                $("#groupemail").addClass("is-invalid");
+                $("#groupemail").focus();
+                res = false;
+            }
+            if(groupemail === ''){
+                $("#cekGroupEmail").text(required);
+                $("#groupemail").addClass("is-invalid");
+                $("#groupemail").focus();
+                res = false;
+            }
+            var isnum = /^\d+$/.test(groupmobile);
+            if(isnum === false){
+                $("#cekGroupMobilePhone").text("Number only");
+                $("#groupmobilphone").addClass("is-invalid");
+                $("#groupmobilphone").focus();
+                res = false;
+            }
+            if(groupmobile === ''){
+                $("#cekGroupMobilePhone").text(required);
+                $("#groupmobilphone").addClass("is-invalid");
+                $("#groupmobilphone").focus();
+                res = false;
+            }
+            isnum2 = /^\d+$/.test(groupphone);
+            if(isnum2 === false){
+                $("#cekGroupPhone").text("Number only");
+                $("#groupphone").addClass("is-invalid");
+                $("#groupphone").focus();
+                res = false;
+            }
+            if(groupphone === ''){
+                $("#cekGroupPhone").text(required);
+                $("#groupphone").addClass("is-invalid");
+                $("#groupphone").focus();
+                res = false;
+            }
+            if(groupaddress === ''){
+                $("#cekGroupAddress").text(required);
+                $("#groupaddress").addClass("is-invalid");
+                $("#groupaddress").focus();
+                res = false;
+
+            }
+            if(groupname === ''){
+                $("#cekGroupname").text(required);
+                $("#groupname").addClass("is-invalid");
+                $("#groupname").focus();
+                res = false;
+
+            }
+            if(groupid === ''){
+                $("#cekGroupId").text(required);
+                $("#groupid").addClass("is-invalid");
+                $("#groupid").focus();
+                res = false;
+            }
+            if (groupid === '') {
+                $("#cekGroupId").text(required);
+                $("#groupid").addClass("is-invalid");
+                $("#groupid").focus();
+                res = false;
+            }
+            if(typeData == "save"){
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('getSalesId') }}",
+                    data: {
+                        'id': groupid,
+                    },
+                    success: function (res) {
+                        if (res.status === "01") {
+                            $("#cekGroupId").text('Sales Id not available, try another ID');
+                            $("#groupid").addClass("is-invalid");
+                            $("#groupid").focus();
+                            res = false;
+                        } else {
+                            res = true;
+                        }
+                    }
+                });
+            }
+            return res;
+        }
+        function changeCheck(data){
+
+            switch (data) {
+                case 'groupid':
+                    var groupid = $("#groupid").val();
+                    if(groupid !== ''){
+                        $("#groupid").removeClass("is-invalid");
+                        $("#cekGroupId").text('');
+                    };
+                    break;
+                case 'groupname':
+                    var groupname = $("#groupname").val();
+                    if(groupname !== ''){
+                        $("#groupname").removeClass("is-invalid");
+                        $("#cekGroupname").text('');
+                    };
+                    break;
+                case 'groupaddress':
+                    var groupaddress = $("#groupaddress").val();
+                    if(groupaddress !== ''){
+                        $("#groupaddress").removeClass("is-invalid");
+                        $("#cekGroupAddress").text('');
+                    };
+                    break;
+                case 'groupphone':
+                    var groupphone = $("#groupphone").val();
+                    if(groupphone !== ''){
+                        $("#groupphone").removeClass("is-invalid");
+                        $("#cekGroupPhone").text('');
+                    };
+                    break;
+                case 'groupmobilephone':
+                    var groupmobile = $("#groupmobilphone").val();
+                    if(groupmobile !== ''){
+                        $("#groupmobilphone").removeClass("is-invalid");
+                        $("#cekGroupMobilePhone").text('');
+                    };
+                    break;
+                case 'groupemail':
+                    var groupemail = $("#groupemail").val();
+                    if(groupemail !== ''){
+                        $("#groupemail").removeClass("is-invalid");
+                        $("#cekGroupEmail").text('');
+                    };
+                    break;
+            }
+        }
+        function testEmail(email){
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
         function addGroup() {
             var id = $("#addgroupID").val();
             $.ajax({
@@ -238,6 +360,7 @@
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
+            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Tambah");
             clearCache();
         }
         function editSales(data){
@@ -249,6 +372,8 @@
                     },
                     success : function (res) {
                         // console.log(res.name);
+                        $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
+                        $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res.sales_name);
                         $("#groupid").val(data);
                         $("#groupname").val(res.sales_name);
                         $("#groupaddress").val(res.address);
@@ -279,6 +404,8 @@
                 },
                 success : function (res) {
                     // console.log(res.name);
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res.sales_name);
                     $("#groupid").val(data);
                     $("#groupname").val(res.sales_name);
                     $("#groupaddress").val(res.address);
@@ -297,7 +424,7 @@
             var groupemail = $("#groupemail").val();
 
             var required = "Field is required.";
-            if (groupname !== ''){
+            if (validateGroup('update')){
                 $.get("/mockjax");
                 $.ajax({
                     type : "GET",
@@ -325,58 +452,115 @@
                         }
                     }
                 });
-            } else{
-                if(groupname === ''){$("#cekGroupname").text(required);$("#groupname").addClass("is-invalid");$("#groupname").focus();}
             }
-
-            $("#add-group").removeClass("d-none");
-            $("#add-group").addClass("d-block");
-            $("#main-group").removeClass("d-block");
-            $("#main-group").addClass("d-none");
-            $("#savegroupbutton").removeClass('d-none');
-            $("#editgroupbutton").addClass('d-none');
-            clearCache();
         });
-        $("#canceleditgroup").on("click", function () {
-            if(confirm("Are u sure dischard changes?")){
+        function clearCache(){
+            $("#hiddendealerid").val('');
+            $("#groupid").val('');
+            $("#groupname").val('');
+            $("#groupaddress").val('');
+            $("#groupphone").val('');
+            $("#groupmobilphone").val('');
+            $("#groupemail").val('');
+
+            $("#cekGroupname").text('');
+            $("#cekGroupId").text('');
+            $("#cekGroupAddress").text('');
+            $("#cekGroupPhone").text('');
+            $("#cekGroupMobilePhone").text('');
+            $("#cekGroupEmail").text('');
+
+            $("#hiddendealerid").removeClass("is-invalid");
+            $("#groupid").removeClass("is-invalid");
+            $("#groupname").removeClass("is-invalid");
+            $("#groupaddress").removeClass("is-invalid");
+            $("#groupphone").removeClass("is-invalid");
+            $("#groupmobilphone").removeClass("is-invalid");
+            $("#groupemail").removeClass("is-invalid");
+        }
+
+        $("#cancelgroup").on("click", function () {
+            var res =  $("#hiddensalesid").val()+$("#groupid").val()+$("#groupname").val()+$("#groupaddress").val()+$("#groupphone").val()+$("#groupmobilphone").val()+$("#groupemail").val();
+            res = res.trim();
+            if(res.length > 0){
+                swal({
+                        title: "Are you sure?",
+                        text: "You will not be able to recover this!",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, cancel it!",
+                        cancelButtonText: "No",
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            $("#add-group").removeClass("d-block");
+                            $("#add-group").addClass("d-none");
+                            $("#main-group").removeClass("d-none");
+                            $("#main-group").addClass("d-block");
+                            $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+                        }
+                    }
+                )
+
+            }else{
                 $("#add-group").removeClass("d-block");
                 $("#add-group").addClass("d-none");
                 $("#main-group").removeClass("d-none");
                 $("#main-group").addClass("d-block");
+                $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
             }
         });
-        function clearCache(){
-            var groupname = $("#groupname").val();
-            $("#cekGroupname").text('');$("#groupname").removeClass("is-invalid");
-        }
 
-        $("#cancelgroup").on("click", function () {
-            $("#add-group").removeClass("d-block");
-            $("#add-group").addClass("d-none");
-            $("#main-group").removeClass("d-none");
-            $("#main-group").addClass("d-block");
+        $("#canceleditgroup").on("click", function () {
+            swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-danger",
+                    confirmButtonText: "Yes, cancel it!",
+                    cancelButtonText: "No",
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                },
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
+                        $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
+                        $("#add-group").removeClass("d-block");
+                        $("#add-group").addClass("d-none");
+                        $("#main-group").removeClass("d-none");
+                        $("#main-group").addClass("d-block");
+
+                    }
+                }
+            )
         });
 
         $("#btn-current1").on("click", function(){
+
             getGroup();
         });
 
         function getGroup() {
-            var id = $("#groupID").val();
-
+            var id = $("#salesID").val();
+            console.log(id);
             if(id === ''){
                 $("#groupGet").val('');
                 $('#table-reggroup').DataTable().ajax.reload();
             } else {
                 $.ajax({
                     type : "GET",
-                    url  : "{{ url('group-get') }}",
+                    url  : "{{ url('salesGetName') }}",
                     data : {
                         'id' : id,
                     },
                     success : function (res) {
                         if ($.trim(res)){
-                            $("#groupGet").val(res[0].name);
+                            $("#groupGet").val(res[0].sales_name);
                         } else {
                             $("#groupGet").val('');
                         }
@@ -399,6 +583,8 @@
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
                         <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
                         <li class="breadcrumb-item active" aria-current="page">Sales</li>
+                        <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
+                        <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>
                     </ol>
                 </nav>
             </div>
@@ -410,8 +596,8 @@
         <div class="card card-header">
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Sales ID</label>
-                <input class="form-control mb-2" placeholder="Input ID Sales Group" id="groupID" onchange="getGroup()">
-                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Sales Group" readonly id="groupGet">
+                <input class="form-control mb-2" placeholder="Input ID Sales" id="salesID"  onchange="getGroup()">
+                <input class="form-control mb-2 ml-input-2" placeholder="Sales Name" readonly id="groupGet">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
             </form>
@@ -482,33 +668,33 @@
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales ID</label>
-                                    <input class="form-control col-sm-6" id="groupid" readonly type="text" maxlength="20" placeholder="Please Input" required/>
+                                    <input class="form-control col-sm-6" id="groupid" type="text" maxlength="20" onchange="changeCheck('groupid')" placeholder="Sales ID" required/>
                                     <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
 
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Sales Name" onchange="changeCheck('groupname')" required id="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Address</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" required id="groupaddress"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Address" onchange="changeCheck('groupaddress')" required id="groupaddress"/>
                                     <label id="cekGroupAddress" class="error invalid-feedback small d-block col-sm-4" for="groupaddress"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Phone</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" maxlength="15" required id="groupphone"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Phone" maxlength="15" onchange="changeCheck('groupphone')" required id="groupphone"/>
                                     <label id="cekGroupPhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Mobile Phone</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Please Input" maxlength="15" required id="groupmobilphone"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Mobile Phone" maxlength="15" onchange="changeCheck('groupmobilephone')" required id="groupmobilphone"/>
                                     <label id="cekGroupMobilePhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
                                 </div>
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Email</label>
-                                    <input class="form-control col-sm-6" type="email" placeholder="Please Input" required id="groupemail"/>
+                                    <input class="form-control col-sm-6" type="email" placeholder="Email" required onchange="changeCheck('groupemail')" id="groupemail"/>
                                     <label id="cekGroupEmail" class="error invalid-feedback small d-block col-sm-4" for="groupemail"></label>
                                 </div>
                             </div>
@@ -519,11 +705,12 @@
             <div class="card card-footer">
                 <div class="form-inline justify-content-end" id="savegroupbutton">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelgroup">Cancel</button>
                 </div>
                 <div class="form-inline justify-content-end d-none" id="editgroupbutton">
-                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-success mb-2" type="button" id="updategroup">Update</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceleditgroup">Cancel</button>
                 </div>
             </div>
@@ -534,7 +721,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Group List</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Sales List</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -544,17 +731,12 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Id</th>
-                                <th>Group Name</th>
+                                <th>Sales Id</th>
+                                <th>Sales Name</th>
                                 <th>#</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>10002</td>
-                                <td>Trader</td>
-                                <td><button class="btn btn-sm btn-success" type="button">OK</button></td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>

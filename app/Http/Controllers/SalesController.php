@@ -59,6 +59,7 @@ class SalesController extends Controller
         return response()->json($sales);
     }
 
+
     public function updateSales(){
         $id = $_GET['sales_id'];
         $name = $_GET['sales_name'];
@@ -160,11 +161,39 @@ class SalesController extends Controller
         ]);
     }
 
-    public function getSales(){
-        $sales = Sales::all();
-//        return response()->json($dealer);
-        return DataTables::of($sales)->make(true);
+    public function getSales(Request $request){
+        $requestData = $request->all();
+        $salesID = $requestData['search_param']['salesID'];
 
+        $where_groupID = "";
+        if ($salesID != ""){
+            $where_groupID = " WHERE sales_id = '$salesID'";
+        }
+
+        $query = 'SELECT *,sales.sales_id as sls from "sales"
+                  '.$where_groupID;
+        $data = DB::select($query);
+        return DataTables::of($data)->make(true);
+    }
+    public function getSalesName(){
+        $id = $_GET['id'];
+        $group = Sales::select("sales_name")
+            ->where("sales_id",$id)
+            ->get();
+        return response()->json($group);
+    }
+
+    public function getIdSales(){
+        $id = $_GET['id'];
+        $res = Sales::where('sales_id',$id)->count();
+        if($res > 0){
+            $status = "01";
+        }else{
+            $status = "00";
+        }
+        return response()->json([
+            'status' => $status,
+        ]);
     }
 
     public function getGroupUser(Request $request){

@@ -60,12 +60,16 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('dealerGetSales', 'DealerController@dealerGetSales');
     Route::get('dealerAssign/add/', 'DealerController@dealerAssignAdd');
     Route::get('dealerAssign/remove/', 'DealerController@dealerAssignRemove');
+    Route::get('dealerGetName', 'DealerController@getDealerName');
 
 
     Route::get('getDataSales','SalesController@getSales');
     Route::get('sales-registrasi', 'SalesController@registrasiSales');
     Route::get('sales-update', 'SalesController@salesEdit');
     Route::get('sales-update/submit', 'SalesController@updateSales');
+    Route::get('getSalesId','SalesController@getIdSales');
+    Route::get('salesGetName', 'SalesController@getSalesName');
+
 
     Route::get('getDataCustomer','CustomerController@getCustomer');
     Route::get('getDataCustomerDetail','CustomerController@getCustomerDetail');

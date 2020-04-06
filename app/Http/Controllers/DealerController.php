@@ -157,10 +157,19 @@ class DealerController extends Controller
         ]);
     }
 
-    public function getDealer(){
-        $dealer = Dealer::all();
-//        return response()->json($dealer);
-        return DataTables::of($dealer)->make(true);
+    public function getDealer(request $request){
+        $requestData = $request->all();
+        $dealerID = $requestData['search_param']['dealerId'];
+
+        $where_groupID = "";
+        if ($dealerID != ""){
+            $where_groupID = " WHERE dealer_id = '$dealerID'";
+        }
+
+        $query = 'SELECT *,dealer.dealer_id as dlr from "dealer"
+                  '.$where_groupID;
+        $data = DB::select($query);
+        return DataTables::of($data)->make(true);
     }
 
     public function getIdDealer(){
@@ -174,6 +183,13 @@ class DealerController extends Controller
         return response()->json([
             'status' => $status,
         ]);
+    }
+    public function getDealerName(){
+        $id = $_GET['id'];
+        $group = Dealer::select("dealer_name")
+            ->where("dealer_id",$id)
+            ->get();
+        return response()->json($group);
     }
     public function dealerGetSales(){
         $id = $_GET['id'];

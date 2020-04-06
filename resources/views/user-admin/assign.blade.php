@@ -11,6 +11,9 @@
                 placeholder: 'AOID'
             });
             $('.bootstrap-select').selectpicker();
+            $(".readonly").on('keydown paste mousedown mouseup drop', function(e){
+                e.preventDefault();
+            });
         });
 
         function getTableGroupUserAO() {
@@ -24,10 +27,10 @@
                     }
                 },
                 columns : [
-                    {data : 'client_id', name: 'client_id'},
-                    {data : 'dlrname', name: 'dlrname'},
-                    {data : 'username', name: 'username'},
-                    {data : 'client_id', name: 'client_id'},
+                    {data : 'user_id', name: 'user_id'},
+                    {data : 'user_name', name: 'user_name'},
+                    {data : 'dealer_id', name: 'dealer_id'},
+                    {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -45,8 +48,8 @@
                     searchable : true,
                     targets : [3],
                     render : function (data, type, row) {
-                        var id = row.id;
-                        var username = row.username;
+                        var id = row.user_id;
+                        var username = row.user_name;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKUserAO(\''+id+'\',\''+username+'\')">OK</button>'
                     }
@@ -82,9 +85,9 @@
                 },
                 columns : [
                     {data : 'sequence_no', name: 'sequence_no'},
-                    {data : 'client_id', name: 'client_id'},
-                    {data : 'dlrname', name: 'dlrname'},
-                    {data : 'username', name: 'username'},
+                    {data : 'user_id', name: 'user_id'},
+                    {data : 'user_name', name: 'user_name'},
+                    {data : 'dealer_id', name: 'dealer_id'},
                     /*{data : 'client_id', name: 'client_id'},*/
                 ],
                 columnDefs: [
@@ -117,8 +120,8 @@
 
             $('#table-listmember tbody').on('click', 'tr', function () {
                 var data = tableListMember.row( this ).data();
-                var aoid = data.user_id;
-                var aoname = data.username;
+                var aoid = data.dealer_id;
+                var aoname = data.user_name;
                 tableListMember.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
 
@@ -159,7 +162,7 @@
                     render : function (data, type, row) {
                         var id = row.group_id;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+id+')">OK</button>'
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+id+'\')">OK</button>'
                     }
                 }]
             });
@@ -416,9 +419,9 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         <th>Seq</th>
-                                        <th>AO ID</th>
-                                        <th>AO Name</th>
-                                        <th>Username</th>
+                                        <th>User ID</th>
+                                        <th>User Name</th>
+                                        <th>Dealer ID</th>
                                         {{--<th>#</th>--}}
                                     </tr>
                                     </thead>
@@ -460,14 +463,14 @@
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">Group Name</label>
                                     <input class="form-control" type="hidden" placeholder="ID Group" required id="group_hidden"/>
-                                    <input class="form-control col-sm-5" type="text" placeholder="Please Click Table Group" readonly id="grpname"/>
+                                    <input class="form-control col-sm-5 readonly" type="text" placeholder="Please Click Table Group" id="grpname" required/>
                                     <label id="cekUser" class="error invalid-feedback small d-block col-sm-5" for="grpname"></label>
                                 </div>
 
                                 <div class="form-group form-inline lbl-user-aoid">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">Username AO</label>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">User Name</label>
                                     <div class="input-group col-sm-5 px-0">
-                                        <input class="form-control form-control-input col-sm-12 mb-0 mx-0" placeholder="Username Account Officer" readonly id="aoid_us" value=""/>
+                                        <input class="form-control form-control-input col-sm-12 mb-0 mx-0 readonly" placeholder="Username Dealer" id="aoid_us" value="" required/>
                                         <div class="input-group-append">
                                             <span class="input-group-text btn btn-default" data-toggle="modal" data-target="#exampleModal1">
                                                 <i class="fa fa-search"></i>

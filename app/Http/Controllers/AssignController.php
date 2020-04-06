@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class AssignController extends Controller
 {
@@ -36,5 +37,32 @@ class AssignController extends Controller
         } else {
             return view('user-admin.assign', ['title' => 'Assign Group', 'countgroup' => $countgroup, 'clapp' => $clapp]);
         }
+    }
+
+    public function getListAO(Request $request){
+        $query = 'SELECT "dealer".dealer_name, "dealer".dealer_id, "users".* FROM "users"
+                  JOIN "dealer" ON "dealer".user_id = "users".user_id';
+        $data = DB::select($query);
+
+        return DataTables::of($data)->make(true);
+    }
+
+    public function getGroupUser(Request $request){
+        $requestData = $request->all();
+        $groupID = $requestData['search_param']['groupID'];
+
+        if ($groupID === '' || $groupID === null){
+            $groupID = '';
+        }
+
+        $query = 'SELECT 
+                ROW_NUMBER() OVER (ORDER BY group_id)  sequence_no,
+                "users".*, group_dealer.group_id, dealer.dealer_id
+                FROM "group_dealer" JOIN dealer
+                ON dealer.dealer_id = group_dealer.dealer_id
+                JOIN users ON users.user_id = dealer.dealer_id
+                WHERE users.user_type = \'D\' AND group_dealer.group_id = \''.$groupID.'\'';
+        $data = DB::select($query);
+        return DataTables::of($data)->make(true);
     }
 }

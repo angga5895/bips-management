@@ -576,14 +576,6 @@ class UserController extends Controller
         return $max;
     }
 
-    public function getListAO(Request $request){
-        $query = 'SELECT "dealer".dealer_name, "user".* FROM "user"
-                  JOIN "dealer" ON "dealer".dealer_id = "user".client_id';
-        $data = DB::select($query);
-
-        return DataTables::of($data)->make(true);
-    }
-
     public function addUserGroup(){
         $id = $_GET['id'];
         $group_id = $_GET['group_id'];

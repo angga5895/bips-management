@@ -162,27 +162,8 @@ class GroupController extends Controller
 
     public function getGroup(){
         $id = $_GET['id'];
-        $group = Group::select("name")
-            ->where("group_id",$id)
-            ->get();
+        $group = DB::select('SELECT "group".* FROM "group" WHERE "lower"("group".group_id) = \''.strtolower($id).'\'');
         return response()->json($group);
-    }
-
-    public function getGroupUser(Request $request){
-        $requestData = $request->all();
-        $groupID = $requestData['search_param']['groupID'];
-
-        if ($groupID === '' || $groupID === null){
-            $groupID = 0;
-        }
-
-        $query = 'SELECT 
-                    ROW_NUMBER() OVER (ORDER BY group_id)  sequence_no,
-                    "view_user_group_dealer".* 
-                  FROM "view_user_group_dealer" 
-                  WHERE "group_id" ='.$groupID;    
-        $data = DB::select($query);
-        return DataTables::of($data)->make(true);
     }
 
     public function dataGroup(Request $request){
@@ -191,7 +172,7 @@ class GroupController extends Controller
         $groupID = $requestData['search_param']['groupID'];
         $where_groupID = "";
         if ($groupID != ""){
-            $where_groupID = ' WHERE "group".group_id = '.$groupID;
+            $where_groupID = ' WHERE "lower"("group".group_id) LIKE \'%'.strtolower($groupID).'%\'';
         }
 
         $query = 'SELECT * from "group"

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
+    <meta name="author" content="Creative Tim">
+    <title>Bahana - {{ $title }}</title>
+    <!-- Favicon -->
+    {{--<link href="./assets/img/brand/favicon.png" rel="icon" type="image/png">--}}
+    {{--<link rel="icon" type="image/png" href="{{ url('adminlte/dist/img/p.png') }}">--}}
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    <!-- Icons -->
+    <link href="{{ url('argon/vendor/nucleo/css/nucleo.css') }}" rel="stylesheet">
+    <link href="{{ url('argon/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <!-- Argon CSS -->
+    <link type="text/css" href="{{ url('argon/css/argon.css?v=1.0.0') }}" rel="stylesheet">
+
+    <link href="{{ asset('dataTables.min.css') }}" type="text/css" rel="stylesheet">
+    <link href="{{ asset('App.css') }}" rel="stylesheet">
+    <link href="{{ url('select2/select2.min.css') }}" rel="stylesheet" />
+    <link href="{{ url('bootstrap-select/dist/css/bootstrap-select.min.css') }}" rel="stylesheet" />
+    <link href="{{ url('bootstrap-datepicker/bootstrap-datepicker.css') }}" rel="stylesheet" />
+    <link href="{{ url('bootstrap-sweetalert/bootstrap-sweetalert.css') }}" rel="stylesheet" />
+    <style>
+        .modal-ajax {
+            display:    none;
+            position:   fixed;
+            z-index:    1000;
+            top:        0;
+            left:       0;
+            height:     100%;
+            width:      100%;
+            background: rgba( 255, 255, 255, .8 )
+            url('{{ asset('/pIkfp.gif') }}')
+            50% 50%
+            no-repeat;
+        }
+    </style>
+    @section('css')
+    @show
+</head>
+
+<body>
+<!-- Sidenav -->
+@include('layouts.includes.sidebar-argon')
+
+<!-- Main content -->
+<div class="main-content">
+    <!-- Top navbar / sidenav -->
+    @include('layouts.includes.navbar-argon')
+
+    <!-- Page content -->
+    <div class="container-fluid mt--9">
+        @yield('styles')
+
+        @yield('content')
+
+        @yield('scripts')
+
+        <!-- Footer -->
+        @include('layouts.includes.footerbar-argon')
+    </div>
+
+    <!-- Modal Not Available -->
+    <div class="modal fade" id="modalNotAvailable" tabindex="-1" role="dialog" aria-labelledby="modalNotAvailableLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-gradient-danger text-lighter">
+                <div class="modal-body">
+                    <div class="py-3 text-center">
+                        <i class="ni ni-notification-70 ni-3x"></i>
+                        <h1 class="mt-4">Upss..!</h1>
+                        <p>Sorry, this page is not available right now.</p>
+                        <p>Please visit later.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link text-white ml-auto" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gagal -->
+    <div class="modal fade" id="modalGagal" tabindex="-1" role="dialog" aria-labelledby="modalGagalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-gradient-gray text-lighter">
+                <div class="modal-body">
+                    <div class="py-3 text-center">
+                        <h1 class="mt-4">Please Input Group Before.</h1>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link text-white ml-auto" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Argon Scripts -->
+<!-- Core -->
+<script src="{{ url('argon/vendor/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ url('argon/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+<!-- Optional JS -->
+<script src="{{ url('argon/vendor/chart.js/dist/Chart.min.js') }}"></script>
+<script src="{{ url('argon/vendor/chart.js/dist/Chart.extension.js') }}"></script>
+<!-- Argon JS -->
+<script src="{{ url('argon/js/argon.js?v=1.0.0') }}"></script>
+
+<script src="{{ url('select2/select2.min.js') }}"></script>
+<script src="{{ url('bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
+<script src="{{ url('bootstrap-datepicker/bootstrap-datepicker.js') }}"></script>
+<script src="{{ url('bootstrap-sweetalert/bootstrap-sweetalert.js') }}"></script>
+<script type="text/javascript" charset="utf8"  src="{{ asset('jquery.dataTables.min.js') }}"></script>
+
+<script src="{{ asset('forms_pickers.js') }}"></script>
+<script src="{{ asset('layout_mockJax.js') }}"></script>
+
+<script type="text/javascript">
+    $('.js-example-basic-single').select2({
+        placeholder: '-- pilih beberapa kategori --'
+    });
+</script>
+
+<script>
+    window.onscroll = function () {myHeaderFixed()};
+
+    var header = document.getElementById("navbar-main");
+
+    var sticky = header.offsetTop;
+
+    function myHeaderFixed() {
+        if (window.pageYOffset > sticky){
+            header.classList.add("sticky-navbar");
+        } else {
+            header.classList.remove("sticky-navbar");
+        }
+    }
+</script>
+
+@section('js')
+
+@show
+</body>
+
+</html>

@@ -518,7 +518,7 @@
                     <div class="box-body">
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="table-reggroup">
+                                <table class="table table-striped table-bordered table-hover table-hoverclick" id="table-reggroup">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         <th>Group ID</th>

@@ -7,6 +7,7 @@
             getTableList();
             getTableGroupUserAO();
             getGroupId();
+            getTableDealerList();
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
@@ -15,6 +16,39 @@
                 e.preventDefault();
             });
         });
+
+        function getTableDealerList() {
+            $("#table-dealerList").dataTable({
+                destroy: true,
+                ajax : {
+                    url: '{{ url("dealerGetSalesID") }}',
+                    data: function (d) {
+                        var search_data = {
+                            dealerID:$("#aoid_id").val(),
+                    };
+                        d.search_param = search_data;
+                    }
+                },
+                columns : [
+                    {data : 'sequence_no', name: 'sequence_no'},
+                    {data : 'sales_id', name: 'sales_id'},
+                    {data : 'sales_name', name: 'sales_id'},
+                ],
+                columnDefs: [{
+                    targets : [0],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [1],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [2],
+                    orderable : true,
+                    searchable : true,
+                }]
+            });
+        }
 
         function getTableGroupUserAO() {
             $("#table-aolist").dataTable({
@@ -96,9 +130,9 @@
                 },
                 columns : [
                     {data : 'sequence_no', name: 'sequence_no'},
-                    {data : 'user_id', name: 'user_id'},
-                    {data : 'user_name', name: 'user_name'},
                     {data : 'dealer_id', name: 'dealer_id'},
+                    {data : 'user_name', name: 'user_name'},
+                    {data : 'user_id', name: 'user_id'},
                     /*{data : 'client_id', name: 'client_id'},*/
                 ],
                 columnDefs: [
@@ -140,6 +174,10 @@
                 $("#aoid_us").removeClass("is-invalid");
                 $("#aoid_us").val(aoname);
                 $("#aoid_id").val(aoid);
+
+                $('#table-dealerList').DataTable().ajax.reload();
+
+                $('#ModalDealerList').modal('show');
             } );
         }
 
@@ -157,7 +195,6 @@
                 columns : [
                     {data : 'group_id', name: 'group_id'},
                     {data : 'name', name: 'name'},
-                    {data : 'group_id', name: 'group_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -501,12 +538,16 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         <th>Seq</th>
-                                        <th>User ID</th>
-                                        <th>User Name</th>
                                         <th>Dealer ID</th>
+                                        <th>User Name</th>
+                                        <th>User ID</th>
                                         {{--<th>#</th>--}}
                                     </tr>
                                     </thead>
+
+
+
+
                                     <tbody>
                                     <tr>
                                         <td></td>
@@ -575,6 +616,45 @@
             </section>
         </div>
     </div>
+    <!-- Modal Dealer List -->
+    <div class="modal fade" id="ModalDealerList" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Dealer List</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="table-dealerList">
+                            <thead class="bg-gradient-primary text-lighter">
+                            <tr>
+                                <th>Seq</th>
+                                <th>Sales ID</th>
+                                <th>Sales Name</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>10002</td>
+                                <td>Trader</td>
+                                <td><button class="btn btn-sm btn-success" type="button">OK</button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {{--<div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>--}}
+            </div>
+        </div>
+    </div>
+
+
     <!-- Modal Group List -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">

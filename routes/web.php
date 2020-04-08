@@ -63,6 +63,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('dealerAssign/remove/', 'DealerController@dealerAssignRemove');
     Route::get('dealerGetName', 'DealerController@getDealerName');
 
+    Route::get('dealerGetSalesID', 'DealerController@dealerGetSalesID');
 
     Route::get('getDataSales','SalesController@getSales');
     Route::get('sales-registrasi', 'SalesController@registrasiSales');

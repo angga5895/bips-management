@@ -212,6 +212,21 @@ class DealerController extends Controller
         }
         return DataTables::of($rowData)->make(true);
     }
+    public function dealerGetSalesID(request $request){
+        $requestData = $request->all();
+        $groupID = $requestData['search_param']['dealerID'];
+
+        if ($groupID === '' || $groupID === null){
+            $groupID = '';
+        }
+        $rowData = DB::select("select *,a.sales_id as sls,ROW_NUMBER() OVER (ORDER BY a.sales_id) 
+                                      sequence_no from sales a
+                                        INNER JOIN
+                                        (select * from dealer_sales b WHERE b.dealer_id = '$groupID') c
+                                        ON a.sales_id = c.sales_id");
+        return DataTables::of($rowData)->make(true);
+    }
+
     public function dealerAssignAdd(){
         $dealer_id = $_GET['dealer_id'];
         $sales_id = $_GET['sales_id'];

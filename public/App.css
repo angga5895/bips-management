@@ -226,6 +226,6 @@ table.dataTable tbody tr.selected {
     padding-bottom:.3rem;
     vertical-align: middle!important;
 }
-.table-hoverclick>tr>td{
+.table-hoverclick tr td{
     cursor: pointer;
 }

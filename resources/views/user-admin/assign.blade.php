@@ -534,7 +534,7 @@
                                 <strong id="nameofgroup">-</strong>
                             </label>
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="table-listmember">
+                                <table class="table table-striped table-bordered table-hover table-hoverclick" id="table-listmember">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         <th>Seq</th>

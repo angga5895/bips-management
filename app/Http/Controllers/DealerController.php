@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DealerSales;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -68,25 +69,27 @@ class DealerController extends Controller
         $mobile = $_GET['mobile_phone'];
         $email = $_GET['email'];
 
-        $query = Dealer::where('dealer_id', $id)->update([
-            'dealer_name' => $name,
-            'address' => $address,
-            'phone' => $phone,
-            'mobilephone' => $mobile,
-            'email' => $email,
-        ]);
-
-        if ($query){
+        try{
+            $query = Dealer::where('dealer_id', $id)->update([
+                'dealer_name' => $name,
+                'address' => $address,
+                'phone' => $phone,
+                'mobilephone' => $mobile,
+                'email' => $email,
+            ]);
             $status = "00";
             $group = $name;
-        } else {
+            $err_msg = null;
+        }catch (QueryException $ex){
             $status = "01";
             $group = "";
+            $err_msg = $ex->getMessage();
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $err_msg,
         ]);
     }
 
@@ -133,27 +136,29 @@ class DealerController extends Controller
         $phone = $_GET['phone'];
         $mobile = $_GET['mobilephone'];
         $email = $_GET['email'];
-        $query = Dealer::create([
-            'dealer_id' => $id,
-            'dealer_name' => $name,
-            'address' => $address,
-            'phone' => $phone,
-            'mobilephone' => $mobile,
-            'email' => $email,
-            'user_id' => $id,
-        ]);
-
-        if ($query){
+        try{
+            $query = Dealer::create([
+                'dealer_id' => $id,
+                'dealer_name' => $name,
+                'address' => $address,
+                'phone' => $phone,
+                'mobilephone' => $mobile,
+                'email' => $email,
+                'user_id' => $id,
+            ]);
             $status = "00";
             $group = $name;
-        } else {
+            $err_msg = null;
+        }catch (QueryException $ex){
             $status = "01";
-            $group = "";
+            $group = null;
+            $err_msg = $ex->getMessage();
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $err_msg,
         ]);
     }
 
@@ -230,38 +235,45 @@ class DealerController extends Controller
     public function dealerAssignAdd(){
         $dealer_id = $_GET['dealer_id'];
         $sales_id = $_GET['sales_id'];
-        $res = DB::insert("INSERT INTO dealer_sales values ('$dealer_id','$sales_id')");
-        if ($res){
+        try{
+            DB::insert("INSERT INTO dealer_sales values ('$dealer_id','$sales_id')");
             $status = "00";
-            $group = "";
-        } else {
+            $group = null;
+            $err_msg = null;
+        }catch (QueryException $ex){
             $status = "01";
-            $group = "";
+            $group = null;
+            $err_msg = $ex->getMessage();
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $err_msg,
         ]);
     }
     public function dealerAssignRemove(){
         $dealer_id = $_GET['dealer_id'];
         $sales_id = $_GET['sales_id'];
-        $res = DealerSales::where([
-            'dealer_id' => $dealer_id,
-            'sales_id' => $sales_id,
-        ])->delete();
-        if ($res){
+
+        try{
+            DealerSales::where([
+                'dealer_id' => $dealer_id,
+                'sales_id' => $sales_id,
+            ])->delete();
             $status = "00";
-            $group = "";
-        } else {
+            $group = null;
+            $err_msg = null;
+        }catch (QueryException $ex){
             $status = "01";
-            $group = "";
+            $group = null;
+            $err_msg = $ex->getMessage();
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $err_msg,
         ]);
     }
 

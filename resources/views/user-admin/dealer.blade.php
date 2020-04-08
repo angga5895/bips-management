@@ -197,6 +197,10 @@
                                 $("#alert-success-registrasi").addClass("d-block");
                                 $("#alert-success-update").removeClass("d-block");
                                 $("#alert-success-update").addClass("d-none");
+                            }else{
+                                $("#alert-error-registrasi").addClass('d-block');
+                                $("#alert-error-registrasi").removeClass('d-none');
+                                $("#err_msg").text(res.err_msg);
                             }
                         }
                     }
@@ -371,11 +375,7 @@
             clearCache();
         }
         function assignSales(data){
-            $("#sales-group").removeClass("d-none");
-            $("#sales-group").addClass("d-block");
-            $("#main-group").removeClass("d-block");
-            $("#main-group").addClass("d-none");
-            $("#idCurrDealer").val(data);
+
 
             $.ajax({
                 type : "GET",
@@ -384,8 +384,14 @@
                     'id' : data,
                 },
                 success : function (res) {
-                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text(res.dealer_name);
-                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text('Assign Sales');
+                        $("#breadAdditional").removeClass("d-none").addClass("d-block").text(res.dealer_name);
+                        $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text('Assign Sales');
+                        $("#sales-group").removeClass("d-none");
+                        $("#sales-group").addClass("d-block");
+                        $("#main-group").removeClass("d-block");
+                        $("#main-group").addClass("d-none");
+                        $("#idCurrDealer").val(data);
+                        clearCache();
                 }
             });
 
@@ -494,10 +500,16 @@
                     'sales_id': salesId,
                 },
                 success : function (res) {
-                    $("#alert-addsuccess").removeClass("d-none");
-                    $("#alert-addsuccess").addClass("d-block");
-                    $("#alert-del").removeClass("d-block");
-                    $("#alert-del").addClass("d-none");
+                    if(res.status == "00"){
+                        $("#alert-addsuccess").removeClass("d-none");
+                        $("#alert-addsuccess").addClass("d-block");
+                        $("#alert-del").removeClass("d-block");
+                        $("#alert-del").addClass("d-none");
+                    }else{
+                        $("#alert-error-assign").removeClass('d-none');
+                        $("#alert-error-assign").addClass('d-block');
+                        $("#err_msg_assign").text(res.err_msg);
+                    }
                     $('#table-dealer-sales').DataTable().ajax.reload();
                 }
             });
@@ -512,11 +524,18 @@
                     'sales_id': salesId,
                 },
                 success : function (res) {
-                    $("#alert-del").removeClass("d-none");
-                    $("#alert-del").addClass("d-block");
+                    if(res.status == "00") {
+                        $("#alert-del").removeClass("d-none");
 
-                    $("#alert-addsuccess").removeClass("d-block");
-                    $("#alert-addsuccess").addClass("d-none");
+                        $("#alert-del").addClass("d-block");
+
+                        $("#alert-addsuccess").removeClass("d-block");
+                        $("#alert-addsuccess").addClass("d-none");
+                    }else{
+                        $("#alert-error-assign").removeClass('d-none');
+                        $("#alert-error-assign").addClass('d-block');
+                        $("#err_msg_assign").text(res.err_msg);
+                    }
                     $('#table-dealer-sales').DataTable().ajax.reload();
                 }
             });
@@ -550,6 +569,7 @@
             $("#main-group").addClass("d-none");
             $("#savegroupbutton").addClass('d-none');
             $("#editgroupbutton").removeClass('d-none');
+            clearCache();
         }
 
         $("#resetgroup").on('click', function(){
@@ -614,7 +634,10 @@
                                 $("#alert-success-update").addClass("d-block");
                                 $("#alert-success-registrasi").removeClass("d-block");
                                 $("#alert-success-registrasi").addClass("d-none");
-                                clearCache();
+                            }else{
+                                $("#alert-error-registrasi").addClass('d-block');
+                                $("#alert-error-registrasi").removeClass('d-none');
+                                $("#err_msg").text(res.err_msg);
                             }
                         }
                     }
@@ -669,6 +692,12 @@
             $("#groupphone").removeClass("is-invalid");
             $("#groupmobilphone").removeClass("is-invalid");
             $("#groupemail").removeClass("is-invalid");
+
+            $("#alert-error-registrasi").addClass('d-none');
+            $("#alert-error-registrasi").removeClass('d-block');
+
+            $("#alert-error-assign").addClass('d-none');
+            $("#alert-error-assign").removeClass('d-block');
         }
 
         $("#cancelgroup").on("click", function () {
@@ -739,6 +768,10 @@
             $("#alert-del").addClass("d-none");
             $("#alert-addsuccess").removeClass("d-block");
             $("#alert-addsuccess").addClass("d-none");
+        }
+        function closeAlertAssign(){
+            $("#alert-error-assign").removeClass('d-block');
+            $("#alert-error-assign").addClass('d-none');
         }
     </script>
 @endsection
@@ -836,6 +869,7 @@
                     <!-- Default box -->
                     <div class="box">
                         <div class="box-body">
+
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer ID</label>
@@ -902,6 +936,15 @@
         </div>
 
         <div class="card card-body" style="min-height: 365px">
+            <div class="d-none" id="alert-error-assign">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="fa fa-exclamation-triangle"></i></span>
+                    <span class="alert-inner--text"><strong>Err.</strong><span id="err_msg_assign"></span></span>
+                    <button type="button" class="close" onclick="closeAlertAssign()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
             <div class="d-none" id="alert-addsuccess">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
@@ -927,6 +970,8 @@
                 <!-- Default box -->
                 <div class="box">
                     <div class="box-body">
+
+
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                             {{--<div class="form-inline">
 

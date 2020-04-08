@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,26 +68,27 @@ class SalesController extends Controller
         $phone = $_GET['phone'];
         $mobile = $_GET['mobile_phone'];
         $email = $_GET['email'];
-
-        $query = Sales::where('sales_id', $id)->update([
-            'sales_name' => $name,
-            'address' => $address,
-            'phone' => $phone,
-            'mobilephone' => $mobile,
-            'email' => $email,
-        ]);
-
-        if ($query){
+        try {
+            $query = Sales::where('sales_id', $id)->update([
+                'sales_name' => $name,
+                'address' => $address,
+                'phone' => $phone,
+                'mobilephone' => $mobile,
+                'email' => $email,
+            ]);
             $status = "00";
             $group = $name;
-        } else {
+            $err_msg = null;
+        }catch(QueryException $ex){
             $status = "01";
-            $group = "";
+            $group = null;
+            $err_msg = $ex->getMessage();
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $err_msg,
         ]);
     }
 
@@ -137,27 +139,29 @@ class SalesController extends Controller
         $phone = $_GET['phone'];
         $mobile = $_GET['mobilephone'];
         $email = $_GET['email'];
-        $query = Sales::create([
-            'sales_id' => $id,
-            'sales_name' => $name,
-            'address' => $address,
-            'phone' => $phone,
-            'mobilephone' => $mobile,
-            'email' => $email,
-            'user_id'=> $id,
-        ]);
-
-        if ($query){
+        try{
+            $query = Sales::create([
+                'sales_id' => $id,
+                'sales_name' => $name,
+                'address' => $address,
+                'phone' => $phone,
+                'mobilephone' => $mobile,
+                'email' => $email,
+                'user_id'=> $id,
+            ]);
             $status = "00";
             $group = $name;
-        } else {
-            $status = "01";
-            $group = "";
+            $err_msg = null;
+        }catch(QueryException $ex){
+            $status = '01';
+            $group = null;
+            $err_msg = $ex->getMessage();
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $err_msg,
         ]);
     }
 

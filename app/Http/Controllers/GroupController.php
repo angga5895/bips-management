@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -64,24 +65,31 @@ class GroupController extends Controller
         $head_name = $_GET['head_name'];
 
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = Group::where('group_id', $id)->update([
-            'name' => $name,
-            'head_name' => $head_name,
-            'head_id' => $head_id,
-            'updated_at' => $current_time,
-        ]);
 
-        if ($query){
-            $status = "00";
+        $updatestatus = '0';
+        $exUpdate = '';
+        try {
+
+            $query = Group::where('group_id', $id)->update([
+                'name' => $name,
+                'head_name' => $head_name,
+                'head_id' => $head_id,
+                'updated_at' => $current_time,
+            ]);
+            $err_msg = null;
             $group = $name;
-        } else {
+            $status = "00";
+        }catch (QueryException $ex){
+            $updatestatus = '1';
+            $err_msg = $ex->getMessage();
+            $group = null;
             $status = "01";
-            $group = "";
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $err_msg,
         ]);
     }
 
@@ -137,26 +145,29 @@ class GroupController extends Controller
         $head_name = $_GET['head_name'];
         $head_id = $_GET['head_id'];
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $query = Group::create([
-            'group_id' => $group_id,
-            'name' => $group_name,
-            'head_id'=>$head_id,
-            'head_name'=>$head_name,
-            'created_at' => $current_time,
-            'updated_at' => $current_time,
-        ]);
-
-        if ($query){
-            $status = "00";
+        try {
+            $query = Group::create([
+                'group_id' => $group_id,
+                'name' => $group_name,
+                'head_id' => $head_id,
+                'head_name' => $head_name,
+                'created_at' => $current_time,
+                'updated_at' => $current_time,
+            ]);
+            $status = '00';
+            $msg = null;
             $group = $group_name;
-        } else {
-            $status = "01";
+        }
+        catch (QueryException $ex){
+            $status = '01';
+            $msg = $ex->getMessage();
             $group = "";
         }
 
         return response()->json([
             'status' => $status,
-            'group' => $group
+            'group' => $group,
+            'err_msg' => $msg,
         ]);
     }
 

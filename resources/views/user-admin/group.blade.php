@@ -177,6 +177,10 @@
 
                                 $("#alert-success-update").removeClass("d-block");
                                 $("#alert-success-update").addClass("d-none");
+                            }else{
+                                $("#err_msg").text(res.err_msg);
+                                $("#alert-error-registrasi").removeClass("d-none");
+                                $("#alert-error-registrasi").addClass("d-block");
                             }
                         }
                     }
@@ -360,6 +364,10 @@
                                 $("#alert-success-registrasi").removeClass("d-block");
                                 $("#alert-success-registrasi").addClass("d-none");
                                 clearCache();
+                            }else{
+                                $("#err_msg").text(res.err_msg);
+                                $("#alert-error-registrasi").removeClass("d-none");
+                                $("#alert-error-registrasi").addClass("d-block");
                             }
                         }
                     }
@@ -424,6 +432,9 @@
             $("#groupname").removeClass("is-invalid");
             $("#grouphead").removeClass("is-invalid");
             $("#groupheadname").removeClass("is-invalid");
+
+            $("#alert-error-registrasi").removeClass('d-block');
+            $("#alert-error-registrasi").addClass('d-none');
         }
 
         $("#cancelgroup").on("click", function () {
@@ -535,6 +546,7 @@
                     </button>
                 </div>
             </div>
+
             <div class="d-none" id="alert-success-update">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
@@ -584,6 +596,17 @@
                     <!-- Default box -->
                     <div class="box">
                         <div class="box-body">
+
+                            <div class="d-none" id="alert-error-registrasi">
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <span class="alert-inner--icon"><i class="fa fa-exclamation-triangle"></i></span>
+                                    <span class="alert-inner--text"><strong>Err.</strong><span id="err_msg"></span></span>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>

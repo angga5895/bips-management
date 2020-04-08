@@ -189,6 +189,10 @@
                                 $("#regisgroup").text(res.group);
                                 $("#alert-success-registrasi").removeClass("d-none");
                                 $("#alert-success-registrasi").addClass("d-block");
+                            }else{
+                                $("#err_msg").text(res.err_msg);
+                                $("#alert-error-registrasi").addClass("d-block");
+                                $("#alert-error-registrasi").removeClass("d-none");
                             }
                         }
                     }
@@ -361,6 +365,13 @@
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Tambah");
+
+
+            $("#savegroupbutton").addClass('d-block');
+            $("#savegroupbutton").removeClass('d-none');
+            $("#editgroupbutton").removeClass('d-block');
+            $("#editgroupbutton").addClass('d-none');
+
             clearCache();
         }
         function editSales(data){
@@ -391,7 +402,9 @@
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#savegroupbutton").addClass('d-none');
+            $("#savegroupbutton").removeClass('d-block');
             $("#editgroupbutton").removeClass('d-none');
+            $("#editgroupbutton").addClass('d-block');
             clearCache();
         }
         $("#resetgroup").on('click', function(){
@@ -448,6 +461,10 @@
                                 $("#update_sales_notification").text(res.group);
                                 $("#alert-success-update").removeClass("d-none");
                                 $("#alert-success-update").addClass("d-block");
+                            }else{
+                                $("#err_msg").text(res.err_msg);
+                                $("#alert-error-registrasi").addClass("d-block");
+                                $("#alert-error-registrasi").removeClass("d-none");
                             }
                         }
                     }
@@ -477,6 +494,15 @@
             $("#groupphone").removeClass("is-invalid");
             $("#groupmobilphone").removeClass("is-invalid");
             $("#groupemail").removeClass("is-invalid");
+
+            $("#alert-error-registrasi").removeClass("d-block");
+            $("#alert-error-registrasi").addClass("d-none");
+
+            $("#alert-success-registrasi").removeClass("d-block");
+            $("#alert-success-registrasi").addClass("d-none");
+
+            $("#alert-success-update").removeClass("d-block");
+            $("#alert-success-update").addClass("d-none");
         }
 
         $("#cancelgroup").on("click", function () {
@@ -660,11 +686,22 @@
         <form>
             <input type="hidden" id="hiddensalesid">
             <div class="card card-body" style="min-height: 365px">
+
                 <!-- Main content -->
                 <section class="content">
                     <!-- Default box -->
                     <div class="box">
                         <div class="box-body">
+                            <div class="d-none" id="alert-error-registrasi">
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <span class="alert-inner--icon"><i class="fa fa-exclamation-triangle"></i></span>
+                                    <span class="alert-inner--text"><strong>Err.</strong><span id="err_msg"></span></span>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales ID</label>
@@ -702,7 +739,7 @@
                     </div>
                 </section>
             </div>
-            <div class="card card-footer">
+            <div class="card card-footer text-right">
                 <div class="form-inline justify-content-end" id="savegroupbutton">
                     <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
                     <button class="form-control-btn btn btn-info mb-2" type="reset">Reset</button>

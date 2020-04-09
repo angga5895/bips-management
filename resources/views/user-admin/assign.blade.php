@@ -54,17 +54,16 @@
             $("#table-aolist").dataTable({
                 destroy: true,
                 ajax : {
-                    url: '{{ url("get-dataAOList/get") }}',
+                    url: '{{ url("getDataDealer") }}',
                     data: function (d) {
-                        var search_data = {aoID:''};
+                        var search_data = {dealerId:''};
                         d.search_param = search_data;
                     }
                 },
                 columns : [
-                    {data : 'user_id', name: 'user_id'},
-                    {data : 'user_name', name: 'user_name'},
                     {data : 'dealer_id', name: 'dealer_id'},
-                    {data : 'user_id', name: 'user_id'},
+                    {data : 'dealer_name', name: 'dealer_name'},
+                    {data : 'dealer_id', name: 'dealer_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -75,15 +74,11 @@
                     orderable : true,
                     searchable : true,
                 },{
+                    searchable : true,
                     targets : [2],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    searchable : true,
-                    targets : [3],
                     render : function (data, type, row) {
-                        var id = row.user_id;
-                        var username = row.user_name;
+                        var id = row.dealer_id;
+                        var username = row.dealer_name;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKUserAO(\''+id+'\',\''+username+'\')">OK</button>'
                     }
@@ -131,8 +126,8 @@
                 columns : [
                     {data : 'sequence_no', name: 'sequence_no'},
                     {data : 'dealer_id', name: 'dealer_id'},
-                    {data : 'user_name', name: 'user_name'},
-                    {data : 'user_id', name: 'user_id'},
+                    {data : 'dealer_name', name: 'dealer_name'},
+                    {data : 'email', name: 'email'},
                     /*{data : 'client_id', name: 'client_id'},*/
                 ],
                 columnDefs: [
@@ -539,8 +534,8 @@
                                     <tr>
                                         <th>Seq</th>
                                         <th>Dealer ID</th>
-                                        <th>User Name</th>
-                                        <th>User ID</th>
+                                        <th>Dealer Name</th>
+                                        <th>Email</th>
                                         {{--<th>#</th>--}}
                                     </tr>
                                     </thead>
@@ -591,9 +586,9 @@
                                 </div>
 
                                 <div class="form-group form-inline lbl-user-aoid">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">User Name</label>
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-0 px-0">Dealer Name</label>
                                     <div class="input-group col-sm-5 px-0">
-                                        <input class="form-control form-control-input col-sm-12 mb-0 mx-0 readonly" placeholder="Username Dealer" id="aoid_us" value="" required/>
+                                        <input class="form-control form-control-input col-sm-12 mb-0 mx-0 readonly" placeholder="Dealer Name" id="aoid_us" value="" required/>
                                         <div class="input-group-append">
                                             <span class="input-group-text btn btn-default" data-toggle="modal" data-target="#exampleModal1">
                                                 <i class="fa fa-search"></i>
@@ -621,7 +616,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Dealer List</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Sales List</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -698,7 +693,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">User Account Officer List</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Dealer List</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -708,9 +703,8 @@
                         <table class="table table-striped table-bordered table-hover" id="table-aolist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>AOID</th>
-                                <th>AO Name</th>
-                                <th>Username</th>
+                                <th>Dealer Id</th>
+                                <th>Dealer Name</th>
                                 <th>#</th>
                             </tr>
                             </thead>

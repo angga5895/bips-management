@@ -37,7 +37,7 @@ class AssignController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.assign', ['title' => 'Assign Group', 'countgroup' => $countgroup, 'clapp' => $clapp]);
+            return view('user-admin.assign', ['title' => 'Dealer Group', 'countgroup' => $countgroup, 'clapp' => $clapp]);
         }
     }
 
@@ -59,11 +59,18 @@ class AssignController extends Controller
 
         $query = 'SELECT 
                 ROW_NUMBER() OVER (ORDER BY group_id)  sequence_no,
-                "users".*, group_dealer.group_id, dealer.dealer_id
+                dealer.*, group_dealer.group_id, dealer.dealer_id
                 FROM "group_dealer" JOIN dealer
                 ON dealer.dealer_id = group_dealer.dealer_id
-                JOIN users ON users.user_id = dealer.dealer_id
-                WHERE users.user_type = \'D\' AND group_dealer.group_id = \''.$groupID.'\'';
+                WHERE group_dealer.group_id = \''.$groupID.'\'';
+
+//        $query = 'SELECT
+//                ROW_NUMBER() OVER (ORDER BY group_id)  sequence_no,
+//                "users".*, group_dealer.group_id, dealer.dealer_id
+//                FROM "group_dealer" JOIN dealer
+//                ON dealer.dealer_id = group_dealer.dealer_id
+//                JOIN users ON users.user_id = dealer.dealer_id
+//                WHERE users.user_type = \'D\' AND group_dealer.group_id = \''.$groupID.'\'';
         $data = DB::select($query);
         return DataTables::of($data)->make(true);
     }
@@ -76,7 +83,7 @@ class AssignController extends Controller
         if($this->_find_user_group($id,$group_id)){
             return response()->json([
                 'status' => '01',
-                'message' => 'User has registered in this group.',
+                'message' => 'This dealer has registered in this group.',
             ]);
         } else{
             $updatestatus = '0';

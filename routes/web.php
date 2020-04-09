@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/user/{id}/reset/password', 'UserController@userResetPassword')->name('useradmin.user-reset-password');
     Route::get('/user/{id}/reset/pin', 'UserController@userResetPIN')->name('useradmin.user-reset-pin');
     Route::get('get-dataClient/{id}', 'UserController@dataClient')->name('data-client');
+    Route::get('getUserPerAccount/', 'UserController@dataAccountRegistered');
+
     Route::get('get-dataAOList/{id}', 'AssignController@getListAO');
 
     Route::get('group-registrasi', 'GroupController@registrasiGroup');

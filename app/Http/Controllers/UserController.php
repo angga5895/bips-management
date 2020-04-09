@@ -444,6 +444,20 @@ class UserController extends Controller
             'message' => $message
         ]);
     }
+    public function dataAccountRegistered(Request $request){
+        $requestData = $request->all();
+
+        $userID = $requestData['search_param']['userID'];
+
+        $data = DB::select("select ROW_NUMBER() OVER (ORDER BY acc.account_no) 
+                                      sequence_no, acc.* from public.account acc
+                                    JOIN
+                                    public.user_account uac
+                                    ON acc.account_no = uac.account_no 
+                                    WHERE uac.user_id = '$userID'");
+        return DataTables::of($data)->make(true);
+    }
+
 
     public function dataRegistrasi(Request $request){
         $requestData = $request->all();

@@ -92,6 +92,8 @@
         $(document).ready(function () {
             tablegetReg();
             tablelist();
+            tablelistaccount();
+
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
@@ -221,6 +223,54 @@
                 }]
             });
         }
+        function convertStatus(status){
+            switch (status) {
+                case 'A': return 'Active';break;
+                case 'T': return 'Trade Disabled'; break;
+                case 'B': return 'Suspend Buy'; break;
+                case 'S': return 'Suspend Sell'; break;
+            }
+        }
+        function tablelistaccount() {
+            $("#table-listaccount").DataTable({
+                /*processing: true,
+                serverSide: true,*/
+                ajax : {
+                    url: '{{ url("getUserPerAccount") }}',
+                    data: function (d) {
+                        var search_data = {userID:$("#detail-userid").text(),
+                         };
+                        d.search_param = search_data;
+                    }
+                },
+                columns : [
+                    {data : 'sequence_no', name : 'sequence_no'},
+                    {data : 'account_no', name : 'account_no'},
+                    {data : 'account_name', name: 'account_name'},
+                    {data : 'account_status', name: 'account_status'},
+                ],
+                columnDefs: [{
+                    targets : [0],
+                    searchable : true
+                },{
+                    targets : [1],
+                    orderable : true,
+                    searchable : false,
+                },{
+                    targets : [2],
+                    orderable : true,
+                    searchable : false,
+                },{
+                    targets : [3],
+                    orderable : true,
+                    searchable : false,
+                    render : function (data, type, row) {
+                        return convertStatus(row.account_status);
+                    }
+                    }],
+            });
+        }
+
 
         function tablelist() {
             $("#table-listmember").DataTable({
@@ -367,6 +417,8 @@
                     $("#add-user").addClass("d-none");
                     $("#main-user").removeClass("d-block");
                     $("#main-user").addClass("d-none");
+                    $('#table-listaccount').DataTable().ajax.reload();
+
                 }
             });
         }
@@ -973,40 +1025,57 @@
             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                 <div class="row">
                     <div class="col-sm-6">
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User ID</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_user_id"></div>
                         </div>
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User Name</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_user_name"></div>
                         </div>
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Email</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_email_address"></div>
                         </div>
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">MSIDN</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_msidn"></div>
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Status</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_status"></div>
                         </div>
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Last Login</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_last_login"></div>
                         </div>
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">Last Teriminal Id</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_last_teriminalid"></div>
                         </div>
-                        <div class="form-group form-inline mb-5">
+                        <div class="form-group form-inline ">
                             <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User Type</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_user_type"></div>
                         </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover table-hoverclick" id="table-listaccount">
+                            <thead class="bg-gradient-primary text-lighter">
+                            <tr>
+                                <th>Seq</th>
+                                <th>Account ID</th>
+                                <th>Account Name</th>
+                                <th>Account Status</th>
+                                {{--<th>#</th>--}}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                     </div>
                 </div>
             </div>

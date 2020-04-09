@@ -18,12 +18,12 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function() {
     //page
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::get('/assign', 'AssignController@index')->name('useradmin.assign');
-    Route::get('/group', 'GroupController@group')->name('useradmin.group');
     Route::get('/user', 'UserController@user')->name('useradmin.user');
     Route::get('/sales', 'SalesController@sales')->name('masterdata.sales');
     Route::get('/dealer', 'DealerController@dealer')->name('masterdata.dealer');
     Route::get('/customer', 'CustomerController@customer')->name('masterdata.customer');
+    Route::get('/assign', 'AssignController@index')->name('masterdata.assign');
+    Route::get('/group', 'GroupController@group')->name('masterdata.group');
 
     //feature
     Route::get('/test', 'UserController@getMaxID');

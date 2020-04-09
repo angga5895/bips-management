@@ -13,25 +13,9 @@ class SeedClModule extends Seeder
     {
         $arr = [
             [
-                'clm_name' => 'Group Dealer',
-                'clm_slug' => 'assign',
-                'clm_order' => 1,
-                'clm_routename' => 'useradmin.assign',
-                'updated_at'=>date('d-m-Y h:i:s'),
-                'created_at'=>date('d-m-Y h:i:s'),
-            ],
-            [
-                'clm_name' => 'Group',
-                'clm_slug' => 'group',
-                'clm_order' => 2,
-                'clm_routename' => 'useradmin.group',
-                'updated_at'=>date('d-m-Y h:i:s'),
-                'created_at'=>date('d-m-Y h:i:s'),
-            ],
-            [
                 'clm_name' => 'User Management',
                 'clm_slug' => 'user',
-                'clm_order' => 3,
+                'clm_order' => 1,
                 'clm_routename' => 'useradmin.user',
                 'updated_at'=>date('d-m-Y h:i:s'),
                 'created_at'=>date('d-m-Y h:i:s'),
@@ -56,6 +40,20 @@ class SeedClModule extends Seeder
                 'clm_slug' => 'customer',
                 'clm_order' => 3,
                 'clm_routename' => 'masterdata.customer',
+                'updated_at'=>date('d-m-Y h:i:s'),
+                'created_at'=>date('d-m-Y h:i:s'),
+            ],  [
+                'clm_name' => 'Group',
+                'clm_slug' => 'group',
+                'clm_order' => 4,
+                'clm_routename' => 'masterdata.group',
+                'updated_at'=>date('d-m-Y h:i:s'),
+                'created_at'=>date('d-m-Y h:i:s'),
+            ],[
+                'clm_name' => 'Group Dealer',
+                'clm_slug' => 'assign',
+                'clm_order' => 5,
+                'clm_routename' => 'masterdata.assign',
                 'updated_at'=>date('d-m-Y h:i:s'),
                 'created_at'=>date('d-m-Y h:i:s'),
             ],

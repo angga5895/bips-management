@@ -384,6 +384,8 @@
                     'id' : data,
                 },
                 success : function (res) {
+                        $("#groupID").val(res.dealer_id);
+                        $("#groupGetSales").val(res.dealer_name);
                         $("#breadAdditional").removeClass("d-none").addClass("d-block").text(res.dealer_name);
                         $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text('Assign Sales');
                         $("#sales-group").removeClass("d-none");
@@ -435,17 +437,30 @@
                 },
                 columns : [
                     {data : 'sls', name: 'sls'},
+                    {data : 'sls', name: 'sls'},
                     {data : 'sales_name', name: 'sales_name'},
                     {data : 'address', name: 'address'},
                     {data : 'phone', name: 'phone'},
                     {data : 'mobilephone', name: 'mobilephone'},
                     {data : 'email', name: 'email'},
-                    {data : 'sales_id', name: 'sales_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
                     orderable : true,
-                    searchable : false,
+                    render : function (data, type, row) {
+                        var id = row.group_id;
+                        if(!row.dealer_id){
+                            return '<button class="btn btn-sm btn-success fa fa-user-plus" type="button" data-dismiss= "modal" onclick="addThis(\''+row.sls+'\')"></button>'
+                        }else{
+                            if(data == null){
+                                return '<button class="btn btn-sm btn-success fa fa-user-plus" type="button" data-dismiss= "modal" onclick="addThis(\''+row.sls+'\')"></button>'
+                            }else{
+                                return '<button class="btn btn-sm btn-danger fa fa-user-minus" type="button" data-dismiss= "modal" onclick="removeThis(\''+row.sls+'\')"></button>'
+                            }
+                        }
+                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
+
+                    }
                 },{
                     targets : [1],
                     orderable : true,
@@ -469,20 +484,7 @@
                 },{
                     searchable : true,
                     targets : [6],
-                    render : function (data, type, row) {
-                        var id = row.group_id;
-                        if(!row.dealer_id){
-                            return '<button class="btn btn-sm btn-success fa fa-user-plus" type="button" data-dismiss= "modal" onclick="addThis(\''+row.sls+'\')"></button>'
-                        }else{
-                            if(data == null){
-                                return '<button class="btn btn-sm btn-success fa fa-user-plus" type="button" data-dismiss= "modal" onclick="addThis(\''+row.sls+'\')"></button>'
-                            }else{
-                                return '<button class="btn btn-sm btn-danger fa fa-user-minus" type="button" data-dismiss= "modal" onclick="removeThis(\''+row.sls+'\')"></button>'
-                            }
-                        }
-                        /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-
-                    }
+                    searchable : true,
                 }]
             });
         }
@@ -929,7 +931,7 @@
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Dealer ID</label>
                 <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="groupID" onchange="getGroup()">
-                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Dealer Group" readonly id="groupGet">
+                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Dealer Group" readonly id="groupGetSales">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
             </form>
@@ -981,13 +983,13 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
+                                        <th>#</th>
                                         <th>Sales Id</th>
                                         <th>Sales Name</th>
                                         <th>Adress</th>
                                         <th>Phone</th>
                                         <th>Mobile Phone</th>
                                         <th>Email</th>
-                                        <th>#</th>
                                     </tr>
                                     </thead>
                                 </table>

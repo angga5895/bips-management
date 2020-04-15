@@ -53,7 +53,7 @@
         }
 
         function clickOK(id) {
-            $("#groupID").val(id);
+            $("#groupID2").val(id);
             getGroup();
         }
 
@@ -85,7 +85,7 @@
                     searchable : true,
                     targets : [2],
                     render : function (data, type, row) {
-                      return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+row.group_id+')">OK</button>'
+                      return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+row.group_id+'\')">Pick</button>'
                     }
                 }]
             });
@@ -103,7 +103,7 @@
                 ajax : {
                     url: '{{ url("get-dataGroup/get") }}',
                     data: function (d) {
-                        var search_data = {groupID:$("#groupID").val()};
+                        var search_data = {groupID:$("#groupID2").val()};
                         d.search_param = search_data;
                     }
                 },
@@ -291,7 +291,7 @@
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
-            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Tambah");
+            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Add");
             $("#savegroupbutton").removeClass('d-none');
             $("#savegroupbutton").addClass('d-block');
             $("#editgroupbutton").removeClass('d-block');
@@ -479,10 +479,10 @@
         });
 
         function getGroup() {
-            var id = $("#groupID").val();
+            var id = $("#groupID2").val();
 
             if(id === ''){
-                $("#groupGet").val('');
+                $("#groupGet2").val('');
                 $('#table-reggroup').DataTable().ajax.reload();
             } else {
                 $.ajax({
@@ -493,9 +493,9 @@
                     },
                     success : function (res) {
                         if ($.trim(res)){
-                            $("#groupGet").val(res[0].name);
+                            $("#groupGet2").val(res[0].name);
                         } else {
-                            $("#groupGet").val('');
+                            $("#groupGet2").val('');
                         }
                         $('#table-reggroup').DataTable().ajax.reload();
                     }
@@ -514,7 +514,7 @@
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
-                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
+                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i>&nbsp;Master Data</li>
                         <li class="breadcrumb-item active" aria-current="page">Group</li>
                         <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
                         <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>
@@ -529,8 +529,8 @@
         <div class="card card-header">
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Group ID</label>
-                <input class="form-control mb-2" placeholder="Input ID Group" id="groupID" onchange="getGroup()">
-                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Group" readonly id="groupGet">
+                <input class="form-control mb-2" placeholder="Input ID Group" id="groupID2" onchange="getGroup()">
+                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Group" readonly id="groupGet2">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
             </form>
@@ -672,7 +672,7 @@
                             <tr>
                                 <td>10002</td>
                                 <td>Trader</td>
-                                <td><button class="btn btn-sm btn-success" type="button">OK</button></td>
+                                <td><button class="btn btn-sm btn-success" type="button">Pick</button></td>
                             </tr>
                             </tbody>
                         </table>

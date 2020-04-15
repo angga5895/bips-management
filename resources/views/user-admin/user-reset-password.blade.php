@@ -42,7 +42,7 @@
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, cancel it!",
+                    confirmButtonText: "Yes",
                     cancelButtonText: "No",
                     closeOnConfirm: true,
                     closeOnCancel: true

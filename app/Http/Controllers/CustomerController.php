@@ -153,12 +153,27 @@ class CustomerController extends Controller
             'group' => $group
         ]);
     }
+    public function getCustomer(request $request){
+        $requestData = $request->all();
+        $customerID = $requestData['search_param']['customerID'];
 
-    public function getCustomer(){
-        $data = DB::select("select * from public.customer");
-//        $customer = Customer::all();
-//        return response()->json($dealer);
+        $where_groupID = "";
+        if ($customerID != ""){
+            $where_groupID = ' WHERE "lower"(custcode) LIKE \'%'.strtolower($customerID).'%\'';
+
+        }
+
+        $query = 'SELECT *,customer.custcode as csd from "customer"
+                  '.$where_groupID;
+        $data = DB::select($query);
         return DataTables::of($data)->make(true);
+    }
+    public function getCustomerName(){
+        $id = $_GET['id'];
+        $group = Customer::select("custname")
+            ->where("custcode",$id)
+            ->get();
+        return response()->json($group);
     }
     public function getCustomerDetail(Request $request){
         $requestData = $request->all();

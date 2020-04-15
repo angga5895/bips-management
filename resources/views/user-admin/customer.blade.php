@@ -60,8 +60,8 @@
             $('#table-grouplist').DataTable().ajax.reload();
         }
 
-        function clickOK(id) {
-            $("#groupID").val(id);
+        function clickOK(id,name) {
+            $("#customerID").val(id);
             getGroup();
         }
 
@@ -75,16 +75,16 @@
                 },
                 ajax : {
                     url: '{{ url("getDataCustomer") }}',
-
+                    data: function (d) {
+                        var search_data = {
+                            customerID:"",
+                        };
+                        d.search_param = search_data;
+                    },
                 },
                 columns : [
                     {data : 'custcode', name: 'custcode'},
                     {data : 'custname', name: 'custname'},
-                    {data : 'custstatus', name: 'custstatus'},
-                    {data : 'idcardno', name: 'idcardno'},
-                    {data : 'email', name: 'email'},
-                    {data : 'phone', name: 'phone'},
-                    {data : 'cellphone', name: 'cellphone'},
                     {data : 'custcode', name: 'custcode'},
                 ],
                 columnDefs: [{
@@ -98,33 +98,10 @@
                 },{
                     targets : [2],
                     orderable : true,
-                    searchable : true,
                     render : function (data, type, row) {
-                        return convertStatus(data);
-                    }
-                },{
-                    targets : [3],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [4],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [5],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    targets : [6],
-                    orderable : true,
-                    searchable : true,
-                },{
-                    searchable : true,
-                    targets : [7],
-                    render : function (data, type, row) {
-                        return '<button class="btn btn-sm btn-info fa fa-search" type="button" data-dismiss= "modal" onclick="detailCustomer(\''+data+'\')"></button>'
-                    }
-                }]
+                        var name = row.custname;
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+row.custcode+'\',\''+name+'\')">Pick</button>'
+                    }}]
             });
         }
 
@@ -139,7 +116,12 @@
                 },
                 ajax : {
                     url: '{{ url("getDataCustomer") }}',
-
+                    data: function (d) {
+                        var search_data = {
+                            customerID: $("#customerID").val(),
+                        };
+                        d.search_param = search_data;
+                    },
                 },
                 columns : [
                     {data : 'custcode', name: 'custcode'},
@@ -176,7 +158,7 @@
                     searchable : true,
                     targets : [5],
                     render : function (data, type, row) {
-                        return '<button class="btn btn-sm btn-info fa fa-search" type="button" data-dismiss= "modal" onclick="detailCustomer(\''+data+'\')"></button>'
+                        return '<button class="btn btn-sm btn-info fa fa-search" type="button" data-dismiss= "modal" onclick="detailCustomer(\''+data+'\',\''+row.custname+'\')"></button>'
                     }
                 }]
             });
@@ -229,13 +211,17 @@
                 if(groupid === ''){$("#cekGroupId").text(required);$("#groupid").addClass("is-invalid");$("#groupid").focus();}
             }
         });
-        function detailCustomer(id){
+        function detailCustomer(id,name){
             $("#breadDetail").removeClass('d-none');
             $("#detail-group").removeClass("d-none");
             $("#detail-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             getDetailCustomer(id);
+            console.log(name);
+            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Detail");
+            $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(name);
+
             // $('#table_detail_customer').DataTable().ajax.reload();
             clearCache();
         }
@@ -344,6 +330,8 @@
             $("#main-group").addClass("d-block");
             $("#detail-group").removeClass("d-block");
             $("#detail-group").addClass("d-none");
+
+
             clearCache();
         }
         function clearCache(){
@@ -356,23 +344,23 @@
         });
 
         function getGroup() {
-            var id = $("#groupID").val();
+            var id = $("#customerID").val();
 
             if(id === ''){
-                $("#groupGet").val('');
+                $("#customerGet").val('');
                 $('#table-reggroup').DataTable().ajax.reload();
             } else {
                 $.ajax({
                     type : "GET",
-                    url  : "{{ url('group-get') }}",
+                    url  : "{{ url('customerGetName') }}",
                     data : {
                         'id' : id,
                     },
                     success : function (res) {
                         if ($.trim(res)){
-                            $("#groupGet").val(res[0].name);
+                            $("#customerGet").val(res[0].custname);
                         } else {
-                            $("#groupGet").val('');
+                            $("#customerGet").val('');
                         }
                         $('#table-reggroup').DataTable().ajax.reload();
                     }
@@ -391,9 +379,12 @@
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
-                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
+                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i>&nbsp;Master Data</li>
+
                         <li class="breadcrumb-item active" aria-current="page">Customer</li>
-                        <li class="breadcrumb-item active d-none" id="breadDetail">Detail</li>
+
+                        <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
+                        <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>
                     </ol>
                 </nav>
             </div>
@@ -405,8 +396,8 @@
         <div class="card card-header">
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Customer Code</label>
-                <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="groupID" onchange="getGroup()">
-                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Customer" readonly id="groupGet">
+                <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="customerID" onchange="getGroup()">
+                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Customer" readonly id="customerGet">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
             </form>
@@ -571,7 +562,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Group List</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Customer List</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -590,7 +581,7 @@
                             <tr>
                                 <td>10002</td>
                                 <td>Trader</td>
-                                <td><button class="btn btn-sm btn-success" type="button">OK</button></td>
+                                <td><button class="btn btn-sm btn-success" type="button">Pick</button></td>
                             </tr>
                             </tbody>
                         </table>

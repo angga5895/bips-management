@@ -75,7 +75,7 @@
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
-                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
+                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i>&nbsp;Master Data</li>
                         <li class="breadcrumb-item active">Group</li>
                         <li class="breadcrumb-item active">Edit</li>
                         @foreach($group as $p)

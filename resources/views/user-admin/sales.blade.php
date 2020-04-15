@@ -84,7 +84,7 @@
                     targets : [2],
                     render : function (data, type, row) {
                         return '<i class="text-center">' +
-                            '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+data+'\')">OK</button></i>'}
+                            '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+data+'\')">Pick</button></i>'}
                 }]
             });
         }
@@ -364,7 +364,7 @@
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
-            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Tambah");
+            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Add");
 
 
             $("#savegroupbutton").addClass('d-block');
@@ -515,9 +515,10 @@
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn-danger",
-                        confirmButtonText: "Yes, cancel it!",
+                        confirmButtonText: "Yes",
                         cancelButtonText: "No",
-                        closeOnConfirm: true,
+                        reverseButtons: true,
+                        closeOnCancel: true,
                         closeOnCancel: true
                     },
                     function(isConfirm) {
@@ -547,7 +548,7 @@
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, cancel it!",
+                    confirmButtonText: "Yes",
                     cancelButtonText: "No",
                     closeOnConfirm: true,
                     closeOnCancel: true
@@ -607,7 +608,7 @@
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
-                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
+                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i>&nbsp;Master Data</li>
                         <li class="breadcrumb-item active" aria-current="page">Sales</li>
                         <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
                         <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>

@@ -80,7 +80,7 @@
                         var id = row.dealer_id;
                         var username = row.dealer_name;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKUserAO(\''+id+'\',\''+username+'\')">OK</button>'
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKUserAO(\''+id+'\',\''+username+'\')">Pick</button>'
                     }
                 }]
             });
@@ -205,7 +205,7 @@
                     render : function (data, type, row) {
                         var id = row.group_id;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+id+'\')">OK</button>'
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+id+'\')">Pick</button>'
                     }
                 }]
             });
@@ -484,8 +484,8 @@
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
-                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
-                        <li class="breadcrumb-item active" aria-current="page">Registrasi</li>
+                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i>&nbsp;Master Data</li>
+                        <li class="breadcrumb-item active" aria-current="page">Group Dealer</li>
                     </ol>
                 </nav>
             </div>
@@ -498,8 +498,8 @@
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Group ID</label>
                 <input class="form-control mb-2" placeholder="Input ID Group" id="groupID" onchange="getGroup()">
+                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Group" readonly id="groupGet">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList();"><i class="fa fa-search"></i></button>
-                <input class="form-control mb-2" placeholder="Nama Detail Group" readonly id="groupGet">
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current2">Search</button>
             </form>
         </div>
@@ -635,7 +635,7 @@
                             <tr>
                                 <td>10002</td>
                                 <td>Trader</td>
-                                <td><button class="btn btn-sm btn-success" type="button">OK</button></td>
+                                <td><button class="btn btn-sm btn-success" type="button">Pick</button></td>
                             </tr>
                             </tbody>
                         </table>

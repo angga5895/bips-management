@@ -87,7 +87,7 @@
                     targets : [2],
                     render : function (data, type, row) {
                         return '' +
-                            '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+row.dealer_id+')">OK</button>'
+                            '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+row.dealer_id+')">Pick</button>'
                     }
                 }]
             });
@@ -371,7 +371,7 @@
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
-            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Tambah");
+            $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Add");
             clearCache();
         }
         function assignSales(data){
@@ -423,7 +423,7 @@
                     $("div.toolbar").html('' +
                         '<div class="input-group"><a href="{{url('dealer')}}">'+
                     '<button class="form-control-btn-0 btn btn-primary mb-2" type="button"  style="display: inline";>Back</button></a>&nbsp;&nbsp;&nbsp;<div id="idselect"></div></div>');
-                    $('<select class="form-control"><option value="01" '+select01+'>Registered</option><option value="02"  '+select02+'>Non Registered</option><option value="00" '+select00+'>All</option></select>').appendTo( $("div.selectToolbar")).on('change', function (){
+                    $('<select class="form-control" data-live-search="true" data-style="btn-default"><option value="01" '+select01+'>Assigned Sales</option><option value="02"  '+select02+'>Unassigned Sales</option><option value="00" '+select00+'>All Sales</option></select>').appendTo( $("div.selectToolbar")).on('change', function (){
                         $("#table-dealer-sales").DataTable().clear().destroy();
                         getAssignSalesTable(data,$(this).val());
                     });
@@ -786,7 +786,7 @@
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
-                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
+                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i>&nbsp;Master Data</li>
                         <li class="breadcrumb-item active" aria-current="page">Dealer</li>
                         <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
                         <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>

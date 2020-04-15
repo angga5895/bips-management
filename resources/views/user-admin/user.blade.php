@@ -304,7 +304,7 @@
                     render : function (data, type, row) {
                         var uid = row.user_id;
                         var us = row.user_name;
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+uid+'\')">OK</button>'
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+uid+'\')">Pick</button>'
                     }
                 }]
             });
@@ -418,6 +418,8 @@
                     $("#main-user").removeClass("d-block");
                     $("#main-user").addClass("d-none");
                     $('#table-listaccount').DataTable().ajax.reload();
+                    $("#breadAdditional").addClass("d-block"); $("#breadAdditional").removeClass("d-none");$("#breadAdditional").text("Detail");
+                    $("#breadAdditionalText").addClass("d-block"); $("#breadAdditionalText").removeClass("d-none");$("#breadAdditionalText").text(res.user_name);
 
                 }
             });
@@ -435,6 +437,7 @@
             $("#main-user").addClass("d-none");
             $("#detail-user").removeClass("d-block");
             $("#detail-user").addClass("d-none");
+            $("#breadAdditional").addClass("d-block"); $("#breadAdditional").removeClass("d-none");$("#breadAdditional").text("Add");
 
             clearCache();
         };
@@ -446,6 +449,9 @@
             $("#add-user").addClass("d-none");
             $("#main-user").removeClass("d-none");
             $("#main-user").addClass("d-block");
+            $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
+            $("#breadAdditionalText").addClass("d-none"); $("#breadAdditionalText").removeClass("d-block");$("#breadAdditionalText").text("");
+
         });
 
         $("#canceluser").on("click", function () {
@@ -468,6 +474,8 @@
                         $("#main-user").addClass("d-block");
                         $("#detail-user").removeClass("d-block");
                         $("#detail-user").addClass("d-none");
+                        $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
+
                     }
                 }
             )
@@ -642,6 +650,7 @@
             $("#cekPin-confirm").text('');
             $("#pin-confirm").removeClass("is-invalid");
             $("#pin-confirm").val('');
+
         }
 
         function resetApp(){
@@ -704,6 +713,7 @@
                     },
                     success : function (res) {
                         if ($.trim(res)){
+                            $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
                             if (res.status === "00"){
                                 $('#table-reggroup').DataTable().ajax.reload();
                                 $("#add-user").removeClass("d-block");
@@ -715,6 +725,7 @@
                                 $("#alert-success-registrasi").addClass("d-block");
                                 $("#alert-error-registrasi").removeClass("d-block");
                                 $("#alert-error-registrasi").addClass("d-none");
+
                             } else {
                                 $('#table-reggroup').DataTable().ajax.reload();
                                 $("#add-user").removeClass("d-block");
@@ -813,6 +824,8 @@
                         {{--<li class="breadcrumb-item"><a href="#"><i class="ni ni-single-02"></i> Dashboards</a></li>--}}
                         <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> User Admin</li>
                         <li class="breadcrumb-item active" aria-current="page">User</li>
+                        <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
+                        <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>
                     </ol>
                 </nav>
             </div>
@@ -903,38 +916,28 @@
                         <div class="box-body">
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
 
-                                <div class="form-group form-inline lbl-user-type">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Type</label>
-                                    <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_type" onchange="checkUserType()" required>
-                                        <option value="" disabled selected>Choose User Type</option>
-                                        @foreach($usertype as $p)
-                                            <option value="{{ $p->id }}">{{ $p->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <label id="cekUser_type" class="error invalid-feedback small d-block col-sm-4" for="user_type"></label>
-                                </div>
-
                                 <div class="row">
                                     <div class="col-sm-6">
+
                                         <div class="form-group form-inline">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
                                             <div class="col-sm-9 pr-0 row" id="useridCDS">
                                                 <div class="input-group col-sm-12 px-0">
-                                                    <input class="form-control readonly" type="text" placeholder="User ID" id="client_id" required/>
-                                                    <input class="form-control" type="hidden" id="user_id" required/>
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text btn btn-default" id="btn-clientid">
-                                                            <i class="fa fa-search"></i>
-                                                        </span>
-                                                    </div>
+                                                    <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-white" id="user_type" onchange="checkUserType()" required>
+                                                        <option value="" disabled selected>Choose User Type</option>
+                                                        @foreach($usertype as $p)
+                                                            <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
-                                                <label id="cekClient_id" class="error invalid-feedback small col-sm-12 px-0" for="client_id" style="justify-content: flex-start;"></label>
+                                                <label id="cekUser_type" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekUser_type"></label>
                                             </div>
                                             <div class="col-sm-9 pr-0 d-none row" id="useridT">
                                                 <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required/>
                                                 <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
                                             </div>
                                         </div>
+
                                         <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
                                             <div class="col-sm-9 pr-0 row">
@@ -956,8 +959,44 @@
                                                 <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
                                             </div>
                                         </div>
+                                        <div class="form-group form-inline lbl-group">
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
+                                            <div class="col-sm-9 pr-0 row">
+                                                <div class="input-group col-sm-12 px-0">
+                                                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking(this)" required>
+                                                    <option value="" disabled selected>Choose User Status</option>
+                                                    @foreach($userstatus as $p)
+                                                        <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                </div>
+                                                <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_status"></label>
+                                            </div>
+                                        </div>
                                     </div>
+
+
                                     <div class="col-sm-6">
+
+                                        <div class="form-group form-inline">
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
+                                            <div class="col-sm-9 pr-0 row" id="useridCDS">
+                                                <div class="input-group col-sm-12 px-0">
+                                                    <input class="form-control readonly" type="text" placeholder="User ID" id="client_id" required/>
+                                                    <input class="form-control" type="hidden" id="user_id" required/>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text btn btn-default" id="btn-clientid">
+                                                            <i class="fa fa-search"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <label id="cekClient_id" class="error invalid-feedback small col-sm-12 px-0" for="client_id" style="justify-content: flex-start;"></label>
+                                            </div>
+                                            <div class="col-sm-9 pr-0 d-none row" id="useridT">
+                                                <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required/>
+                                                <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
+                                            </div>
+                                        </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Password</label>
                                             <div class="col-sm-9 pr-0 row">
@@ -987,17 +1026,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="form-group form-inline lbl-user-status">
-                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Status</label>
-                                    <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking(this)" required>
-                                        <option value="" disabled selected>Choose User Status</option>
-                                        @foreach($userstatus as $p)
-                                            <option value="{{ $p->id }}">{{ $p->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
                                 </div>
                             </div>
                         </div>

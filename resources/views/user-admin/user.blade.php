@@ -921,7 +921,10 @@
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
                                             <div class="col-sm-9 pr-0 row" id="useridCDS">
                                                 <div class="input-group col-sm-12 px-0">
-                                                    <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-white" id="user_type" onchange="checkUserType()" required>
+                                                    <select class="form-control bootstrap-select w-select-100" data-live-search="true"
+                                                            data-style="btn-white" id="user_type" onchange="checkUserType()" required
+                                                            oninvalid="this.setCustomValidity('Please pick an user type')"
+                                                    >
                                                         <option value="" disabled selected>Choose User Type</option>
                                                         @foreach($usertype as $p)
                                                             <option value="{{ $p->id }}">{{ $p->name }}</option>
@@ -939,21 +942,28 @@
                                         <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
                                             <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="text" placeholder="User Name" id="user_name" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="text" placeholder="User Name"
+                                                       id="user_name" onchange="checking(this)" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekUser_name" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_name"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>
                                             <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="email" placeholder="Email" id="email_address" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="email" placeholder="Email" id="email_address" onchange="checking(this)" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekEmail_address" class="error invalid-feedback small d-block col-sm-12 px-0" for="email_address"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">MSIDN</label>
                                             <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="text" placeholder="MSIDN" id="msidn" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="text" placeholder="MSIDN" id="msidn" onchange="checking(this)" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
                                             </div>
                                         </div>
@@ -961,7 +971,10 @@
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
                                             <div class="col-sm-9 pr-0 row">
                                                 <div class="input-group col-sm-12 px-0">
-                                                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking(this)" required>
+                                                <select class="form-control bootstrap-select w-select-100" data-live-search="true"
+                                                        data-style="btn-white" id="user_status" onchange="checking(this)" required
+                                                        oninvalid="this.setCustomValidity('Please pick an user status')"
+                                                >
                                                     <option value="" disabled selected>Choose User Status</option>
                                                     @foreach($userstatus as $p)
                                                         <option value="{{ $p->id }}">{{ $p->name }}</option>
@@ -980,7 +993,9 @@
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
                                             <div class="col-sm-9 pr-0 row" id="useridCDS">
                                                 <div class="input-group col-sm-12 px-0">
-                                                    <input class="form-control readonly" type="text" placeholder="User ID" id="client_id" required/>
+                                                    <input class="form-control readonly" type="text" placeholder="User ID" id="client_id" required
+                                                           oninvalid="this.setCustomValidity('Field is required')"
+                                                    />
                                                     <input class="form-control" type="hidden" id="user_id" required/>
                                                     <div class="input-group-append">
                                                         <span class="input-group-text btn btn-default" id="btn-clientid">
@@ -991,35 +1006,50 @@
                                                 <label id="cekClient_id" class="error invalid-feedback small col-sm-12 px-0" for="client_id" style="justify-content: flex-start;"></label>
                                             </div>
                                             <div class="col-sm-9 pr-0 d-none row" id="useridT">
-                                                <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Password</label>
                                             <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="password" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input"
+                                                       id="password" onchange="checking(this)" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekPassword" class="error invalid-feedback small d-block col-sm-12 px-0" for="password"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Confirm Password</label>
                                             <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="password-confirm" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input"
+                                                       id="password-confirm" onchange="checking(this)" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekPassword-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="password-confirm"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">PIN</label>
                                             <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required/>
+                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input"
+                                                       id="pin" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekPin" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin"></label>
                                             </div>
                                         </div>
                                         <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Confirm PIN</label>
                                             <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input" id="pin-confirm" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required/>
+                                                <input class="form-control col-sm-12" type="password" placeholder="Please Input"
+                                                       id="pin-confirm" onchange="checking(this)" onkeypress="return hanyaAngka(event)"
+                                                       maxlength="6" pattern="\d+" required
+                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                />
                                                 <label id="cekPin-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin-confirm"></label>
                                             </div>
                                         </div>

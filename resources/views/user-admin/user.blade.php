@@ -218,7 +218,7 @@
                             +email_address+'\',\''
                             +msidn+'\',\''
                             +hash_password+'\',\''
-                            +hash_pin+'\')">OK</button>'
+                            +hash_pin+'\')">Pick</button>'
                     }
                 }]
             });

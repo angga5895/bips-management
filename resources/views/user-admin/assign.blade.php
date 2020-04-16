@@ -297,17 +297,15 @@
             } else {
                 swal({
                         title: "Are you sure?",
-                        text: "You will not be able to recover this imaginary file!",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn-danger",
-                        confirmButtonText: "Yes, delete it!",
-                        cancelButtonText: "No, cancel!",
-                        closeOnConfirm: true,
-                        closeOnCancel: true
+                        confirmButtonText: "No",
+                        cancelButtonText: "Yes",
+                        closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (isConfirm) {
+                    if (!isConfirm) {
                         $.ajax({
                             type: "GET",
                             url: "{{ url('delAllUserGroup') }}",

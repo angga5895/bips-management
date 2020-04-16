@@ -511,18 +511,15 @@
             if(res.length > 0){
                 swal({
                         title: "Are you sure?",
-                        text: "You will not be able to recover this!",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn-danger",
-                        confirmButtonText: "Yes",
-                        cancelButtonText: "No",
-                        reverseButtons: true,
+                        confirmButtonText: "No",
+                        cancelButtonText: "Yes",
                         closeOnCancel: true,
-                        closeOnCancel: true
                     },
                     function(isConfirm) {
-                        if (isConfirm) {
+                        if (!isConfirm) {
                             $("#add-group").removeClass("d-block");
                             $("#add-group").addClass("d-none");
                             $("#main-group").removeClass("d-none");
@@ -544,17 +541,15 @@
         $("#canceleditgroup").on("click", function () {
             swal({
                     title: "Are you sure?",
-                    text: "You will not be able to recover this!",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true
+                    confirmButtonText: "No",
+                    cancelButtonText: "Yes",
+                    closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (isConfirm) {
+                    if (!isConfirm) {
                         $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
                         $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
                         $("#add-group").removeClass("d-block");

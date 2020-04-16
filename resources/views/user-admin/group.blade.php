@@ -395,17 +395,15 @@
         $("#canceleditgroup").on("click", function () {
             swal({
                     title: "Are you sure?",
-                    text: "You will not be able to recover this!",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, cancel it!",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true
+                    confirmButtonText: "No",
+                    cancelButtonText: "Yes",
+                    closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (isConfirm) {
+                    if (!isConfirm) {
                         $("#add-group").removeClass("d-block");
                         $("#add-group").addClass("d-none");
                         $("#main-group").removeClass("d-none");
@@ -443,17 +441,15 @@
             if(res.length > 0){
                 swal({
                         title: "Are you sure?",
-                        text: "You will not be able to recover this!",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonClass: "btn-danger",
-                        confirmButtonText: "Yes, cancel it!",
-                        cancelButtonText: "No",
-                        closeOnConfirm: true,
-                        closeOnCancel: true
+                        confirmButtonText: "No",
+                        cancelButtonText: "Yes",
+                        closeOnCancel: true,
                     },
                     function(isConfirm) {
-                        if (isConfirm) {
+                        if (!isConfirm) {
                             $("#add-group").removeClass("d-block");
                             $("#add-group").addClass("d-none");
                             $("#main-group").removeClass("d-none");

@@ -649,17 +649,15 @@
         $("#canceleditgroup").on("click", function () {
             swal({
                     title: "Are you sure?",
-                    text: "You will not be able to recover this!",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, cancel it!",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true
+                    confirmButtonText: "No",
+                    cancelButtonText: "Yes",
+                    closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (isConfirm) {
+                    if (!isConfirm) {
                         $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
                         $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
                         $("#add-group").removeClass("d-block");
@@ -703,22 +701,20 @@
         }
 
         $("#cancelgroup").on("click", function () {
-            var res =  $("#hiddendealerid").val()+$("#groupid").val()+$("#groupname").val()+$("#groupaddress").val()+$("#groupphone").val()+$("#groupmobilphone").val()+$("#groupemail").val();
+            var res =  $("#groupid").val()+$("#groupname").val()+$("#groupaddress").val()+$("#groupphone").val()+$("#groupmobilphone").val()+$("#groupemail").val();
             res = res.trim();
             if(res.length > 0){
             swal({
                     title: "Are you sure?",
-                    text: "You will not be able to recover this!",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, cancel it!",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true
+                    confirmButtonText: "No",
+                    cancelButtonText: "Yes",
+                    closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (isConfirm) {
+                    if (!isConfirm) {
                         $("#add-group").removeClass("d-block");
                         $("#add-group").addClass("d-none");
                         $("#main-group").removeClass("d-none");

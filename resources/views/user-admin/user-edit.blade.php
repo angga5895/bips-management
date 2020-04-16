@@ -56,17 +56,15 @@
         $("#canceluser").on("click", function () {
             swal({
                     title: "Are you sure?",
-                    text: "You will not be able to recover this!",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, cancel it!",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true
+                    confirmButtonText: "No",
+                    cancelButtonText: "Yes",
+                    closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (isConfirm) {
+                    if (!isConfirm) {
                         window.location.href="{{ route('useradmin.user') }}"
                     }
                 }
@@ -166,19 +164,28 @@
                         <div class="box-body">
                             @foreach($userbips as $p)
                                 <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                                    <div class="form-group form-inline lbl-user-type">
-                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">User Type</label>
-                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_type" disabled>
-                                            <option value="" disabled>Choose User Type</option>
-                                            @foreach($usertype as $r)
-                                                <option @if($p->user_type === $r->id) selected="selected" @endif value={{ $r->id }}>{{ $r->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <label id="cekUsertype" class="error invalid-feedback small d-block col-sm-4" for="user_type"></label>
-                                    </div>
+
 
                                     <div class="row">
                                         <div class="col-sm-6">
+                                            <div class="form-group form-inline">
+                                                <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
+                                                <div class="col-sm-9 pr-0 row" id="useridCDS">
+                                                    <div class="input-group col-sm-12 px-0">
+                                                        <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-white" id="user_type" disabled>
+                                                            <option value="" disabled selected>Choose User Type</option>
+                                                            @foreach($usertype as $r)
+                                                                <option @if($p->user_type === $r->id) selected="selected" @endif value={{ $r->id }}>{{ $r->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <label id="cekUser_type" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekUser_type"></label>
+                                                </div>
+                                                <div class="col-sm-9 pr-0 d-none row" id="useridT">
+                                                    <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required/>
+                                                    <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
+                                                </div>
+                                            </div>
 
                                             <div class="form-group form-inline">
                                                 <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
@@ -210,20 +217,26 @@
                                                     <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
                                                 </div>
                                             </div>
+                                            <div class="form-group form-inline lbl-group">
+                                                <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Status</label>
+                                                <div class="col-sm-9 pr-0 row">
+                                                    <div class="input-group col-sm-12 px-0">
+                                                        <select class="form-control bootstrap-select" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking(this)">
+                                                            <option value="" disabled>Choose User Status</option>
+                                                            @foreach($userstatus as $r)
+                                                                <option @if($p->status === $r->id) selected="selected" @endif value="{{ $r->id }}">{{ $r->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
+                                                </div>
+
+                                            </div>
                                         </div>
+
                                     </div>
 
 
-                                    <div class="form-group form-inline lbl-user-status">
-                                        <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Status</label>
-                                        <select class="form-control bootstrap-select w-select-100 w-50" data-live-search="true" data-style="btn-white" id="user_status" onchange="checking(this)">
-                                            <option value="" disabled>Choose User Status</option>
-                                            @foreach($userstatus as $r)
-                                                <option @if($p->status === $r->id) selected="selected" @endif value="{{ $r->id }}">{{ $r->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
-                                    </div>
                                 </div>
                             @endforeach
                         </div>

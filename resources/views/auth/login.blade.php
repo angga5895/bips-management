@@ -5,7 +5,7 @@
         <div class="row justify-content-center p-login">
             <div class="col-md-12">
                 <div class="card d-border-input">
-                    <div class="bg-gradient-secondary card-header justify-content-center text-center"><img height="auto" width="50%" src="{{asset('/bahana-transparan.png')}}"/></div>
+                    <div class="bg-gradient-secondary card-header justify-content-center text-center"><img height="auto" width="40%" height="40%" src="{{asset('/logo_bahana_dx_trade.png')}}"/></div>
                     <div class="bg-gradient-secondary card-body">
                         <form method="POST" action="{{ route('login') }}">
                             @csrf

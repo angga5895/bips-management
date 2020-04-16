@@ -457,17 +457,15 @@
         $("#canceluser").on("click", function () {
             swal({
                     title: "Are you sure?",
-                    text: "You will not be able to recover this!",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes, cancel it!",
-                    cancelButtonText: "No",
-                    closeOnConfirm: true,
-                    closeOnCancel: true
+                    confirmButtonText: "No",
+                    cancelButtonText: "Yes",
+                    closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (isConfirm) {
+                    if (!isConfirm) {
                         $("#add-user").removeClass("d-block");
                         $("#add-user").addClass("d-none");
                         $("#main-user").removeClass("d-none");

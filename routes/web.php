@@ -76,6 +76,8 @@ Route::group(['middleware' => 'auth'], function() {
 
 
     Route::get('getDataCustomer','CustomerController@getCustomer');
+    Route::get('getDataFilterCustomer','CustomerController@getFilterCustomer');
+
     Route::get('getDataCustomerDetail','CustomerController@getCustomerDetail');
     Route::get('customerGetName', 'CustomerController@getCustomerName');
 

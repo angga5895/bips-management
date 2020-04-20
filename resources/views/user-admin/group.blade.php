@@ -33,10 +33,11 @@
             } else if (tgl[1] == '12'){
                 var month = 'December';
             }
-
+            var time = datetime[1];
+            // return time;
             var date = tgl[2];
 
-            return date+" "+month+" "+year;
+            return time+" "+date+" "+month+" "+year;
         }
 
         $(document).ready(function () {
@@ -84,6 +85,7 @@
                 },{
                     searchable : true,
                     targets : [2],
+                    className: 'text-center',
                     render : function (data, type, row) {
                       return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+row.group_id+'\')">Pick</button>'
                     }
@@ -110,24 +112,18 @@
                 columns : [
                     {data : 'group_id', name: 'group_id'},
                     {data : 'name', name: 'name'},
+                    {data : 'group_id', name: 'group_id'},
                     {data : 'created_at', name: 'created_at'},
                     {data : 'updated_at', name: 'updated_at'},
-                    {data : 'group_id', name: 'group_id'},
                 ],
                 columnDefs: [{
-                    targets : [0],
+                    targets : [1],
                     orderable : true,
                     searchable : false,
                 },{
-                    targets : [1],
+                    targets : [2],
                     orderable : true,
                     searchable : true,
-                },{
-                    targets : [2],
-                    searchable : true,
-                    render : function (data, type, row) {
-                        return getDateBips(data);
-                    }
                 },{
                     targets : [3],
                     searchable : true,
@@ -135,8 +131,15 @@
                         return getDateBips(data);
                     }
                 },{
-                    searchable : true,
                     targets : [4],
+                    searchable : true,
+                    render : function (data, type, row) {
+                        return getDateBips(data);
+                    }
+                },{
+                    searchable : true,
+                    targets : [0],
+                    className: 'text-center',
                     render : function (data, type, row) {
                         return  '<button class="btn btn-sm btn-warning fa fa-pen" onclick="editGroup(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
                     }
@@ -566,12 +569,11 @@
                                 <table class="table table-striped table-bordered table-hover" id="table-reggroup">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
-                                        {{--<th>ID</th>--}}
-                                        <th>Group ID</th>
+                                        <th>Action</th>
                                         <th>Group Name</th>
+                                        <th>Group ID</th>
                                         <th>Create Date</th>
                                         <th>Last Update</th>
-                                        <th>#</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -661,7 +663,7 @@
                             <tr>
                                 <th>Id</th>
                                 <th>Group Name</th>
-                                <th>#</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>

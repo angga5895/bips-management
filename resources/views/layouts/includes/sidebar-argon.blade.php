@@ -10,7 +10,9 @@
         <a class="navbar-brand pt-0" href="{{ url('/') }}">
             {{--<img src="./assets/img/brand/blue.png" class="navbar-brand-img" alt="...">--}}
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-lg"><b>Bahana</b></span>
+            {{--<span class="logo-lg"><b>Bahana</b></span><br>--}}
+                <img width="50%" height="50%" src="{{asset('/logo_bahana_dx_trade.png')}}"/>
+
         </a>
         <!-- User -->
         <ul class="nav align-items-center d-md-none">

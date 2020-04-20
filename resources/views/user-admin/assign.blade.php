@@ -76,6 +76,7 @@
                 },{
                     searchable : true,
                     targets : [2],
+                    className: 'text-center',
                     render : function (data, type, row) {
                         var id = row.dealer_id;
                         var username = row.dealer_name;
@@ -202,6 +203,7 @@
                 },{
                     searchable : true,
                     targets : [2],
+                    className: 'text-center',
                     render : function (data, type, row) {
                         var id = row.group_id;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
@@ -663,9 +665,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Id</th>
+                                <th>Group ID</th>
                                 <th>Group Name</th>
-                                <th>#</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -703,7 +705,7 @@
                             <tr>
                                 <th>Dealer Id</th>
                                 <th>Dealer Name</th>
-                                <th>#</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                         </table>

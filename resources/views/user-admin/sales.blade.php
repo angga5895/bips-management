@@ -57,6 +57,7 @@
             $("#table-grouplist").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
                 ajax : {
                     url: '{{ url("getDataSales") }}',
                     data: function (d) {
@@ -82,6 +83,7 @@
                 },{
                     searchable : true,
                     targets : [2],
+                    className: "text-center",
                     render : function (data, type, row) {
                         return '<i class="text-center">' +
                             '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+data+'\')">Pick</button></i>'}
@@ -96,10 +98,13 @@
 
         function getTableGroup(){
             var tableGroup = $("#table-reggroup").DataTable({
+                responsive: {
+                    details: true,
+                },
                 /*processing: true,
                 serverSide: true,*/
                 aaSorting: [[0, 'desc']],
-                dom: 'l<"toolbar">frtip',
+                dom: 'l<"toolbar"><f "col-md-6">rtip',
                 initComplete: function(){
                     $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" id="addgroup" type="button" onclick="addGroup()">Add</button>');
                 },
@@ -115,16 +120,20 @@
                 columns : [
                     {data : 'sls', name: 'sls'},
                     {data : 'sales_name', name: 'sales_name'},
+                    {data : 'sls', name: 'sls'},
                     {data : 'address', name: 'address'},
                     {data : 'phone', name: 'phone'},
                     {data : 'mobilephone', name: 'mobilephone'},
                     {data : 'email', name: 'email'},
-                    {data : 'sls', name: 'sls'},
                 ],
                 columnDefs: [{
+                    searchable : true,
                     targets : [0],
-                    orderable : true,
-                    searchable : false,
+                    className: 'text-center',
+                    render : function (data, type, row) {
+                        return  '<i class="text-center"><button class="btn btn-sm btn-warning fa fa-pen" onclick="editSales(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
+                    },
+                    className: "text-center",
                 },{
                     targets : [1],
                     orderable : true,
@@ -146,12 +155,10 @@
                     orderable :true,
                     searchable : true,
                 },{
-                    searchable : true,
                     targets : [6],
-                    render : function (data, type, row) {
-                        return  '<i class="text-center"><button class="btn btn-sm btn-warning fa fa-pen" onclick="editSales(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
-                    }
-                }]
+                    orderable :true,
+                    searchable : true,
+                }],
             });
         }
 
@@ -656,17 +663,17 @@
 
                             </div>--}}
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="table-reggroup">
+                                <table class="table table-striped table-bordered nowrap" width="100%" id="table-reggroup">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
-                                        <th>Sales Id</th>
+                                        <th>Action</th>
                                         <th>Sales Name</th>
+                                        <th>Sales Id</th>
                                         <th>Address</th>
                                         <th>Phone</th>
                                         <th>Mobile Phone</th>
                                         <th>Email</th>
-                                        <th>#</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -766,7 +773,7 @@
                             <tr>
                                 <th>Sales Id</th>
                                 <th>Sales Name</th>
-                                <th>#</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>

@@ -50,6 +50,7 @@
         $(document).ready(function () {
             getTableGroup();
             getTableList();
+            $("#spanTextList").text("Customer");
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
@@ -74,18 +75,18 @@
                     $("div.toolbar").html('');
                 },
                 ajax : {
-                    url: '{{ url("getDataCustomer") }}',
+                    url: '{{ url("getDataFilterCustomer") }}',
                     data: function (d) {
                         var search_data = {
-                            customerID:"",
+                            type:$("#changeStatus").val(),
                         };
                         d.search_param = search_data;
                     },
                 },
                 columns : [
-                    {data : 'custcode', name: 'custcode'},
-                    {data : 'custname', name: 'custname'},
-                    {data : 'custcode', name: 'custcode'},
+                    {data : 'code', name: 'code'},
+                    {data : 'name', name: 'name'},
+                    {data : 'code', name: 'code'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -98,9 +99,10 @@
                 },{
                     targets : [2],
                     orderable : true,
+                    className: 'text-center',
                     render : function (data, type, row) {
-                        var name = row.custname;
-                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+row.custcode+'\',\''+name+'\')">Pick</button>'
+                        var name = row.name;
+                        return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+row.code+'\',\''+name+'\')">Pick</button>'
                     }}]
             });
         }
@@ -119,6 +121,7 @@
                     data: function (d) {
                         var search_data = {
                             customerID: $("#customerID").val(),
+                            type: $("#changeStatus").val(),
                         };
                         d.search_param = search_data;
                     },
@@ -126,15 +129,19 @@
                 columns : [
                     {data : 'custcode', name: 'custcode'},
                     {data : 'custname', name: 'custname'},
+                    {data : 'sales_name', name: 'sales_name'},
+                    {data : 'csd', name: 'csd'},
                     {data : 'custstatus', name: 'custstatus'},
                     {data : 'email', name: 'email'},
                     {data : 'phone', name: 'phone'},
-                    {data : 'custcode', name: 'custcode'},
                 ],
                 columnDefs: [{
                     targets : [0],
                     orderable : true,
-                    searchable : false,
+                    className: "text-center",
+                    render : function (data, type, row) {
+                        return '<button class="btn btn-sm btn-info fa fa-search" type="button" data-dismiss= "modal" onclick="detailCustomer(\''+data+'\',\''+row.custname+'\')"></button>'
+                    }
                 },{
                     targets : [1],
                     orderable : true,
@@ -143,23 +150,27 @@
                     targets : [2],
                     orderable : true,
                     searchable : true,
-                    render : function (data, type, row) {
-                        return convertStatus(data);
-                    }
+
                 },{
                     targets : [3],
                     orderable : true,
                     searchable : true,
+
                 },{
                     targets : [4],
                     orderable : true,
                     searchable : true,
+                    render : function (data, type, row) {
+                        return convertStatus(data);
+                    }
+                },{
+                    targets : [5],
+                    orderable : true,
+                    searchable : true,
                 },{
                     searchable : true,
-                    targets : [5],
-                    render : function (data, type, row) {
-                        return '<button class="btn btn-sm btn-info fa fa-search" type="button" data-dismiss= "modal" onclick="detailCustomer(\''+data+'\',\''+row.custname+'\')"></button>'
-                    }
+                    targets : [6],
+                    searchable : false,
                 }]
             });
         }
@@ -342,9 +353,22 @@
         $("#btn-current1").on("click", function(){
             getGroup();
         });
-
+        function changeSearch(){
+            var val = $("#changeStatus").val();
+            var spanText = $("#spanTextList");
+            if(val == "sales"){
+                $("#customerID").attr("placeholder", "Input Sales ID");
+                $("#customerGet").attr("placeholder", "Nama Detail Sales");
+                spanText.text("Sales");
+            }else{
+                $("#customerID").attr("placeholder", "Input Customer ID");
+                $("#customerGet").attr("placeholder", "Nama Detail Customer");
+                spanText.text("Customer");
+            }
+        }
         function getGroup() {
             var id = $("#customerID").val();
+            var type = $("#changeStatus").val();
 
             if(id === ''){
                 $("#customerGet").val('');
@@ -355,10 +379,11 @@
                     url  : "{{ url('customerGetName') }}",
                     data : {
                         'id' : id,
+                        'type': type,
                     },
                     success : function (res) {
                         if ($.trim(res)){
-                            $("#customerGet").val(res[0].custname);
+                            $("#customerGet").val(res[0].name);
                         } else {
                             $("#customerGet").val('');
                         }
@@ -395,8 +420,12 @@
     <div class="card shadow" id="main-group">
         <div class="card card-header">
             <form class="form-inline">
-                <label class="form-control-label pr-5 mb-2">Customer Code</label>
-                <input class="form-control mb-2" placeholder="Input ID Dealer Group" id="customerID" onchange="getGroup()">
+                <label class="form-control-label pr-5 mb-2">Filter Search</label>
+                <select class="form-control bootstrap-select w-select-100 m-top-min-4" id="changeStatus" onchange="changeSearch()"  data-live-search="true" data-style="btn-default" id="userType" required onchange="getUsername()">
+                        <option value="customer" selected>Customer</option>
+                        <option value="sales">Sales</option>
+                </select>
+                <input class="form-control mb-2 ml-input-2" placeholder="Input Customer ID" id="customerID" onchange="getGroup()">
                 <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Customer" readonly id="customerGet">
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
@@ -438,12 +467,13 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
-                                        <th>Custcomer Code</th>
-                                        <th>Name</th>
+                                        <th>Action</th>
+                                        <th>Customer Name</th>
+                                        <th>Sales Name</th>
+                                        <th>Customer Code</th>
                                         <th>Status</th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <th>#</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -562,7 +592,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Customer List</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"><span id="spanTextList"></span> List</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -572,9 +602,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Id</th>
-                                <th>Group Name</th>
-                                <th>#</th>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>

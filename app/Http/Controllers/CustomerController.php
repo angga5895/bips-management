@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Dealer;
 use App\Group;
 use App\Customer;
+use App\Sales;
 use DataTables;
 
 class CustomerController extends Controller
@@ -156,23 +157,49 @@ class CustomerController extends Controller
     public function getCustomer(request $request){
         $requestData = $request->all();
         $customerID = $requestData['search_param']['customerID'];
+        $type = $requestData['search_param']['type'];
 
         $where_groupID = "";
         if ($customerID != ""){
-            $where_groupID = ' WHERE "lower"(custcode) LIKE \'%'.strtolower($customerID).'%\'';
-
+            if($type == "sales"){
+                $where_groupID = ' WHERE "lower"(c.sales_id) LIKE \'%'.strtolower($customerID).'%\'';
+            }else{
+                $where_groupID = ' WHERE "lower"(custcode) LIKE \'%'.strtolower($customerID).'%\'';
+            }
         }
 
-        $query = 'SELECT *,customer.custcode as csd from "customer"
-                  '.$where_groupID;
+        $query = 'SELECT c.*,s.sales_name, c.custcode as csd FROM public.customer c
+                  JOIN
+                  sales s ON c.sales_id = s.sales_id'.$where_groupID;
         $data = DB::select($query);
         return DataTables::of($data)->make(true);
     }
+
+    public function getFilterCustomer(request $request){
+        $requestData = $request->all();
+        $type = $requestData['search_param']['type'];
+
+        if($type == "sales"){
+            $query = 'SELECT s.sales_id as code, s.sales_name as name FROM sales s';
+        }else {
+            $query = 'SELECT  c.custcode as csd, c.custcode as code, c.custname as name FROM public.customer c';
+        }
+            $data = DB::select($query);
+        return DataTables::of($data)->make(true);
+    }
+
     public function getCustomerName(){
         $id = $_GET['id'];
-        $group = Customer::select("custname")
-            ->where("custcode",$id)
-            ->get();
+        $type = $_GET['type'];
+        if($type == "sales"){
+            $group = Sales::select("sales_name as name")
+                ->where("sales_id",$id)
+                ->get();
+        }else{
+            $group = Customer::select("custname as name")
+                ->where("custcode",$id)
+                ->get();
+        }
         return response()->json($group);
     }
     public function getCustomerDetail(Request $request){

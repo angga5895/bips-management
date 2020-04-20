@@ -71,8 +71,8 @@
                     },
                 },
                 columns : [
-                    {data : 'dealer_id', name: 'dealer_id'},
                     {data : 'dealer_name', name: 'dealer_name'},
+                    {data : 'dealer_id', name: 'dealer_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -85,6 +85,7 @@
                 },{
                     searchable : true,
                     targets : [2],
+                    className: 'text-center',
                     render : function (data, type, row) {
                         return '' +
                             '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK('+row.dealer_id+')">Pick</button>'
@@ -115,17 +116,23 @@
                 columns : [
                     {data : 'dealer_id', name: 'dealer_id'},
                     {data : 'dealer_name', name: 'dealer_name'},
+                    {data : 'dealer_id', name: 'dealer_id'},
                     {data : 'address', name: 'address'},
                     {data : 'phone', name: 'phone'},
                     {data : 'mobilephone', name: 'mobilephone'},
                     {data : 'email', name: 'email'},
-                    {data : 'dealer_id', name: 'dealer_id'},
 
                 ],
                 columnDefs: [{
                     targets : [0],
                     orderable : true,
-                    searchable : false,
+                    className: "text-center",
+                    render : function (data, type, row) {
+                        var id = row.group_id;
+                        return '' +
+                            '<button class="btn btn-sm btn-warning fa fa-pen" type="button" data-dismiss= "modal" onclick="editDealer(\''+data+'\')"></button>' +
+                            '<button class="btn btn-sm btn-info fa fa-user-cog" type="button" data-dismiss= "modal" onclick="assignSales(\''+data+'\')"></button>'
+                    }
                 },{
                     targets : [1],
                     orderable : true,
@@ -149,12 +156,7 @@
                 },{
                     searchable : true,
                     targets : [6],
-                    render : function (data, type, row) {
-                        var id = row.group_id;
-                        return '' +
-                            '<button class="btn btn-sm btn-warning fa fa-pen" type="button" data-dismiss= "modal" onclick="editDealer(\''+data+'\')"></button>' +
-                            '<button class="btn btn-sm btn-info fa fa-user-cog" type="button" data-dismiss= "modal" onclick="assignSales(\''+data+'\')"></button>'
-                    }
+                    searchable : true,
                 }]
             });
         }
@@ -437,8 +439,8 @@
                 },
                 columns : [
                     {data : 'sls', name: 'sls'},
-                    {data : 'sls', name: 'sls'},
                     {data : 'sales_name', name: 'sales_name'},
+                    {data : 'sls', name: 'sls'},
                     {data : 'address', name: 'address'},
                     {data : 'phone', name: 'phone'},
                     {data : 'mobilephone', name: 'mobilephone'},
@@ -447,6 +449,7 @@
                 columnDefs: [{
                     targets : [0],
                     orderable : true,
+                    className: 'text-center',
                     render : function (data, type, row) {
                         var id = row.group_id;
                         if(!row.dealer_id){
@@ -839,13 +842,13 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
-                                        <th>Dealer Id</th>
+                                        <th>Action</th>
                                         <th>Dealer Name</th>
+                                        <th>Dealer Id</th>
                                         <th>Adress</th>
                                         <th>Phone</th>
                                         <th>Mobile Phone</th>
                                         <th>Email</th>
-                                        <th>#</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -979,9 +982,9 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
-                                        <th>#</th>
-                                        <th>Sales Id</th>
+                                        <th>Action</th>
                                         <th>Sales Name</th>
+                                        <th>Sales Id</th>
                                         <th>Adress</th>
                                         <th>Phone</th>
                                         <th>Mobile Phone</th>
@@ -1014,7 +1017,7 @@
                             <tr>
                                 <th>Dealer Id</th>
                                 <th>Dealer Name</th>
-                                <th>#</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                             <tbody>

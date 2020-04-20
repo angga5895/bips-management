@@ -331,46 +331,38 @@
                     }
                 },
                 columns : [
-                    {data : 'user_id', name : 'user_id'},
+                    {data : 'user_id', name: 'user_id'},
                     {data : 'user_name', name: 'user_name'},
+                    {data : 'user_id', name : 'user_id'},
                     {data : 'email_address', name: 'email_address'},
                     /*{data : 'msidn', name: 'msidn'},*/
                     {data : 'usertype', name: 'usertype'},
                     {data : 'userstatus', name: 'userstatus'},
                     /*{data : 'last_login', name: 'last_login'},*/
-                    {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
-                    targets : [0],
+                    targets : [1],
                     searchable : false
                 },{
-                    targets : [1],
+                    targets : [2],
                     orderable : true,
                     searchable : true,
                 },{
-                    targets : [2],
+                    targets : [3],
                     searchable : true,
                     render : function (data, type, row) {
                         return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
                     }
-                },/*{
-                    targets : [3],
-                    searchable : true,
-                },*/{
-                    targets : [3],
+                },{
+                    targets : [4],
                     searchable : true,
                 },{
                     searchable : true,
-                    targets : [4],
-                },/*{
-                    searchable : true,
-                    targets : [6],
-                    render : function (data, type, row) {
-                        return getDateBips(data)
-                    }
-                },*/{
-                    searchable : true,
                     targets : [5],
+                },{
+                    searchable : true,
+                    targets : [0],
+                    className: 'text-center',
                     render : function (data, type, row) {
                         return '<button class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail" onclick="detailUser(\''+data+'\')">' +
                             '<i class="fa fa-search"></i>' +
@@ -885,14 +877,14 @@
                                 <table class="table table-striped table-bordered table-hover" id="table-reggroup">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
-                                        <th>User ID</th>
+                                        <th>Action</th>
                                         <th>User Name</th>
+                                        <th>User ID</th>
                                         <th>Email</th>
                                         {{--<th>MSIDN</th>--}}
                                         <th>User Type</th>
                                         <th>Status</th>
                                         {{--<th>Last Login</th>--}}
-                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -1153,9 +1145,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-listmember">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Employee No</th>
+                                <th>No</th>
                                 <th>Employee Name</th>
-                                <th>#</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                         </table>
@@ -1186,7 +1178,7 @@
                             <tr>
                                 <th id="idClident"></th>
                                 <th id="nameClient"></th>
-                                <th>#</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
                         </table>

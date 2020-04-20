@@ -359,11 +359,17 @@
             if(val == "sales"){
                 $("#customerID").attr("placeholder", "Input Sales ID");
                 $("#customerGet").attr("placeholder", "Nama Detail Sales");
+                $("#customerID").val("");
+                $("#customerGet").val("");
                 spanText.text("Sales");
+                $('#table-reggroup').DataTable().ajax.reload();
             }else{
                 $("#customerID").attr("placeholder", "Input Customer ID");
                 $("#customerGet").attr("placeholder", "Nama Detail Customer");
+                $("#customerID").val("");
+                $("#customerGet").val("");
                 spanText.text("Customer");
+                $('#table-reggroup').DataTable().ajax.reload();
             }
         }
         function getGroup() {

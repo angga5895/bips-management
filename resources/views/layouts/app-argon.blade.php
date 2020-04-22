@@ -19,7 +19,10 @@
     <link type="text/css" href="{{ url('argon/css/argon.css?v=1.0.0') }}" rel="stylesheet">
 
     <link href="{{ asset('dataTables.min.css') }}" type="text/css" rel="stylesheet">
+
     <link href="{{ asset('App.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/responsive.dataTables.min.css') }}" rel="stylesheet">
+
     <link href="{{ url('select2/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ url('bootstrap-select/dist/css/bootstrap-select.min.css') }}" rel="stylesheet" />
     <link href="{{ url('bootstrap-datepicker/bootstrap-datepicker.css') }}" rel="stylesheet" />
@@ -100,6 +103,7 @@
     </div>
 </div>
 <!-- Argon Scripts -->
+
 <!-- Core -->
 <script src="{{ url('argon/vendor/jquery/dist/jquery.min.js') }}"></script>
 <script src="{{ url('argon/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
@@ -117,6 +121,8 @@
 
 <script src="{{ asset('forms_pickers.js') }}"></script>
 <script src="{{ asset('layout_mockJax.js') }}"></script>
+
+<script src="{{ url('js/dataTables.responsive.min.js') }}"></script>
 
 <script type="text/javascript">
     $('.js-example-basic-single').select2({

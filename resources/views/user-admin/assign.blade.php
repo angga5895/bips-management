@@ -20,6 +20,8 @@
         function getTableDealerList() {
             $("#table-dealerList").dataTable({
                 destroy: true,
+                responsive: true,
+
                 ajax : {
                     url: '{{ url("dealerGetSalesID") }}',
                     data: function (d) {
@@ -52,6 +54,8 @@
 
         function getTableGroupUserAO() {
             $("#table-aolist").dataTable({
+                responsive: true,
+
                 destroy: true,
                 ajax : {
                     url: '{{ url("getDataDealer") }}',
@@ -113,6 +117,8 @@
         function getGroupId(){
             var tableListMember = $("#table-listmember").DataTable({
                 destroy: true,
+                responsive: true,
+
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
                     $("div.toolbar").html('<button class="form-control-btn-0 btn btn-sm btn-danger mb-2" type="button" onclick="delAllUser()">Delete All Member</button>');
@@ -181,6 +187,7 @@
             $("#table-grouplist").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
                 ajax : {
                     url: '{{ url("get-dataGroup/get") }}',
                     data: function (d) {
@@ -217,6 +224,8 @@
             var tableGroup = $("#table-reggroup").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
+
                 ajax : {
                     url: '{{ url("get-dataGroup/get") }}',
                     data: function (d) {

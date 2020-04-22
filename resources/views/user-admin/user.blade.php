@@ -161,6 +161,8 @@
 
             $("#table-listclient").DataTable({
                 destroy: true,
+                responsive: true,
+
                 /*processing: true,
                 serverSide: true,*/
                 ajax : {
@@ -233,6 +235,8 @@
         }
         function tablelistaccount() {
             $("#table-listaccount").DataTable({
+                responsive: true,
+
                 /*processing: true,
                 serverSide: true,*/
                 ajax : {
@@ -276,6 +280,8 @@
             $("#table-listmember").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
+
                 ajax : {
                     url: '{{ url("get-dataRegistrasi/get") }}',
                     data: function (d) {
@@ -313,7 +319,10 @@
         function tablegetReg() {
             var tableData = $("#table-reggroup").DataTable({
                 /*processing: true,
+
                 serverSide: true,*/
+                responsive: true,
+
                 aaSorting: [[0, 'desc']],
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){

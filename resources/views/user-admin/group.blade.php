@@ -60,6 +60,8 @@
 
         function getTableList() {
             $("#table-grouplist").DataTable({
+                responsive: true,
+
                 /*processing: true,
                 serverSide: true,*/
                 ajax : {
@@ -95,6 +97,8 @@
 
         function getTableGroup(){
             var tableGroup = $("#table-reggroup").DataTable({
+                responsive: true,
+
                 /*processing: true,
                 serverSide: true,*/
                 aaSorting: [[0, 'desc']],

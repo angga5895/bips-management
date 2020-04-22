@@ -68,6 +68,8 @@
 
         function getTableList() {
             $("#table-grouplist").DataTable({
+                responsive: true,
+
                 /*processing: true,
                 serverSide: true,*/
                 dom: 'l<"toolbar">frtip',
@@ -111,6 +113,8 @@
             var tableGroup = $("#table-reggroup").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
+
                 aaSorting: [[0, 'desc']],
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
@@ -238,6 +242,8 @@
         }
         function getDetailCustomer(id){
             var tbldetail = $("#table_detail_customer").DataTable({
+                responsive: true,
+
                 /*processing: true,
                 serverSide: true,*/
                 aaSorting: [[0, 'desc']],

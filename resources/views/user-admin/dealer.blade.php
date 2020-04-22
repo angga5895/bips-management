@@ -61,6 +61,8 @@
             $("#table-grouplist").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
+
                 ajax : {
                     url: '{{ url("getDataDealer") }}',
                     data: function (d) {
@@ -98,6 +100,8 @@
             var tableGroup = $("#table-reggroup").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
+
                 aaSorting: [[0, 'desc']],
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
@@ -420,6 +424,8 @@
             $("#table-dealer-sales").DataTable({
                 /*processing: true,
                 serverSide: true,*/
+                responsive: true,
+
                 dom: 'l<"toolbar"><"selectToolbar col-md-3">frtip',
                 initComplete: function(){
                     $("div.toolbar").html('' +
@@ -1015,8 +1021,8 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Dealer Id</th>
                                 <th>Dealer Name</th>
+                                <th>Dealer Id</th>
                                 <th>Action</th>
                             </tr>
                             </thead>

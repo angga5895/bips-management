@@ -25,7 +25,7 @@ body.loading .modal-ajax {
         position: fixed!important;
         top: 0!important;
         width: 100%!important;
-        background: linear-gradient(87deg, #8898aa 0, #888aaa 100%) !important;
+        background: linear-gradient(87deg, #2bccf3, #2bccf4 100%) !important;
     }
 
     .main-content .container-fluid {
@@ -234,4 +234,7 @@ table.dataTable tbody tr.selected {
 }
 .navbar-vertical .navbar-brand > img{
     max-height: none;
+}
+.navbar-blue{
+    background: linear-gradient(87deg, #2ac4f4 0, #bcd630 100%) !important;
 }

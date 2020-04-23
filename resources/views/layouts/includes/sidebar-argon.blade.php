@@ -1,6 +1,6 @@
 <?php $routeName = Route::currentRouteName(); ?>
 <!-- Sidenav -->
-<nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-dark bg-gradient-dark" id="sidenav-main" style="z-index: 999">
+<nav class="navbar navbar-vertical fixed-left navbar-expand-md bg-white" id="sidenav-main" style="z-index: 999">
     <div class="container-fluid">
         <!-- Toggler -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
             </li>
         </ul>
         <!-- Collapse -->
-        <div class="collapse navbar-collapse navbar-dark bg-gradient-dark" id="sidenav-collapse-main">
+        <div class="collapse navbar-collapse " id="sidenav-collapse-main">
             <!-- Collapse header -->
             <div class="navbar-collapse-header d-md-none">
                 <div class="row">

@@ -1,5 +1,5 @@
 <!-- Top navbar -->
-<nav class="navbar navbar-top navbar-expand-md navbar-dark navbar-border-bottom" id="navbar-main">
+<nav class="navbar navbar-top navbar-expand-md navbar-blue navbar-border-bottom" id="navbar-main">
     <div class="container-fluid" style="justify-content: flex-end!important;">
         <!-- Brand -->
         <div class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"></div>
@@ -65,4 +65,4 @@
 </nav>
 
 <!-- Header -->
-<div class="header bg-gradient-gray pb-8 pt-5 pt-md-8"></div>
+<div class="header navbar-blue pb-8 pt-5 pt-md-8"></div>

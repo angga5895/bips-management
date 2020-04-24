@@ -30,7 +30,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
                     <div class=" dropdown-header noti-title">
-                        <h6 class="text-overflow m-0"><b>Bahana</b></h6>
+                        <h6 class="text-overflow m-0"><b>DX TRADE</b></h6>
                     </div>
                     {{--<a href="{{ url('/home') }}" class="dropdown-item">
                         <i class="ni ni-single-02"></i>

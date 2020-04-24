@@ -15,7 +15,9 @@ body.loading .modal-ajax {
 .navbar-dark .navbar-nav .nav-link {
     color: rgba(255, 255, 255, .95)!important;
 }
-
+.bg-white .navbar-toggler-icon{
+     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox=\'0 0 30 30\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath stroke=\'rgba(0, 0, 0, 0.5)\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-miterlimit=\'10\' d=\'M4 7h22M4 15h22M4 23h22\'/%3E%3C/svg%3E");
+}
 .navbar-border-bottom{
     border: 1px solid rgba(255,255,255,.08)!important
 }
@@ -237,4 +239,25 @@ table.dataTable tbody tr.selected {
 }
 .navbar-blue{
     background: linear-gradient(87deg, #2ac4f4 0, #bcd630 100%) !important;
+}
+.logo-dx{
+    height: 50%;
+    width: 50%;
+}
+.navbar-brand{
+    width: 100%;
+    text-align: center;
+}
+@media (max-width: 710px){
+    .logo-dx{
+        height: 22%;
+        width: 22%;
+    }
+    .navbar-top{
+        display: none;
+    }
+    .navbar-brand{
+        width: 50%;
+        text-align: center;
+    }
 }

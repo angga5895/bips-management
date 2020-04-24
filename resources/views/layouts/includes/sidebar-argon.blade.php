@@ -1,6 +1,6 @@
 <?php $routeName = Route::currentRouteName(); ?>
 <!-- Sidenav -->
-<nav class="navbar navbar-vertical fixed-left navbar-expand-md bg-white" id="sidenav-main" style="z-index: 999">
+<nav class="navbar navbar-vertical fixed-left bg-white navbar-expand-md" id="sidenav-main" style="z-index: 999;color: rgba(0, 0, 0, .5);">
     <div class="container-fluid">
         <!-- Toggler -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#sidenav-collapse-main" aria-controls="sidenav-main" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,7 +11,7 @@
             {{--<img src="./assets/img/brand/blue.png" class="navbar-brand-img" alt="...">--}}
             <!-- mini logo for sidebar mini 50x50 pixels -->
             {{--<span class="logo-lg"><b>Bahana</b></span><br>--}}
-                <img width="50%" height="50%" src="{{asset('/logo_bahana_dx_trade.png')}}"/>
+                <img class="logo-dx" src="{{asset('/logo_bahana_dx_trade.png')}}"/>
 
         </a>
         <!-- User -->
@@ -38,7 +38,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
                     <div class=" dropdown-header noti-title">
-                        <h6 class="text-overflow m-0"><b>Bahana</b></h6>
+                        <h6 class="text-overflow m-0"><b>DX TRADE</b></h6>
                     </div>
                     {{--<a href="{{ route('home') }}" class="dropdown-item">
                         <i class="ni ni-single-02"></i>

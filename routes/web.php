@@ -40,7 +40,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('get-dataClient/{id}', 'UserController@dataClient')->name('data-client');
     Route::get('getUserPerAccount/', 'UserController@dataAccountRegistered');
 
-    Route::get('reset-password','UserController@resetPassword');
+    Route::get('password_reset','UserController@resetPassword');
 
     Route::get('get-dataAOList/{id}', 'AssignController@getListAO');
 

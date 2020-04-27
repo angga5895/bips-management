@@ -40,6 +40,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('get-dataClient/{id}', 'UserController@dataClient')->name('data-client');
     Route::get('getUserPerAccount/', 'UserController@dataAccountRegistered');
 
+    Route::get('reset-password','UserController@resetPassword');
+
     Route::get('get-dataAOList/{id}', 'AssignController@getListAO');
 
     Route::get('group-registrasi', 'GroupController@registrasiGroup');
@@ -77,6 +79,9 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('getDataCustomer','CustomerController@getCustomer');
     Route::get('getDataFilterCustomer','CustomerController@getFilterCustomer');
+    Route::get('sendEmail','CustomerController@sendEmail');
+
+    Route::get('emailTemplate','CustomerController@testEmail');
 
     Route::get('getDataCustomerDetail','CustomerController@getCustomerDetail');
     Route::get('customerGetName', 'CustomerController@getCustomerName');

@@ -288,7 +288,7 @@
 <table border="0" cellpadding="0" cellspacing="0" class="body">
     <tr>
         <td class="container cn-logo">
-            <img class="logo-dx" src="cid:logo.png" width="70px"
+            <img class="logo-dx" src="{{asset('logo_bahana_dx_trade.png')}}" width="70px"
                  height="70px">
         </td>
     </tr>

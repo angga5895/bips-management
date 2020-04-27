@@ -68,8 +68,8 @@
                     },
                 },
                 columns : [
-                    {data : 'sls', name: 'sls'},
                     {data : 'sales_name', name: 'sales_name'},
+                    {data : 'sls', name: 'sls'},
                     {data : 'sls', name: 'sls'},
                 ],
                 columnDefs: [{
@@ -87,7 +87,8 @@
                     render : function (data, type, row) {
                         return '<i class="text-center">' +
                             '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+data+'\')">Pick</button></i>'}
-                }]
+                },
+                ]
             });
         }
         function clickOK(id) {
@@ -118,22 +119,18 @@
                     },
                 },
                 columns : [
-                    {data : 'sls', name: 'sls'},
                     {data : 'sales_name', name: 'sales_name'},
                     {data : 'sls', name: 'sls'},
                     {data : 'address', name: 'address'},
                     {data : 'phone', name: 'phone'},
                     {data : 'mobilephone', name: 'mobilephone'},
                     {data : 'email', name: 'email'},
+                    {data : 'sls', name: 'sls'},
                 ],
                 columnDefs: [{
-                    searchable : true,
                     targets : [0],
-                    className: 'text-center',
-                    render : function (data, type, row) {
-                        return  '<i class="text-center"><button class="btn btn-sm btn-warning fa fa-pen" onclick="editSales(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
-                    },
-                    className: "text-center",
+                    orderable : true,
+                    searchable : true,
                 },{
                     targets : [1],
                     orderable : true,
@@ -148,17 +145,25 @@
                     searchable : true,
                 },{
                     targets : [4],
-                    orderable : true,
+                    orderable :true,
                     searchable : true,
                 },{
                     targets : [5],
                     orderable :true,
                     searchable : true,
                 },{
-                    targets : [6],
-                    orderable :true,
                     searchable : true,
-                }],
+                    targets : [6],
+                    className: 'text-center',
+                    render : function (data, type, row) {
+                        return  '<i class="text-center"><button class="btn btn-sm btn-warning fa fa-pen" onclick="editSales(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
+                    },
+                    className: "text-center",
+                },
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: 1 },
+                    { responsivePriority: 3, targets: 2 },
+                ],
             });
         }
 
@@ -667,13 +672,13 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
-                                        <th>Action</th>
-                                        <th>Sales Name</th>
-                                        <th>Sales Id</th>
-                                        <th>Address</th>
-                                        <th>Phone</th>
-                                        <th>Mobile Phone</th>
-                                        <th>Email</th>
+                                        <th data-priority="0">Sales Name</th>
+                                        <th data-priority="2">Sales Id</th>
+                                        <th data-priority="10006">Address</th>
+                                        <th data-priority="10002">Phone</th>
+                                        <th data-priority="10003">Mobile Phone</th>
+                                        <th data-priority="10004">Email</th>
+                                        <th data-priority="1">Action</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -771,9 +776,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Sales Id</th>
-                                <th>Sales Name</th>
-                                <th>Action</th>
+                                <th data-priority="1">Sales Name</th>
+                                <th data-priority="3">Sales Id</th>
+                                <th data-priority="2">Action</th>
                             </tr>
                             </thead>
                             <tbody>

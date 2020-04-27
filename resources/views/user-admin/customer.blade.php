@@ -86,8 +86,8 @@
                     },
                 },
                 columns : [
-                    {data : 'code', name: 'code'},
                     {data : 'name', name: 'name'},
+                    {data : 'code', name: 'code'},
                     {data : 'code', name: 'code'},
                 ],
                 columnDefs: [{
@@ -131,25 +131,29 @@
                     },
                 },
                 columns : [
-                    {data : 'custcode', name: 'custcode'},
                     {data : 'custname', name: 'custname'},
                     {data : 'sales_name', name: 'sales_name'},
                     {data : 'csd', name: 'csd'},
                     {data : 'custstatus', name: 'custstatus'},
                     {data : 'email', name: 'email'},
                     {data : 'phone', name: 'phone'},
+                    {data : 'custcode', name: 'custcode'},
+
                 ],
                 columnDefs: [{
+                        searchable : true,
+                        targets : [0],
+                        searchable : false,
+                    },
+                  {
                     targets : [0],
                     orderable : true,
-                    className: "text-center",
-                    render : function (data, type, row) {
-                        return '<button class="btn btn-sm btn-info fa fa-search" type="button" data-dismiss= "modal" onclick="detailCustomer(\''+data+'\',\''+row.custname+'\')"></button>'
-                    }
+                    searchable : true,
                 },{
                     targets : [1],
                     orderable : true,
                     searchable : true,
+
                 },{
                     targets : [2],
                     orderable : true,
@@ -159,23 +163,25 @@
                     targets : [3],
                     orderable : true,
                     searchable : true,
-
-                },{
-                    targets : [4],
-                    orderable : true,
-                    searchable : true,
                     render : function (data, type, row) {
                         return convertStatus(data);
                     }
+                },{
+                   targets : [4],
+                   orderable : true,
+                   searchable : true,
                 },{
                     targets : [5],
                     orderable : true,
                     searchable : true,
                 },{
-                    searchable : true,
-                    targets : [6],
-                    searchable : false,
-                }]
+                        targets : [6],
+                        orderable : true,
+                        className: "text-center",
+                        render : function (data, type, row) {
+                            return '<button class="btn btn-sm btn-info fa fa-search" type="button" data-dismiss= "modal" onclick="detailCustomer(\''+data+'\',\''+row.custname+'\')"></button>'
+                        }
+                    },]
             });
         }
 
@@ -479,13 +485,13 @@
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         {{--<th>ID</th>--}}
-                                        <th>Action</th>
-                                        <th>Customer Name</th>
-                                        <th>Sales Name</th>
-                                        <th>Customer Code</th>
-                                        <th>Status</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
+                                        <th data-priority="1">Customer Name</th>
+                                        <th data-priority="3">Sales Name</th>
+                                        <th data-priority="10001">Customer Code</th>
+                                        <th data-priority="10002">Status</th>
+                                        <th data-priority="10003">Email</th>
+                                        <th data-priority="10004">Phone</th>
+                                        <th data-priority="2">Action</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -614,8 +620,8 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Code</th>
                                 <th>Name</th>
+                                <th>Code</th>
                                 <th>Action</th>
                             </tr>
                             </thead>

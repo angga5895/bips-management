@@ -72,8 +72,8 @@
                     }
                 },
                 columns : [
-                    {data : 'group_id', name: 'group_id'},
                     {data : 'name', name: 'name'},
+                    {data : 'group_id', name: 'group_id'},
                     {data : 'group_id', name: 'group_id'},
                 ],
                 columnDefs: [{
@@ -114,20 +114,26 @@
                     }
                 },
                 columns : [
-                    {data : 'group_id', name: 'group_id'},
                     {data : 'name', name: 'name'},
                     {data : 'group_id', name: 'group_id'},
                     {data : 'created_at', name: 'created_at'},
                     {data : 'updated_at', name: 'updated_at'},
+                    {data : 'group_id', name: 'group_id'},
                 ],
                 columnDefs: [{
-                    targets : [1],
+                    targets : [0],
                     orderable : true,
                     searchable : false,
                 },{
-                    targets : [2],
+                    targets : [1],
                     orderable : true,
                     searchable : true,
+                },{
+                    targets : [2],
+                    searchable : true,
+                    render : function (data, type, row) {
+                        return getDateBips(data);
+                    }
                 },{
                     targets : [3],
                     searchable : true,
@@ -135,14 +141,8 @@
                         return getDateBips(data);
                     }
                 },{
+                    searchable : true,
                     targets : [4],
-                    searchable : true,
-                    render : function (data, type, row) {
-                        return getDateBips(data);
-                    }
-                },{
-                    searchable : true,
-                    targets : [0],
                     className: 'text-center',
                     render : function (data, type, row) {
                         return  '<button class="btn btn-sm btn-warning fa fa-pen" onclick="editGroup(\''+data+'\')" type="button" data-dismiss= "modal")"></button>'
@@ -573,11 +573,11 @@
                                 <table class="table table-striped table-bordered table-hover" id="table-reggroup">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
-                                        <th>Action</th>
-                                        <th>Group Name</th>
-                                        <th>Group ID</th>
-                                        <th>Create Date</th>
-                                        <th>Last Update</th>
+                                        <th data-priority="1">Group Name</th>
+                                        <th data-priority="3">Group ID</th>
+                                        <th data-priority="10001">Create Date</th>
+                                        <th data-priority="10002">Last Update</th>
+                                        <th data-priority="2">Action</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -665,9 +665,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Id</th>
-                                <th>Group Name</th>
-                                <th>Action</th>
+                                <th data-priority="1">Group Name</th>
+                                <th data-priority="3">Id</th>
+                                <th data-priority="2">Action</th>
                             </tr>
                             </thead>
                             <tbody>

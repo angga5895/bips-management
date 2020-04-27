@@ -54,61 +54,45 @@
                 }
             );
         });
+        $("#test").on("click", function(){
+            window.location.href = "{{ route('useradmin.user') }}";
+        });
 
         $("#saveuser").on("click", function () {
-            var email_address = $("#email_address").val();
-
-            var emailaddress = $("#email_address");
-
-            swal({
-                title: "Reset Password Not Available Right Now !",
-                text: "",
-                type: "error",
-                showCancelButton: false,
-                confirmButtonClass: 'btn-danger',
-                confirmButtonText: 'OK'
-            });
-
-            /*if (emailaddress[0].checkValidity()){
-                $.get("/mockjax");
-
+                userid = $("#resetUserID").val();
                 $.ajax({
                     type: "GET",
-                    url: "{ url('username-update') }}",
+                    url: "{{ url('password_reset/') }}",
                     data: {
-                        'email_address' : email_address,
-                    },
+                        'userID': userid,
+                        },
                     success: function (res) {
                         if ($.trim(res)) {
                             if (res.status === "00") {
                                 swal({
-                                    title: res.user,
-                                    text: "Has Updated",
+                                    title: "Email Sent",
+                                    text: "Check email for the new password",
                                     type: "success",
                                     showCancelButton: false,
                                     confirmButtonClass: 'btn-success',
                                     confirmButtonText: 'OK'
                                 }, function () {
-                                    window.location.href = "{ route('useradmin.user') }}";
+                                    window.location.href = "{{ route('useradmin.user') }}";
                                 });
                             } else {
                                 swal({
-                                    title: res.user,
+                                    title: "Email Not Sent",
                                     text: res.message,
                                     type: "warning",
                                     showCancelButton: false,
                                     confirmButtonClass: 'btn-danger',
                                     confirmButtonText: 'OK'
-                                }, function () {
-                                    window.location.href = "{ route('useradmin.user') }}";
                                 });
                             }
                         }
                     }
                 });
-            } else {
-                checkCache();
-            }*/
+
         });
     </script>
 @endsection
@@ -143,6 +127,7 @@
                     <div class="box">
                         <div class="box-body">
                             @foreach($userbips as $p)
+                                <input type="hidden" value="{{$p->user_id}}" id="resetUserID">
                                 <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                     <div class="form-group form-inline lbl-group">
                                         <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>
@@ -158,7 +143,7 @@
                                                 Note ::
                                                 <br/>
                                                 <strong>
-                                                    The user's new password will be sent via email. New passwords are randomly sent and confidential without the admin knowing.
+                                                    The user's new password will be sent via email. New passwords are randomly generate and confidential without the admin knowing.
                                                 </strong>
                                             </span>
                                         </div>

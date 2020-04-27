@@ -48,14 +48,13 @@
                     targets : [2],
                     orderable : true,
                     searchable : true,
-                }]
+                },
+                ]
             });
         }
 
         function getTableGroupUserAO() {
-            $("#table-aolist").dataTable({
-                responsive: true,
-
+            $("#table-pickDealer").dataTable({
                 destroy: true,
                 ajax : {
                     url: '{{ url("getDataDealer") }}',
@@ -86,8 +85,8 @@
                         var username = row.dealer_name;
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKUserAO(\''+id+'\',\''+username+'\')">Pick</button>'
-                    }
-                }]
+                    },
+                },]
             });
         }
 
@@ -116,7 +115,7 @@
 
         function getGroupId(){
             var tableListMember = $("#table-listmember").DataTable({
-                destroy: true,
+                // destroy: true,
                 responsive: true,
 
                 dom: 'l<"toolbar">frtip',
@@ -154,7 +153,8 @@
                         targets : [3],
                         orderable : true,
                         searchable : true,
-                    },/*{
+                    },
+                    /*{
                     searchable : true,
                     targets : [4],
                     render : function (data, type, row) {
@@ -198,6 +198,7 @@
                 columns : [
                     {data : 'group_id', name: 'group_id'},
                     {data : 'name', name: 'name'},
+                    {data : 'group_id', name: 'group_id'},
                 ],
                 columnDefs: [{
                     targets : [0],
@@ -216,7 +217,8 @@
                         /*return '<a class="btn btn-sm btn-success" href="/user/'+data+'/edit">Edit</a>' +*/
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOK(\''+id+'\')">Pick</button>'
                     }
-                }]
+                }
+                ]
             });
         }
 
@@ -525,8 +527,8 @@
                                 <table class="table table-striped table-bordered table-hover table-hoverclick" id="table-reggroup">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
-                                        <th>Group ID</th>
-                                        <th>Group Name</th>
+                                        <th data-priority="2">Group ID</th>
+                                        <th data-priority="1">Group Name</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -541,46 +543,14 @@
                                 <table class="table table-striped table-bordered table-hover table-hoverclick" id="table-listmember">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
-                                        <th>Seq</th>
-                                        <th>Dealer ID</th>
-                                        <th>Dealer Name</th>
-                                        <th>Email</th>
+                                        <th data-priority="3">Seq</th>
+                                        <th data-priority="2">Dealer ID</th>
+                                        <th data-priority="1">Dealer Name</th>
+                                        <th data-priority="10001">Email</th>
                                         {{--<th>#</th>--}}
                                     </tr>
                                     </thead>
-
-
-
-
                                     <tbody>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        {{--<td></td>--}}
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        {{--<td></td>--}}
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        {{--<td></td>--}}
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        {{--<td></td>--}}
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -635,9 +605,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-dealerList">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Seq</th>
-                                <th>Sales ID</th>
-                                <th>Sales Name</th>
+                                <th data-priority="3">Saq</th>
+                                <th data-priority="2">Sales ID</th>
+                                <th data-priority="1">Sales Name</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -674,9 +644,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Group ID</th>
-                                <th>Group Name</th>
-                                <th>Action</th>
+                                <th data-priority="3">Group ID</th>
+                                <th data-priority="1">Group Name</th>
+                                <th data-priority="2">Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -700,31 +670,33 @@
     <!-- Modal Employees List -->
     <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content shadow">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Dealer List</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="table-aolist">
-                            <thead class="bg-gradient-primary text-lighter">
-                            <tr>
-                                <th>Dealer Id</th>
-                                <th>Dealer Name</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
-                {{--<div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>--}}
+        <div class="modal-content shadow">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Dealer List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover display nowrap dataTable" id="table-pickDealer">
+                        <thead class="bg-gradient-primary text-lighter">
+                        <tr>
+                            <th data-priority="3">Dealer ID</th>
+                            <th data-priority="1">Dealer Name</th>
+                            <th data-priority="2">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {{--<div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>--}}
+               </div>
         </div>
     </div>
 @endsection

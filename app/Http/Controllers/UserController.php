@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
+use Mailjet\LaravelMailjet\Facades\Mailjet;
+use Mailjet\Resources;
 
 class UserController extends Controller
 {
@@ -588,5 +590,65 @@ class UserController extends Controller
         }
 
         return $max;
+    }
+
+    public function resetPassword(){
+
+        $userID =$_GET['userID'];
+        $rowdata = $this->__getDataUser($userID);
+
+
+
+        $newpassword = Hash::make($userID);
+        $newpassword = substr($newpassword,8,12);
+
+        try {
+            User::where('user_id', $userID)->update([
+                'hash_password' => $newpassword,
+            ]);
+
+
+        $name = explode(" ",$rowdata->user_name);
+        $name = $name[0];
+        $data = [
+            'name'=>$name,
+            'account'=>$rowdata->email_address,
+            'newpassword'=>$newpassword,
+        ];
+        $body = [
+            'FromEmail' => "zaky@vsi.co.id",
+            'FromName' => "DX-TRADE",
+            'Subject' => "New Password",
+            'Text-part' => "Dear passenger, welcome to Mailjet! May the delivery force be with you!",
+            'Html-part' => view('emailTemplate',$data)->render(),
+            'Recipients' => [
+                [
+                    'Email' => "zakyymuh123@gmail.com"
+                ]
+            ],
+        ];
+        $response = Mailjet::post(Resources::$Email, ['body' => $body]);
+
+        if($response->success()){
+            $status = "00";
+            $msg = null;
+
+        }else{
+            $status = "01";
+            $msg = $response->getData();
+        }
+        } catch (QueryException $r){
+            $status = '01';
+            $msg = $r->getMessage();
+        }
+
+        return response()->json([
+            'status' => $status,
+            'msg' => $msg,
+        ]);
+    }
+    private function __getDataUser($id){
+        return DB::select('SELECT * FROM users WHERE user_id = \''.$id.'\'')[0];
+
     }
 }

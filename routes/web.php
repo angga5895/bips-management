@@ -41,6 +41,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('getUserPerAccount/', 'UserController@dataAccountRegistered');
 
     Route::get('password_reset','UserController@resetPassword');
+    Route::get('pin_reset','UserController@resetPin');
 
     Route::get('get-dataAOList/{id}', 'AssignController@getListAO');
 
@@ -85,6 +86,5 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('getDataCustomerDetail','CustomerController@getCustomerDetail');
     Route::get('customerGetName', 'CustomerController@getCustomerName');
-
 
 });

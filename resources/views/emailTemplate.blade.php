@@ -302,7 +302,7 @@
     <tr>
         <td class="container bg-lime">
             <span style="font-size: 17px; color:#f4f4f4; font-weight: bold;">
-                Here is the new DX-TRADE password that you need to login to account {{$account}}:
+                Here is the new DX-TRADE {{$type}} that you need to login to account {{$account}}:
             </span>
         </td>
     </tr>
@@ -316,13 +316,14 @@
     <tr>
         <td class="container bg-lime">
             <div style="background-color: #ffffffdb; color: #727272; padding: 30px 15px 15px 15px; font-size: 12px;">
-                This email was generated because of a request reset password from Administrator.
-                The new login attempt included your correct account name and password.<br><br>
+                This email was generated because of a request reset {{$type}} from Administrator.
 
-                The New Password is required to complete the login. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
+                The new login attempt included your correct account name and {{$type}}.<br><br>
+
+                The New {{$type}} is required to complete the login. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
                 <br><br>
 
-                <span style="font-weight: bold;">If you are not requesting to reset password</span> then please contact our customer service, and consider changing your email password as well to ensure your account security.
+                <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
                 <br><br>
             </div>
             <br><br>

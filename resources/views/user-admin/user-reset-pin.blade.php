@@ -56,59 +56,39 @@
         });
 
         $("#saveuser").on("click", function () {
-            var email_address = $("#email_address").val();
-
-            var emailaddress = $("#email_address");
-
-            swal({
-                title: "Reset PIN Not Available Right Now !",
-                text: "",
-                type: "error",
-                showCancelButton: false,
-                confirmButtonClass: 'btn-danger',
-                confirmButtonText: 'OK'
-            });
-
-            /*if (emailaddress[0].checkValidity()){
-                $.get("/mockjax");
-
-                $.ajax({
-                    type: "GET",
-                    url: "{ url('username-update') }}",
-                    data: {
-                        'email_address' : email_address,
-                    },
-                    success: function (res) {
-                        if ($.trim(res)) {
-                            if (res.status === "00") {
-                                swal({
-                                    title: res.user,
-                                    text: "Has Updated",
-                                    type: "success",
-                                    showCancelButton: false,
-                                    confirmButtonClass: 'btn-success',
-                                    confirmButtonText: 'OK'
-                                }, function () {
-                                    window.location.href = "{ route('useradmin.user') }}";
-                                });
-                            } else {
-                                swal({
-                                    title: res.user,
-                                    text: res.message,
-                                    type: "warning",
-                                    showCancelButton: false,
-                                    confirmButtonClass: 'btn-danger',
-                                    confirmButtonText: 'OK'
-                                }, function () {
-                                    window.location.href = "{ route('useradmin.user') }}";
-                                });
-                            }
+            userid = $("#resetUserID").val();
+            $.ajax({
+                type: "GET",
+                url: "{{ url('pin_reset/') }}",
+                data: {
+                    'userID': userid,
+                },
+                success: function (res) {
+                    if ($.trim(res)) {
+                        if (res.status === "00") {
+                            swal({
+                                title: "Email Sent",
+                                text: "Check email for the new password",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonClass: 'btn-success',
+                                confirmButtonText: 'OK'
+                            }, function () {
+                                window.location.href = "{{ route('useradmin.user') }}";
+                            });
+                        } else {
+                            swal({
+                                title: "Email Not Sent",
+                                text: res.message,
+                                type: "warning",
+                                showCancelButton: false,
+                                confirmButtonClass: 'btn-danger',
+                                confirmButtonText: 'OK'
+                            });
                         }
                     }
-                });
-            } else {
-                checkCache();
-            }*/
+                }
+            });
         });
     </script>
 @endsection
@@ -143,6 +123,8 @@
                     <div class="box">
                         <div class="box-body">
                             @foreach($userbips as $p)
+                                <input type="hidden" value="{{$p->user_id}}" id="resetUserID">
+
                                 <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                     <div class="form-group form-inline lbl-group">
                                         <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>

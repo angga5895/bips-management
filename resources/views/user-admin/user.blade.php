@@ -292,8 +292,8 @@
                     }
                 },
                 columns : [
-                    {data : 'user_id', name : 'user_id'},
                     {data : 'user_name', name: 'user_name'},
+                    {data : 'user_id', name : 'user_id'},
                     {data : 'user_id', name: 'user_id'},
                 ],
                 columnDefs: [{
@@ -307,6 +307,7 @@
                     targets : [2],
                     orderable:false,
                     searchable : false,
+                    className: 'text-center',
                     render : function (data, type, row) {
                         var uid = row.user_id;
                         var us = row.user_name;
@@ -483,16 +484,19 @@
         function checkUserType() {
             var usertype = $("#user_type").val();
             if(usertype !== null){
-                if(usertype === 'T'){
-                    $("#useridT").removeClass("d-none");
-                    $("#useridCDS").addClass("d-none");
-                    clearCache();
-                } else {
+                // if(usertype === 'T'){
+                //     $("#useridT").removeClass("d-none");
+                //     $("#useridCDS").addClass("d-none");
+                //     clearCache();
+                // } else {
+                //
                     $("#useridCDS").removeClass("d-none");
                     $("#useridT").addClass("d-none");
                     clearCache();
-                }
+
+                // }
             }
+            // console.log(usertype);
         }
 
         function checking(these) {
@@ -836,7 +840,7 @@
         <div class="card card-header">
             <label class="form-control-label pr-5 mb-2">Filtered by :</label>
             <form class="form-inline">
-                <input class="form-control mb-2" placeholder="Input ID User" id="userID" onchange="getUsername()">
+                <input class="form-control mb-2" placeholder="Input User Code" id="userID" onchange="getUsername()">
                 <input class="form-control mb-2 ml-input-2" placeholder="Name Of User" id="usernameGet" readonly>
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal1" onclick="refreshTablemember()"><i class="fa fa-search"></i></button>
                 <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="userType" required onchange="getUsername()">
@@ -888,7 +892,7 @@
                                     <tr>
                                         <th>Action</th>
                                         <th>User Name</th>
-                                        <th>User ID</th>
+                                        <th>User Code</th>
                                         <th>Email</th>
                                         {{--<th>MSIDN</th>--}}
                                         <th>User Type</th>
@@ -919,7 +923,7 @@
                                     <div class="col-sm-6">
 
                                         <div class="form-group form-inline">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
                                             <div class="col-sm-9 pr-0 row" id="useridCDS">
                                                 <div class="input-group col-sm-12 px-0">
                                                     <select class="form-control bootstrap-select w-select-100" data-live-search="true"
@@ -935,7 +939,7 @@
                                                 <label id="cekUser_type" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekUser_type"></label>
                                             </div>
                                             <div class="col-sm-9 pr-0 d-none row" id="useridT">
-                                                <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required/>
+                                                <input class="form-control col-sm-12" type="text" placeholder="User Code" id="client_id_t" onchange="checking(this)" required/>
                                                 <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
                                             </div>
                                         </div>
@@ -991,10 +995,10 @@
                                     <div class="col-sm-6">
 
                                         <div class="form-group form-inline">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Code</label>
                                             <div class="col-sm-9 pr-0 row" id="useridCDS">
                                                 <div class="input-group col-sm-12 px-0">
-                                                    <input class="form-control readonly" type="text" placeholder="User ID" id="client_id" required
+                                                    <input class="form-control readonly" type="text" placeholder="User Code" id="client_id" required
                                                            oninvalid="this.setCustomValidity('Field is required')"
                                                     />
                                                     <input class="form-control" type="hidden" id="user_id" required/>
@@ -1007,7 +1011,7 @@
                                                 <label id="cekClient_id" class="error invalid-feedback small col-sm-12 px-0" for="client_id" style="justify-content: flex-start;"></label>
                                             </div>
                                             <div class="col-sm-9 pr-0 d-none row" id="useridT">
-                                                <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required
+                                                <input class="form-control col-sm-12" type="text" placeholder="User Code" id="client_id_t" onchange="checking(this)" required
                                                        oninvalid="this.setCustomValidity('Field is required')"
                                                 />
                                                 <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
@@ -1075,7 +1079,7 @@
         <div class="card card-header">
             <form class="form-inline">
                 <button class="btn btn-sm btn-primary" type="button" id="backdetail"><i class="fa fa-backspace"></i> Back</button>
-                <label class="form-control-label pr-5 mb-0">Detail User ID : &nbsp;<span id="detail-userid"></span></label>
+                <label class="form-control-label pr-5 mb-0">Detail User Code : &nbsp;<span id="detail-userid"></span></label>
             </form>
         </div>
         <div class="card card-body" style="min-height: 365px">
@@ -1083,7 +1087,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group form-inline ">
-                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User ID</label>
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User Code</label>
                             <div class="col-sm-8 pr-0 row" id="dtl_user_id"></div>
                         </div>
                         <div class="form-group form-inline ">
@@ -1154,9 +1158,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-listmember">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>No</th>
-                                <th>Employee Name</th>
-                                <th>Action</th>
+                                <th data-priority="1">Employee Name</th>
+                                <th data-priority="3">User Code</th>
+                                <th data-priority="2">Action</th>
                             </tr>
                             </thead>
                         </table>

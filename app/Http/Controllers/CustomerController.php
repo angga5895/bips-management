@@ -157,20 +157,20 @@ class CustomerController extends Controller
     public function getCustomer(request $request){
         $requestData = $request->all();
         $customerID = $requestData['search_param']['customerID'];
-        $type = $requestData['search_param']['type'];
+        $salesID = $requestData['search_param']['salesID'];
 
-        $where_groupID = "";
+        $where_custID = "";
+        $where_salesID = "";
         if ($customerID != ""){
-            if($type == "sales"){
-                $where_groupID = ' WHERE "lower"(c.sales_id) LIKE \'%'.strtolower($customerID).'%\'';
-            }else{
-                $where_groupID = ' WHERE "lower"(custcode) LIKE \'%'.strtolower($customerID).'%\'';
-            }
+            $where_custID = ' AND "lower"(custcode) LIKE \'%'.strtolower($customerID).'%\'';
+        }
+        if($salesID != ""){
+            $where_salesID = ' AND "lower"(c.sales_id) LIKE \'%'.strtolower($salesID).'%\'';
         }
 
         $query = 'SELECT c.*,s.sales_name, c.custcode as csd FROM public.customer c
                   JOIN
-                  sales s ON c.sales_id = s.sales_id'.$where_groupID;
+                  sales s ON c.sales_id = s.sales_id WHERE c.custcode IS NOT NULL '.$where_custID.' '.$where_salesID;
         $data = DB::select($query);
         return DataTables::of($data)->make(true);
     }

@@ -50,19 +50,33 @@
         $(document).ready(function () {
             getTableGroup();
             getTableList();
-            $("#spanTextList").text("Customer");
+            $("#spanTextList").text($("#SearchType").val());
+            $("#NameText").text($("#SearchType").val());
+            $("#CodeText").text($("#SearchType").val());
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
             $('.bootstrap-select').selectpicker();
         });
 
-        function refreshTableList(){
+        function refreshTableList(type){
+            $("#SearchType").val(type);
+            $("#spanTextList").text($("#SearchType").val());
+            $("#NameText").text($("#SearchType").val());
+            $("#CodeText").text($("#SearchType").val());
+
             $('#table-grouplist').DataTable().ajax.reload();
         }
 
         function clickOK(id,name) {
-            $("#customerID").val(id);
+            var type = $("#SearchType").val();
+            if(type == "sales"){
+                $("#SalesNameInput").val(name);
+                $("#SalesIDs").val(id);
+            }else{
+                $("#CustomerNameInput").val(name);
+                $("#CustomerIDs").val(id);
+            }
             getGroup();
         }
 
@@ -80,7 +94,7 @@
                     url: '{{ url("getDataFilterCustomer") }}',
                     data: function (d) {
                         var search_data = {
-                            type:$("#changeStatus").val(),
+                            type:$("#SearchType").val(),
                         };
                         d.search_param = search_data;
                     },
@@ -124,8 +138,8 @@
                     url: '{{ url("getDataCustomer") }}',
                     data: function (d) {
                         var search_data = {
-                            customerID: $("#customerID").val(),
-                            type: $("#changeStatus").val(),
+                            customerID: $("#CustomerIDs").val(),
+                            salesID: $("#SalesIDs").val(),
                         };
                         d.search_param = search_data;
                     },
@@ -385,32 +399,24 @@
             }
         }
         function getGroup() {
-            var id = $("#customerID").val();
-            var type = $("#changeStatus").val();
+            // var id = $("#customerID").val();
+            // var type = $("#changeStatus").val();
 
-            if(id === ''){
-                $("#customerGet").val('');
+            // if(id === ''){
+                // $("#customerGet").val('');
+                // $('#table-reggroup').DataTable().ajax.reload();
+            // } else {
                 $('#table-reggroup').DataTable().ajax.reload();
-            } else {
-                $.ajax({
-                    type : "GET",
-                    url  : "{{ url('customerGetName') }}",
-                    data : {
-                        'id' : id,
-                        'type': type,
-                    },
-                    success : function (res) {
-                        if ($.trim(res)){
-                            $("#customerGet").val(res[0].name);
-                        } else {
-                            $("#customerGet").val('');
-                        }
-                        $('#table-reggroup').DataTable().ajax.reload();
-                    }
-                });
-            }
+            // }
         }
 
+        function resetBtn(){
+            $("#SalesNameInput").val("");
+            $("#SalesIDs").val("");
+            $("#CustomerNameInput").val("");
+            $("#CustomerIDs").val("");
+            getGroup();
+        }
     </script>
 @endsection
 
@@ -439,13 +445,23 @@
         <div class="card card-header">
             <form class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Filter Search</label>
-                <select class="form-control bootstrap-select w-select-100 m-top-min-4" id="changeStatus" onchange="changeSearch()"  data-live-search="true" data-style="btn-default" id="userType" required onchange="getUsername()">
-                        <option value="customer" selected>Customer</option>
-                        <option value="sales">Sales</option>
-                </select>
-                <input class="form-control mb-2 ml-input-2" placeholder="Input Customer ID" id="customerID" onchange="getGroup()">
-                <input class="form-control mb-2 ml-input-2" placeholder="Nama Detail Customer" readonly id="customerGet">
-                <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList()"><i class="fa fa-search"></i></button>
+                {{--<select class="form-control bootstrap-select w-select-100 m-top-min-4" id="changeStatus" onchange="changeSearch()"  data-live-search="true" data-style="btn-default" id="userType" required onchange="getUsername()">--}}
+                        {{--<option value="customer" selected>Customer</option>--}}
+                        {{--<option value="sales">Sales</option>--}}
+                {{--</select>--}}
+                {{--<input class="form-control mb-2 ml-input-2" placeholder="Input Customer ID" id="customerID" onchange="getGroup()">--}}
+                <input class="form-control mb-2 ml-input-2" placeholder="Customer Name" readonly id="CustomerNameInput">
+                <button class="form-control-btn btn btn-default mb-2 mr-0" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList('customer')"><i class="fa fa-search"></i></button>
+                {{--<input class="form-control mb-2 ml-input-2" placeholder="Input Customer ID" id="customerID" onchange="getGroup()">--}}
+                <input class="form-control mb-2 ml-input-2" placeholder="Sales Name" readonly id="SalesNameInput">
+
+                <button class="form-control-btn btn btn-default mb-2 mr-0" type="button" data-toggle="modal" data-target="#exampleModal" onclick="refreshTableList('sales')"><i class="fa fa-search"></i></button>
+
+                <input type="hidden" id="CustomerIDs">
+                <input type="hidden" id="SalesIDs">
+                <input type="hidden" id="SearchType" value="customer">
+
+                <button class="form-control-btn btn btn-danger mb-2 mr-0" type="button" onclick="resetBtn()">Reset</button>
                 <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current1">Search</button>
             </form>
         </div>
@@ -620,9 +636,9 @@
                         <table class="table table-striped table-bordered table-hover" id="table-grouplist">
                             <thead class="bg-gradient-primary text-lighter">
                             <tr>
-                                <th>Name</th>
-                                <th>Code</th>
-                                <th>Action</th>
+                                <th data-priority="1"><span id="NameText"></span> Name</th>
+                                <th data-priority="3"><span id="CodeText"></span> Code</th>
+                                <th data-priority="2">Action</th>
                             </tr>
                             </thead>
                             <tbody>

@@ -110,12 +110,14 @@
                     @if($p->cla_module)
                         <?php $clappmodule = Illuminate\Support\Facades\DB::select
                         ('
-                                SELECT cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app_mod
-                                LEFT JOIN cl_app ON cl_app.cla_id = cl_app_mod.clam_cla_id
-                                LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
-                                JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
-                                WHERE cl_app.cla_id = '.$p->cla_id.' AND cl_app_mod.clam_show = TRUE ORDER BY cl_module.clm_order;
-                            ')
+                            SELECT cl_permission_app_mod.clp_role_app, cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app_mod
+                            LEFT JOIN cl_app ON cl_app.cla_id = cl_app_mod.clam_cla_id
+                            LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                            JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
+                            JOIN role_app ON role_app.id = cl_permission_app_mod.clp_role_app
+                            WHERE cl_app.cla_id = '.$p->cla_id.' AND cl_app_mod.clam_show = TRUE
+                            AND cl_permission_app_mod.clp_role_app = '.$role_app.' ORDER BY cl_module.clm_order;
+                        ')
                         ?>
 
                         <li class="nav-item {{ strpos($routeName, $p->cla_routename) !== false ? 'active' : '' }}">

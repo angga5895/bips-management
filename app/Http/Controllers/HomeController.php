@@ -34,8 +34,15 @@ class HomeController extends Controller
             $countgroup = $p->count;
         }
 
-        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
+        $role_app = Auth::user()->role_app;
+        $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
+                                    JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                    JOIN role_app ON cl_permission_app.clp_role_app = role_app.id
+                                    WHERE cl_app.cla_shown = 1 
+                                    AND cl_permission_app.clp_role_app = '.$role_app.'
+                                    ORDER BY cl_app.cla_order;
+                            ');
 
-        return view('home', ['title' => 'Dashboard', 'countgroup'=>$countgroup, 'clapp' => $clapp]);
+        return view('home', ['title' => 'Dashboard', 'countgroup'=>$countgroup, 'clapp' => $clapp, 'role_app' => $role_app]);
     }
 }

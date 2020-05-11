@@ -24,9 +24,15 @@ class SalesController extends Controller
             $row = $p->count;
         }
 
-        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
-
         $role_app = Auth::user()->role_app;
+        $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
+                                    JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                    JOIN role_app ON cl_permission_app.clp_role_app = role_app.id
+                                    WHERE cl_app.cla_shown = 1 
+                                    AND cl_permission_app.clp_role_app = '.$role_app.'
+                                    ORDER BY cl_app.cla_order;
+                            ');
+
         $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
                             JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
                             JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
@@ -48,6 +54,7 @@ class SalesController extends Controller
                     'countgroup' => $row,
                     'dealer_list' => $dealer_list,
                     'clapp' => $clapp,
+                    'role_app' => $role_app,
                 ]
             );
         }

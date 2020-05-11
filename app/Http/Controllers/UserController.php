@@ -38,9 +38,15 @@ class UserController extends Controller
             $countgroup = $p->count;
         }
 
-        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
-
         $role_app = Auth::user()->role_app;
+        $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
+                                    JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                    JOIN role_app ON cl_permission_app.clp_role_app = role_app.id
+                                    WHERE cl_app.cla_shown = 1 
+                                    AND cl_permission_app.clp_role_app = '.$role_app.'
+                                    ORDER BY cl_app.cla_order;
+                            ');
+
         $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
                             JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
                             JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
@@ -54,7 +60,7 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp'), ['title' => 'User']);
+            return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp', 'role_app'), ['title' => 'User']);
         }
     }
 
@@ -64,9 +70,15 @@ class UserController extends Controller
         $userstatus = User_status::orderBy('id','ASC')->get();
         $userbips = DB::select('SELECT * FROM users WHERE user_id = \''.$id.'\'');
 
-        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
-
         $role_app = Auth::user()->role_app;
+        $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
+                                    JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                    JOIN role_app ON cl_permission_app.clp_role_app = role_app.id
+                                    WHERE cl_app.cla_shown = 1 
+                                    AND cl_permission_app.clp_role_app = '.$role_app.'
+                                    ORDER BY cl_app.cla_order;
+                            ');
+
         $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
                             JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
                             JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
@@ -80,7 +92,7 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user-edit', compact('usertype', 'userstatus', 'userbips', 'clapp'), ['title' => 'Edit User']);
+            return view('user-admin.user-edit', compact('usertype', 'userstatus', 'userbips', 'clapp', 'role_app'), ['title' => 'Edit User']);
         }
     }
 
@@ -88,9 +100,15 @@ class UserController extends Controller
     {
         $userbips = DB::select('SELECT * FROM users WHERE user_id = \''.$id.'\'');
 
-        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
-
         $role_app = Auth::user()->role_app;
+        $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
+                                    JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                    JOIN role_app ON cl_permission_app.clp_role_app = role_app.id
+                                    WHERE cl_app.cla_shown = 1 
+                                    AND cl_permission_app.clp_role_app = '.$role_app.'
+                                    ORDER BY cl_app.cla_order;
+                            ');
+
         $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
                             JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
                             JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
@@ -104,7 +122,7 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user-reset-password', compact('userbips', 'clapp'), ['title' => 'Reset Password User']);
+            return view('user-admin.user-reset-password', compact('userbips', 'clapp', 'role_app'), ['title' => 'Reset Password User']);
         }
     }
 
@@ -112,9 +130,15 @@ class UserController extends Controller
     {
         $userbips = DB::select('SELECT * FROM users WHERE user_id = \''.$id.'\'');
 
-        $clapp = DB::select(' SELECT cl_app.* FROM cl_app JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id WHERE cl_app.cla_shown = 1 ORDER BY cl_app.cla_order;');
-
         $role_app = Auth::user()->role_app;
+        $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
+                                    JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                    JOIN role_app ON cl_permission_app.clp_role_app = role_app.id
+                                    WHERE cl_app.cla_shown = 1 
+                                    AND cl_permission_app.clp_role_app = '.$role_app.'
+                                    ORDER BY cl_app.cla_order;
+                            ');
+
         $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
                             JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
                             JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
@@ -128,7 +152,7 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user-reset-pin', compact('userbips', 'clapp'), ['title' => 'Reset PIN User']);
+            return view('user-admin.user-reset-pin', compact('userbips', 'clapp', 'role_app'), ['title' => 'Reset PIN User']);
         }
     }
 

@@ -207,18 +207,31 @@ class UserController extends Controller
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
         try {
-            $query = User::create([
+            /*$query = User::create([
                 'user_id' => $user_id,
                 'user_name' => $user_name,
                 'email_address' => $email_address,
                 'msidn' => $msidn,
-                'hash_password' => $hash_password,
+                'hash_password' => 'crypt('.$hash_password.', gen_salt("md5"))',
                 'status' => $user_status,
                 'last_login' => $current_time,
                 'last_teriminalid' => null,
                 'user_type' => $user_type,
                 'hash_pin' => $hash_pin,
-            ]);
+            ]);*/
+
+            $query = DB::insert('INSERT INTO users(user_id, user_name, email_address, msidn, hash_password, status, last_login, last_teriminalid, user_type, hash_pin)
+                          VALUES (\''.$user_id.'\',
+                            \''.$user_name.'\',
+                            \''.$email_address.'\',
+                            \''.$msidn.'\',
+                            crypt(\''.$hash_password.'\', gen_salt(\'md5\')),
+                            \''.$user_status.'\',
+                            \''.$current_time.'\',
+                            null,
+                            \''.$user_type.'\',
+                            \''.$hash_pin.'\')'
+                );
 
             if ($query) {
                 if ($user_type === 'C') {

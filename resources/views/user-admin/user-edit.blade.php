@@ -2,6 +2,79 @@
 
 @section('js')
     <script>
+        var rulesobj = {
+            "user_name" : {
+                required : true
+            },
+            "email_address" : {
+                required : true,
+                email : true
+            },
+            "msidn" : {
+                required : true
+            },
+            "user_status" : {
+                required : true
+            }
+        };
+
+        var messagesobj = {
+            "user_name" : "Field is required.",
+            "email_address" : {
+                required : "Field is required.",
+                email : "Field must be a valid email address."
+            },
+            "msidn" : "Field is required.",
+            "user_status" : "Please pick an user status.",
+        };
+
+        $(function () {
+            var $form = $('#myFormUpdate');
+            $form.validate({
+                rules: rulesobj,
+                messages: messagesobj,
+                debug: false,
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback offset-label-error-user');
+                    element.closest('.form-group').append(error);
+                    $(element).addClass('is-invalid');
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+
+                    if (element.id === 'user_status'){
+                        $(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");
+                    }
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+
+                    if (element.id === 'user_status'){
+                        $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
+                    }
+                }
+            });
+
+            $form.find("#saveuser").on('click', function () {
+                if ($form.valid()) {
+                    saveUser();
+                } else {
+                    var email = $("#email_address-error").text();
+                    if (email === 'Field must be a valid email address.'){
+                        $('.lbl-group').removeClass('focused');
+                    }
+                }
+                return false;
+            });
+
+            $form.keypress(function(e) {
+                if(e.which == 13) {
+                    $("#saveuser").click();
+                }
+            });
+        });
+
         $(document).ready(function () {
             $('.bootstrap-select').selectpicker();
             $(".readonly").on('keydown paste mousedown mouseup drop', function(e){
@@ -23,34 +96,10 @@
                 }
 
                 if (str === 'User_status'){
+                    $("#user_status-error").text('');
                     $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
                 }
             }
-        }
-
-        function checkCache(){
-            var user_name = $("#user_name");
-            var email_address = $("#email_address");
-            var msidn = $("#msidn");
-            var user_status = $("#user_status");
-
-            //lbl
-            var cekUser_name = $("#cekUser_name");
-            var cekEmail_address = $("#cekEmail_address");
-            var cekMsidn = $("#cekMsidn");
-            var cekUser_status = $("#cekUser_status");
-
-            if(!user_status[0].checkValidity()){cekUser_status.text(user_status[0].validationMessage);$(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");user_status.focus();}
-            else {cekUser_status.text('');$(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");}
-
-            if(!user_name[0].checkValidity()){cekUser_name.text(user_name[0].validationMessage);user_name.addClass("is-invalid");user_name.focus();}
-            else {cekUser_name.text('');user_name.removeClass("is-invalid");}
-
-            if(!email_address[0].checkValidity()){cekEmail_address.text(email_address[0].validationMessage);email_address.addClass("is-invalid");email_address.focus();}
-            else {cekEmail_address.text('');email_address.removeClass("is-invalid");}
-
-            if(!msidn[0].checkValidity()){cekMsidn.text(msidn[0].validationMessage);msidn.addClass("is-invalid");msidn.focus();}
-            else {cekMsidn.text('');msidn.removeClass("is-invalid");}
         }
 
         $("#canceluser").on("click", function () {
@@ -71,65 +120,53 @@
             );
         });
 
-        $("#saveuser").on("click", function () {
+        function saveUser() {
             var user_name = $("#user_name").val();
             var email_address = $("#email_address").val();
             var msidn = $("#msidn").val();
             var user_status = $("#user_status").val();
 
+            $.get("/mockjax");
 
-            var username = $("#user_name");
-            var emailaddress = $("#email_address");
-            var msidn_no = $("#msidn");
-            var userstatus = $("#user_status");
-
-            if (username[0].checkValidity() && msidn_no[0].checkValidity()
-                && userstatus[0].checkValidity() && emailaddress[0].checkValidity()
-            ){
-                $.get("/mockjax");
-
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url('username-update') }}",
-                    data: {
-                        'user_id' : "@foreach($userbips as $p){{ $p->user_id }}@endforeach",
-                        'user_name' : user_name,
-                        'email_address' : email_address,
-                        'msidn' : msidn,
-                        'user_status' : user_status,
-                    },
-                    success: function (res) {
-                        if ($.trim(res)) {
-                            if (res.status === "00") {
-                                swal({
-                                    title: res.user,
-                                    text: "Has Updated",
-                                    type: "success",
-                                    showCancelButton: false,
-                                    confirmButtonClass: 'btn-success',
-                                    confirmButtonText: 'OK'
-                                }, function () {
-                                    window.location.href = "{{ route('useradmin.user') }}";
-                                });
-                            } else {
-                                swal({
-                                    title: res.user,
-                                    text: res.message,
-                                    type: "warning",
-                                    showCancelButton: false,
-                                    confirmButtonClass: 'btn-danger',
-                                    confirmButtonText: 'OK'
-                                }, function () {
-                                    window.location.href = "{{ route('useradmin.user') }}";
-                                });
-                            }
+            $.ajax({
+                type: "GET",
+                url: "{{ url('username-update') }}",
+                data: {
+                    'user_id' : "@foreach($userbips as $p){{ $p->user_id }}@endforeach",
+                    'user_name' : user_name,
+                    'email_address' : email_address,
+                    'msidn' : msidn,
+                    'user_status' : user_status,
+                },
+                success: function (res) {
+                    if ($.trim(res)) {
+                        if (res.status === "00") {
+                            swal({
+                                title: res.user,
+                                text: "Has Updated",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonClass: 'btn-success',
+                                confirmButtonText: 'OK'
+                            }, function () {
+                                window.location.href = "{{ route('useradmin.user') }}";
+                            });
+                        } else {
+                            swal({
+                                title: res.user,
+                                text: res.message,
+                                type: "warning",
+                                showCancelButton: false,
+                                confirmButtonClass: 'btn-danger',
+                                confirmButtonText: 'OK'
+                            }, function () {
+                                window.location.href = "{{ route('useradmin.user') }}";
+                            });
                         }
                     }
-                });
-            } else {
-                checkCache();
-            }
-        });
+                }
+            });
+        }
     </script>
 @endsection
 
@@ -155,7 +192,7 @@
     </div>
 
     <div class="card shadow">
-        <form>
+        <form id="myFormUpdate">
             <div class="card card-body" style="min-height: 365px">
                 <!-- Main content -->
                 <section class="content">
@@ -165,12 +202,12 @@
                             @foreach($userbips as $p)
                                 <div class="container-fluid py-2 card d-border-radius-0 mb-2">
 
-
                                     <div class="row">
                                         <div class="col-sm-6">
-                                            <div class="form-group form-inline">
+
+                                            <div class="form-group form-inline lbl-group">
                                                 <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
-                                                <div class="col-sm-9 pr-0 row" id="useridCDS">
+                                                <div class="col-sm-9 pr-0 row">
                                                     <div class="input-group col-sm-12 px-0">
                                                         <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-white" id="user_type" disabled>
                                                             <option value="" disabled selected>Choose User Type</option>
@@ -181,27 +218,18 @@
                                                     </div>
                                                     <label id="cekUser_type" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekUser_type"></label>
                                                 </div>
-                                                <div class="col-sm-9 pr-0 d-none row" id="useridT">
-                                                    <input class="form-control col-sm-12" type="text" placeholder="User ID" id="client_id_t" onchange="checking(this)" required
-                                                           oninvalid="this.setCustomValidity('Field is required')"
-                                                    />
-                                                    <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
-                                                </div>
                                             </div>
-
-                                            <div class="form-group form-inline">
+                                            <div class="form-group form-inline lbl-group">
                                                 <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
                                                 <div class="col-sm-9 pr-0 row">
                                                     <input class="form-control col-sm-12 readonly" type="text" placeholder="User ID" readonly id="userID" value="{{ $p->user_id }}"
-                                                           oninvalid="this.setCustomValidity('Field is required')"
                                                     />
                                                 </div>
                                             </div>
                                             <div class="form-group form-inline lbl-group">
                                                 <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
                                                 <div class="col-sm-9 pr-0 row">
-                                                    <input class="form-control col-sm-12" type="text" placeholder="User Name" id="user_name" value="{{ $p->user_name }}" onchange="checking(this)" required
-                                                           oninvalid="this.setCustomValidity('Field is required')"
+                                                    <input class="form-control col-sm-12" type="text" placeholder="User Name" id="user_name" name="user_name" value="{{ $p->user_name }}" onchange="checking(this)"
                                                     />
                                                     <label id="cekUser_name" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_name"></label>
                                                 </div>
@@ -209,12 +237,12 @@
 
                                         </div>
                                         <div class="col-sm-6">
+
                                             <div class="form-group form-inline lbl-group">
                                                 <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>
                                                 <div class="col-sm-9 pr-0 row">
                                                     <input class="form-control col-sm-12" type="email" placeholder="Email"
-                                                           id="email_address" value="{{ $p->email_address }}" onchange="checking(this)" required
-                                                           oninvalid="this.setCustomValidity('Field is required')"
+                                                           id="email_address" name="email_address" value="{{ $p->email_address }}" onchange="checking(this)"
                                                     />
                                                     <label id="cekEmail_address" class="error invalid-feedback small d-block col-sm-12 px-0" for="email_address"></label>
                                                 </div>
@@ -223,8 +251,7 @@
                                                 <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">MSIDN</label>
                                                 <div class="col-sm-9 pr-0 row">
                                                     <input class="form-control col-sm-12" type="text" placeholder="MSIDN"
-                                                           id="msidn" value="{{ $p->msidn }}" onchange="checking(this)" required
-                                                           oninvalid="this.setCustomValidity('Field is required')"
+                                                           id="msidn" name="msidn" value="{{ $p->msidn }}" onchange="checking(this)"
                                                     />
                                                     <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
                                                 </div>
@@ -235,7 +262,6 @@
                                                     <div class="input-group col-sm-12 px-0">
                                                         <select class="form-control bootstrap-select" data-live-search="true"
                                                                 data-style="btn-white" id="user_status" onchange="checking(this)"
-                                                                oninvalid="this.setCustomValidity('Status can not be null')"
                                                         >
                                                             <option value="" disabled>Choose User Status</option>
                                                             @foreach($userstatus as $r)
@@ -250,7 +276,6 @@
                                         </div>
 
                                     </div>
-
 
                                 </div>
                             @endforeach

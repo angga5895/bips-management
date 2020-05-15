@@ -695,6 +695,7 @@ class UserController extends Controller
         $rowdata = $this->__getDataUser($userID);
 
         //$newpassword =  substr(md5($userID),rand(0,23),6);
+        //random only numeric
         $newpassword =  mt_rand(100000,999999);
         $hashPassword = $rowdata->hash_pin;
 

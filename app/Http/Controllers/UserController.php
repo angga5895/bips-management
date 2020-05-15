@@ -635,44 +635,51 @@ class UserController extends Controller
         $rowdata = $this->__getDataUser($userID);
 
         $newpassword =  substr(md5($userID),rand(0,19),12);
+        $hashPassword = $rowdata->hash_password;
 
         try {
-            User::where('user_id', $userID)->update([
+            /*User::where('user_id', $userID)->update([
                 'hash_password' => $newpassword,
-            ]);
+            ]);*/
 
+            DB::update('UPDATE users SET hash_password = crypt(\''.$newpassword.'\', gen_salt(\'md5\'))
+                                    WHERE user_id=\''.$userID.'\' ');
 
-        $name = explode(" ",$rowdata->user_name);
-        $name = $name[0];
-        $data = [
-            'name'=>$name,
-            'account'=>$rowdata->email_address,
-            'newpassword'=>$newpassword,
-            'type'=>'password'
-        ];
-        $body = [
-            'FromEmail' => "zaky@vsi.co.id",
-            'FromName' => "DX-TRADE",
-            'Subject' => "New Password Reset",
-            'Text-part' => "Dear ".$name.", Here is your new account password data account ".
-                $rowdata->email_address.": ".$newpassword."",
-            'Html-part' => view('emailTemplate',$data)->render(),
-            'Recipients' => [
-                [
-                    'Email' => $rowdata->email_address,
-                ]
-            ],
-        ];
-        $response = Mailjet::post(Resources::$Email, ['body' => $body]);
+            $name = explode(" ",$rowdata->user_name);
+            $name = $name[0];
+            $data = [
+                'name'=>$name,
+                'account'=>$rowdata->email_address,
+                'newpassword'=>$newpassword,
+                'type'=>'password'
+            ];
+            $body = [
+                'FromEmail' => "zaky@vsi.co.id",
+                'FromName' => "DX-TRADE",
+                'Subject' => "New Password Reset",
+                'Text-part' => "Dear ".$name.", Here is your new account password data account ".
+                    $rowdata->email_address.": ".$newpassword."",
+                'Html-part' => view('emailTemplate',$data)->render(),
+                'Recipients' => [
+                    [
+                        'Email' => $rowdata->email_address,
+                    ]
+                ],
+            ];
+            $response = Mailjet::post(Resources::$Email, ['body' => $body]);
 
-        if($response->success()){
-            $status = "00";
-            $msg = null;
+            if($response->success()){
+                $status = "00";
+                $msg = null;
 
-        }else{
-            $status = "01";
-            $msg = $response->getData();
-        }
+            } else{
+                User::where('user_id', $userID)->update([
+                    'hash_password' => $hashPassword,
+                ]);
+
+                $status = "01";
+                $msg = $response->getData();
+            }
         } catch (QueryException $r){
             $status = '01';
             $msg = $r->getMessage();

@@ -694,13 +694,17 @@ class UserController extends Controller
         $userID =$_GET['userID'];
         $rowdata = $this->__getDataUser($userID);
 
-        $newpassword =  substr(md5($userID),rand(0,23),6);
+        //$newpassword =  substr(md5($userID),rand(0,23),6);
+        $newpassword =  mt_rand(100000,999999);
+        $hashPassword = $rowdata->hash_pin;
 
         try {
-            User::where('user_id', $userID)->update([
+            /*User::where('user_id', $userID)->update([
                 'hash_pin' => $newpassword,
-            ]);
+            ]);*/
 
+            DB::update('UPDATE users SET hash_pin = crypt(\''.$newpassword.'\', gen_salt(\'md5\'))
+                                    WHERE user_id=\''.$userID.'\' ');
 
             $name = explode(" ",$rowdata->user_name);
             $name = $name[0];
@@ -730,6 +734,10 @@ class UserController extends Controller
                 $msg = null;
 
             }else{
+                User::where('user_id', $userID)->update([
+                    'hash_pin' => $hashPassword,
+                ]);
+
                 $status = "01";
                 $msg = $response->getData();
             }

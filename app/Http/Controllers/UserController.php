@@ -212,7 +212,7 @@ class UserController extends Controller
                 'user_name' => $user_name,
                 'email_address' => $email_address,
                 'msidn' => $msidn,
-                'hash_password' => 'crypt('.$hash_password.', gen_salt("md5"))',
+                'hash_password' => $hash_password,
                 'status' => $user_status,
                 'last_login' => $current_time,
                 'last_teriminalid' => null,

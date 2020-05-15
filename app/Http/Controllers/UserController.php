@@ -230,7 +230,7 @@ class UserController extends Controller
                             \''.$current_time.'\',
                             null,
                             \''.$user_type.'\',
-                            \''.$hash_pin.'\')'
+                            crypt(\''.$hash_pin.'\', gen_salt(\'md5\')))'
                 );
 
             if ($query) {

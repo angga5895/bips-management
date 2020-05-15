@@ -37,6 +37,10 @@ body.loading .modal-ajax {
 }
 
 @media (min-width: 576px) {
+    .offset-label-error-user{
+        margin-left: 25.5%;
+    }
+
     .ml-input-2{
         margin-left: .5rem!important;
     }

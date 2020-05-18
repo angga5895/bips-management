@@ -58,7 +58,22 @@
 
             $form.find("#saveuser").on('click', function () {
                 if ($form.valid()) {
-                    saveUser();
+                    swal({
+                            title: "Are you sure?",
+                            type: "warning",
+                            showCancelButton: true,
+                            cancelButtonClass: "btn-danger",
+                            confirmButtonClass: "btn-success",
+                            confirmButtonText: "Yes",
+                            cancelButtonText: "No",
+                            closeOnCancel: true,
+                        },
+                        function(isConfirm) {
+                            if (isConfirm) {
+                                saveUser();
+                            }
+                        }
+                    );
                 } else {
                     $('.lbl-group').removeClass('focused');
                 }
@@ -100,21 +115,7 @@
         }
 
         $("#canceluser").on("click", function () {
-            swal({
-                    title: "Are you sure?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "No",
-                    cancelButtonText: "Yes",
-                    closeOnCancel: true,
-                },
-                function(isConfirm) {
-                    if (!isConfirm) {
-                        window.location.href="{{ route('useradmin.user') }}"
-                    }
-                }
-            );
+            window.location.href="{{ route('useradmin.user') }}"
         });
 
         function saveUser() {

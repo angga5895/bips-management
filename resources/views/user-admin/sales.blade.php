@@ -374,6 +374,7 @@
         }
 
         function addGroup() {
+            $("#groupid").removeAttr( "disabled", "disabled" );
             var id = $("#addgroupID").val();
             $.ajax({
                 type : "GET",
@@ -404,6 +405,7 @@
         }
 
         function editSales(data){
+            $("#groupid").attr( "disabled", "disabled" );
             $.ajax({
                 type : "GET",
                         url  : "{{ url('sales-update/') }}",

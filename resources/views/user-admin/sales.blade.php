@@ -420,7 +420,7 @@
                         $("#groupname").val(res.sales_name);
                         $("#groupaddress").val(res.address);
                         $("#groupphone").val(res.phone);
-                        $("#groupmobilphone").val(res.mobile_phone);
+                        $("#groupmobilphone").val(res.mobilephone);
                         $("#groupemail").val(res.email);
                 }
             });
@@ -456,7 +456,7 @@
                     $("#groupname").val(res.sales_name);
                     $("#groupaddress").val(res.address);
                     $("#groupphone").val(res.phone);
-                    $("#groupmobilphone").val(res.mobile_phone);
+                    $("#groupmobilphone").val(res.mobilephone);
                     $("#groupemail").val(res.email);
                 }
             });

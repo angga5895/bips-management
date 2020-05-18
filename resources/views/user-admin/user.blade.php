@@ -106,6 +106,8 @@
             $form.find("#saveUser").on('click', function () {
                 if ($form.valid()) {
                     saveUser();
+                } else {
+                    $('.lbl-group').removeClass('focused');
                 }
                 return false;
             });

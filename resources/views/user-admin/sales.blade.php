@@ -117,7 +117,22 @@
 
         function updateGroup(form){
             if (form.valid()) {
-                updategroup();
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-success",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            updategroup();
+                        }
+                    }
+                )
             }  else {
                 $('.lbl-group').removeClass('focused');
             }
@@ -545,27 +560,12 @@
         });
 
         $("#canceleditgroup").on("click", function () {
-            swal({
-                    title: "Are you sure?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "No",
-                    cancelButtonText: "Yes",
-                    closeOnCancel: true,
-                },
-                function(isConfirm) {
-                    if (!isConfirm) {
-                        $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
-                        $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
-                        $("#add-group").removeClass("d-block");
-                        $("#add-group").addClass("d-none");
-                        $("#main-group").removeClass("d-none");
-                        $("#main-group").addClass("d-block");
-
-                    }
-                }
-            )
+            $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
+            $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
+            $("#add-group").removeClass("d-block");
+            $("#add-group").addClass("d-none");
+            $("#main-group").removeClass("d-none");
+            $("#main-group").addClass("d-block");
         });
 
         $("#btn-current1").on("click", function(){

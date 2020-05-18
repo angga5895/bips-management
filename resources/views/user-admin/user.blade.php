@@ -584,6 +584,7 @@
                     type: "warning",
                     showCancelButton: true,
                     cancelButtonClass: "btn-danger",
+                    confirmButtonClass: "btn-default",
                     cancelButtonText: "No",
                     confirmButtonText: "Yes",
                     closeOnCancel: true,

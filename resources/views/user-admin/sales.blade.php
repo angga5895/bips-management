@@ -518,13 +518,14 @@
                         title: "Are you sure?",
                         type: "warning",
                         showCancelButton: true,
-                        confirmButtonClass: "btn-danger",
-                        confirmButtonText: "No",
-                        cancelButtonText: "Yes",
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
                         closeOnCancel: true,
                     },
                     function(isConfirm) {
-                        if (!isConfirm) {
+                        if (isConfirm) {
                             $("#add-group").removeClass("d-block");
                             $("#add-group").addClass("d-none");
                             $("#main-group").removeClass("d-none");

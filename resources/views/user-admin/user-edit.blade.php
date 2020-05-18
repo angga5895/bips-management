@@ -60,10 +60,7 @@
                 if ($form.valid()) {
                     saveUser();
                 } else {
-                    var email = $("#email_address-error").text();
-                    if (email === 'Field must be a valid email address.'){
-                        $('.lbl-group').removeClass('focused');
-                    }
+                    $('.lbl-group').removeClass('focused');
                 }
                 return false;
             });

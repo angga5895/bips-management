@@ -128,7 +128,7 @@
                                 <ul class="nav nav-sm flex-column">
                                     @foreach($clappmodule as $r)
                                         <li class="nav-item">
-                                            <a href="/{{ $r->clm_slug }}" class="nav-link {{ strpos($routeName, $r->clm_routename) !== false ? 'menu-active' : '' }}">
+                                            <a href="{{ url('/'.$r->clm_slug)}}" class="nav-link {{ strpos($routeName, $r->clm_routename) !== false ? 'menu-active' : '' }}">
                                                 <span class="sidenav-normal"> {{ $r->clm_name }} </span>
                                             </a>
                                         </li>

@@ -141,6 +141,7 @@
 <script src="{{ asset('layout_mockJax.js') }}"></script>
 
 <script src="{{ url('js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ url('jquery-validation-1.19.1/dist/jquery.validate.min.js') }}" type="text/javascript"></script>
 
 <script type="text/javascript">
     $('.js-example-basic-single').select2({

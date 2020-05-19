@@ -2,8 +2,144 @@
 
 @section('js')
     <script>
+        var conpass = 0;
+        var conpin = 0;
+        var rulesobj = {
+            "user_type" : {
+                required : true
+            },
+            "client_id" : {
+                required : true
+            },
+            "client_id_t" : {
+                required : true
+            },
+            "user_name" : {
+                required : true
+            },
+            "email_address" : {
+                required : true,
+                email : true
+            },
+            "msidn" : {
+                required : true
+            },
+            "user_status" : {
+                required : true
+            },
+            "password" : {
+                required : true
+            },
+            "password-confirm" : {
+                required : true
+            },
+            "pin" : {
+                required : true,
+                digits : true
+            },
+            "pin-confirm" : {
+                required : true,
+                digits : true
+            }
+        }
+
+        var messagesobj = {
+            "user_type" : "Please pick an user type.",
+            "client_id" : "Field is required.",
+            "client_id_t" : "Field is required.",
+            "user_name" : "Field is required.",
+            "email_address" : {
+                required : "Field is required.",
+                email : "Field must be a valid email address."
+            },
+            "msidn" : "Field is required.",
+            "user_status" : "Please pick an user status.",
+            "password" : "Field is required.",
+            "password-confirm" : "Field is required.",
+            "pin" : {
+                required : "Field is required.",
+                digits : "Field must be a number."
+            },
+            "pin-confirm" : {
+                required : "Field is required.",
+                digits : "Field must be a number."
+            }
+
+        }
+
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
+
+            var $form = $('#myForm');
+            $form.validate({
+                rules: rulesobj,
+                messages: messagesobj,
+                debug: false,
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback offset-label-error-user');
+                    element.closest('.form-group').append(error);
+                    $(element).addClass('is-invalid');
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+
+                    if (element.id === 'user_type'){
+                        $(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");
+                    }
+                    if (element.id === 'user_status'){
+                        $(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");
+                    }
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+
+                    if (element.id === 'user_type'){
+                        $(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
+                    }
+                    if (element.id === 'user_status'){
+                        $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
+                    }
+                }
+            });
+
+            $form.find("#saveUser").on('click', function () {
+                if ($form.valid()) {
+                    saveUser();
+                } else {
+                    $('.lbl-group').removeClass('focused');
+                }
+                return false;
+            });
+
+            $form.keypress(function(e) {
+                if(e.which == 13) {
+                    $("#saveUser").click();
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            tablegetReg();
+            tablelist();
+            tablelistaccount();
+
+            $('.js-example-basic-single').select2({
+                placeholder: 'AOID'
+            });
+            $('.bootstrap-select').selectpicker();
+            $(".readonly").on('keydown paste mousedown mouseup drop', function(e){
+                e.preventDefault();
+            });
+
+            setInterval(function () {
+                if(conpass > 0){
+                    $('#password-confirm-error').text('Password confirm is wrong.');
+                }
+                if(conpin > 0){
+                    $('#pin-confirm-error').text('PIN confirm is wrong.');
+                }
+            },100);
         });
 
         function hanyaAngka(evt) {
@@ -89,20 +225,6 @@
             return date+" "+month+" "+year+" | "+datetime[1]+" WIB";
         }
 
-        $(document).ready(function () {
-            tablegetReg();
-            tablelist();
-            tablelistaccount();
-
-            $('.js-example-basic-single').select2({
-                placeholder: 'AOID'
-            });
-            $('.bootstrap-select').selectpicker();
-            $(".readonly").on('keydown paste mousedown mouseup drop', function(e){
-                e.preventDefault();
-            });
-        });
-
         function refreshTablemember(){
             $('#table-listmember').DataTable().ajax.reload();
         }
@@ -123,7 +245,7 @@
             $("#pin").val(hash_pin);
             $("#pin-confirm").val(hash_pin);
 
-            checkCache();
+            $("#myForm").valid();
         }
 
         function clientlist(){
@@ -461,13 +583,14 @@
                     title: "Are you sure?",
                     type: "warning",
                     showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "No",
-                    cancelButtonText: "Yes",
+                    cancelButtonClass: "btn-danger",
+                    confirmButtonClass: "btn-default",
+                    cancelButtonText: "No",
+                    confirmButtonText: "Yes",
                     closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (!isConfirm) {
+                    if (isConfirm) {
                         $("#add-user").removeClass("d-block");
                         $("#add-user").addClass("d-none");
                         $("#main-user").removeClass("d-none");
@@ -484,17 +607,15 @@
         function checkUserType() {
             var usertype = $("#user_type").val();
             if(usertype !== null){
-                // if(usertype === 'T'){
-                //     $("#useridT").removeClass("d-none");
-                //     $("#useridCDS").addClass("d-none");
-                //     clearCache();
-                // } else {
-                //
+                if(usertype === 'T'){
+                    $("#useridT").removeClass("d-none");
+                    $("#useridCDS").addClass("d-none");
+                    clearCache();
+                } else {
                     $("#useridCDS").removeClass("d-none");
                     $("#useridT").addClass("d-none");
                     clearCache();
-
-                // }
+                }
             }
             // console.log(usertype);
         }
@@ -505,29 +626,37 @@
             var pin = $("#pin").val();
             var cpin = $("#pin-confirm").val();
 
+            if (pass === ''){
+                conpass=0;
+            }
+
+            if (pin === ''){
+                conpin=0;
+            }
+
             if(cpass !== '') {
                 if (pass != cpass) {
-                    var cekpass = document.getElementById('cekPassword-confirm');
-                    cekpass.innerHTML = 'Password confirm is wrong.';
-                    $("#password-confirm").addClass("is-invalid");
-                    $("#password-confirm").val('');
                     $("#password-confirm").focus();
+                    $("#password-confirm").val('');
+                    $('#password-confirm').valid();
+                    conpass = 1;
                 } else if (pass == cpass) {
-                    var cekpass = document.getElementById('cekPassword-confirm');
-                    cekpass.innerHTML = '';
+                    $('#password').valid();
+                    $('#password-confirm').valid();
+                    conpass = 0;
                 }
             }
 
             if(cpin !== '') {
                 if (pin != cpin) {
-                    var cekpin = document.getElementById('cekPin-confirm');
-                    cekpin.innerHTML = 'Pin confirm is wrong.';
-                    $("#pin-confirm").addClass("is-invalid");
-                    $("#pin-confirm").val('');
                     $("#pin-confirm").focus();
+                    $("#pin-confirm").val('');
+                    $('#pin-confirm').valid();
+                    conpin = 1;
                 } else if (pin == cpin) {
-                    var cekpin = document.getElementById('cekPin-confirm');
-                    cekpin.innerHTML = '';
+                    $('#pin').valid();
+                    $('#pin-confirm').valid();
+                    conpin = 0;
                 }
             }
 
@@ -544,113 +673,56 @@
                 }
 
                 if (str === 'User_status'){
+                    $("#user_status-error").text('');
                     $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
                 }
             }
         }
 
-        function checkCache(){
-            var user_id = $("#client_id");
-            var user_idT = $("#client_id_t");
-            var user_name = $("#user_name");
-            var email_address = $("#email_address");
-            var msidn = $("#msidn");
-            var hash_password = $("#password");
-            var hash_pin = $("#pin");
-            var hash_password_confirm = $("#password-confirm");
-            var hash_pin_confirm = $("#pin-confirm");
-            var user_type = $("#user_type");
-            var user_status = $("#user_status");
-
-            //lbl
-            var cekUser_id = $("#cekClient_id");
-            var cekUser_idT = $("#cekClient_id_t");
-            var cekUser_name = $("#cekUser_name");
-            var cekEmail_address = $("#cekEmail_address");
-            var cekMsidn = $("#cekMsidn");
-            var cekHash_password = $("#cekPassword");
-            var cekHash_password_confirm = $("#cekPassword-confirm");
-            var cekHash_pin = $("#cekPin");
-            var cekHash_pin_confirm = $("#cekPin-confirm");
-            var cekUser_type = $("#cekUser_type");
-            var cekUser_status = $("#cekUser_status");
-            
-            if(!user_status[0].checkValidity()){cekUser_status.text(user_status[0].validationMessage);$(".lbl-user-status > .dropdown.bootstrap-select").addClass("is-invalid");user_status.focus();}
-            else {cekUser_status.text('');$(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");}
-
-            if(!user_type[0].checkValidity()){cekUser_type.text(user_type[0].validationMessage);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");user_type.focus();}
-            else {cekUser_type.text('');$(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");}
-
-            if(!user_name[0].checkValidity()){cekUser_name.text(user_name[0].validationMessage);user_name.addClass("is-invalid");user_name.focus();}
-            else {cekUser_name.text('');user_name.removeClass("is-invalid");}
-
-            if(!email_address[0].checkValidity()){cekEmail_address.text(email_address[0].validationMessage);email_address.addClass("is-invalid");email_address.focus();}
-            else {cekEmail_address.text('');email_address.removeClass("is-invalid");}
-
-            if(!msidn[0].checkValidity()){cekMsidn.text(msidn[0].validationMessage);msidn.addClass("is-invalid");msidn.focus();}
-            else {cekMsidn.text('');msidn.removeClass("is-invalid");}
-
-            if(!hash_password[0].checkValidity()){cekHash_password.text(hash_password[0].validationMessage);hash_password.addClass("is-invalid");hash_password.focus();}
-            else {cekHash_password.text('');hash_password.removeClass("is-invalid");}
-
-            if(!hash_password_confirm[0].checkValidity()){cekHash_password_confirm.text(hash_password_confirm[0].validationMessage);hash_password_confirm.addClass("is-invalid");hash_password_confirm.focus();}
-            else {cekHash_password_confirm.text('');hash_password_confirm.removeClass("is-invalid");}
-
-            if(!hash_pin[0].checkValidity()){cekHash_pin.text(hash_pin[0].validationMessage);hash_pin.addClass("is-invalid");hash_pin.focus();}
-            else {cekHash_pin.text('');hash_pin.removeClass("is-invalid");}
-
-            if(!hash_pin_confirm[0].checkValidity()){cekHash_pin_confirm.text(hash_pin_confirm[0].validationMessage);hash_pin_confirm.addClass("is-invalid");hash_pin_confirm.focus();}
-            else {cekHash_pin_confirm.text('');hash_pin_confirm.removeClass("is-invalid");}
-
-            if(user_type.val() === 'T'){
-                if(!user_idT[0].checkValidity()){cekUser_idT.text(user_idT[0].validationMessage);user_idT.addClass("is-invalid");user_idT.focus();}
-                else {cekUser_idT.text('');user_id.removeClass("is-invalid");}
-            } else{
-                if(!user_id[0].checkValidity()){cekUser_id.text(user_id[0].validationMessage);user_id.addClass("is-invalid");user_id.focus();}
-                else {cekUser_id.text('');user_id.removeClass("is-invalid");}
-            }
-        }
-
         function clearCache(){
-            $("#cekUser_type").text('');
+            conpass = 0;
+            conpin = 0;
+            $('.lbl-group').removeClass('focused');
+
+            $("#user_type-error").text('');
             $(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
 
-            $("#cekUser_status").text('');
+            $("#user_status-error").text('');
             $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
 
-            $("#cekClient_id").text('');
+            $("#client_id-error").text('');
             $("#client_id").removeClass("is-invalid");
             $("#client_id").val('');
 
-            $("#cekClient_id_t").text('');
+            $("#client_id_t-error").text('');
             $("#client_id_t").removeClass("is-invalid");
             $("#client_id_t").val('');
 
-            $("#cekUser_name").text('');
+            $("#user_name-error").text('');
             $("#user_name").removeClass("is-invalid");
             $("#user_name").val('');
 
-            $("#cekEmail_address").text('');
+            $("#email_address-error").text('');
             $("#email_address").removeClass("is-invalid");
             $("#email_address").val('');
 
-            $("#cekMsidn").text('');
+            $("#msidn-error").text('');
             $("#msidn").removeClass("is-invalid");
             $("#msidn").val('');
 
-            $("#cekPassword").text('');
+            $("#password-error").text('');
             $("#password").removeClass("is-invalid");
             $("#password").val('');
 
-            $("#cekPassword-confirm").text('');
+            $("#password-confirm-error").text('');
             $("#password-confirm").removeClass("is-invalid");
             $("#password-confirm").val('');
 
-            $("#cekPin").text('');
+            $("#pin-error").text('');
             $("#pin").removeClass("is-invalid");
             $("#pin").val('');
 
-            $("#cekPin-confirm").text('');
+            $("#pin-confirm-error").text('');
             $("#pin-confirm").removeClass("is-invalid");
             $("#pin-confirm").val('');
 
@@ -665,13 +737,13 @@
             clearCache();
         }
 
-        $("#saveuser").on("click", function () {
+        function saveUser() {
             var user_type = $("#user_type").val();
             var user_status = $("#user_status").val();
             var user_name = $("#user_name").val();
             var password = $("#password").val();
-            var cpassword = $("#password-confirm").val();
             var pin = $("#pin").val();
+            var cpassword = $("#password-confirm").val();
             var cpin = $("#pin-confirm").val();
 
             var email_address = $("#email_address").val();
@@ -683,71 +755,52 @@
                 var user_id = $("#client_id").val();
             }
 
-            var emailaddress = $("#email_address");
-            var hashpin = $("#pin");
-            var hashpinconfirm = $("#pin-confirm");
-            var hashpassword = $("#password");
-            var hashpasswordconfirm = $("#password-confirm");
-            var username = $("#user_name");
-            var usertype = $("#user_type");
-            var userstatus = $("#user_status");
-            var userid = $("#user_id");
-            var msidn_no = $("#msidn");
+            $.get("/mockjax");
 
-            /*&& user_type !== null && user_status !== null*/
-            if (username[0].checkValidity() && hashpassword[0].checkValidity() && hashpasswordconfirm[0].checkValidity()
-                && userid[0].checkValidity() && msidn_no[0].checkValidity() && usertype[0].checkValidity() && userstatus[0].checkValidity()
-                && emailaddress[0].checkValidity() && hashpin[0].checkValidity() && hashpinconfirm[0].checkValidity()
-            ){
-                $.get("/mockjax");
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('username-registrasi') }}",
+                data : {
+                    'user_id' : user_id,
+                    'user_name' : user_name,
+                    'email_address' : email_address,
+                    'msidn' : msidn,
+                    'hash_password' : password,
+                    'hash_pin' : pin,
+                    'user_type' : user_type,
+                    'user_status' : user_status,
+                },
+                success : function (res) {
+                    if ($.trim(res)){
+                        $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
+                        if (res.status === "00"){
+                            $('#table-reggroup').DataTable().ajax.reload();
+                            $("#add-user").removeClass("d-block");
+                            $("#add-user").addClass("d-none");
+                            $("#main-user").removeClass("d-none");
+                            $("#main-user").addClass("d-block");
+                            $("#regisuser").text(res.user);
+                            $("#alert-success-registrasi").removeClass("d-none");
+                            $("#alert-success-registrasi").addClass("d-block");
+                            $("#alert-error-registrasi").removeClass("d-block");
+                            $("#alert-error-registrasi").addClass("d-none");
 
-                $.ajax({
-                    type : "GET",
-                    url  : "{{ url('username-registrasi') }}",
-                    data : {
-                        'user_id' : user_id,
-                        'user_name' : user_name,
-                        'email_address' : email_address,
-                        'msidn' : msidn,
-                        'hash_password' : password,
-                        'hash_pin' : pin,
-                        'user_type' : user_type,
-                        'user_status' : user_status,
-                    },
-                    success : function (res) {
-                        if ($.trim(res)){
-                            $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
-                            if (res.status === "00"){
-                                $('#table-reggroup').DataTable().ajax.reload();
-                                $("#add-user").removeClass("d-block");
-                                $("#add-user").addClass("d-none");
-                                $("#main-user").removeClass("d-none");
-                                $("#main-user").addClass("d-block");
-                                $("#regisuser").text(res.user);
-                                $("#alert-success-registrasi").removeClass("d-none");
-                                $("#alert-success-registrasi").addClass("d-block");
-                                $("#alert-error-registrasi").removeClass("d-block");
-                                $("#alert-error-registrasi").addClass("d-none");
-
-                            } else {
-                                $('#table-reggroup').DataTable().ajax.reload();
-                                $("#add-user").removeClass("d-block");
-                                $("#add-user").addClass("d-none");
-                                $("#main-user").removeClass("d-none");
-                                $("#main-user").addClass("d-block");
-                                $("#messageuser").text(res.message);
-                                $("#alert-error-registrasi").removeClass("d-none");
-                                $("#alert-error-registrasi").addClass("d-block");
-                                $("#alert-success-registrasi").removeClass("d-block");
-                                $("#alert-success-registrasi").addClass("d-none");
-                            }
+                        } else {
+                            $('#table-reggroup').DataTable().ajax.reload();
+                            $("#add-user").removeClass("d-block");
+                            $("#add-user").addClass("d-none");
+                            $("#main-user").removeClass("d-none");
+                            $("#main-user").addClass("d-block");
+                            $("#messageuser").text(res.message);
+                            $("#alert-error-registrasi").removeClass("d-none");
+                            $("#alert-error-registrasi").addClass("d-block");
+                            $("#alert-success-registrasi").removeClass("d-block");
+                            $("#alert-success-registrasi").addClass("d-none");
                         }
                     }
-                });
-            } else {
-                checkCache();
-            }
-        });
+                }
+            });
+        };
 
         $("#btn-current").on("click", function(){
             $("#userID").val('');
@@ -795,9 +848,6 @@
                     showCancelButton: false,
                     confirmButtonClass: 'btn-warning',
                     confirmButtonText: 'OK'
-                }, function () {
-                    var required = "Field is required.";
-                    $("#cekUser_type").text(required);$(".lbl-user-type > .dropdown.bootstrap-select").addClass("is-invalid");$("#user_type").focus();
                 });
             } else {
                 if (usertype === 'C' || usertype === 'D' || usertype === 'S'){
@@ -843,14 +893,14 @@
                 <input class="form-control mb-2" placeholder="Input User Code" id="userID" onchange="getUsername()">
                 <input class="form-control mb-2 ml-input-2" placeholder="Name Of User" id="usernameGet" readonly>
                 <button class="form-control-btn btn btn-default mb-2" type="button" data-toggle="modal" data-target="#exampleModal1" onclick="refreshTablemember()"><i class="fa fa-search"></i></button>
-                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="userType" required onchange="getUsername()">
+                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="userType"  onchange="getUsername()">
                     <option value="" selected>All User Type</option>
                     @foreach($usertype as $p)
                         <option value="{{ $p->id }}">{{ $p->name }}</option>
                     @endforeach
                 </select>
                 &nbsp;&nbsp;
-                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="userStatus" required onchange="getUsername()">
+                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="userStatus"  onchange="getUsername()">
                     <option value="" selected>All User Status</option>
                     @foreach($userstatus as $p)
                         <option value="{{ $p->id }}">{{ $p->name }}</option>
@@ -910,7 +960,7 @@
     </div>
 
     <div class="card shadow d-none" id="add-user">
-        <form>
+        <form id="myForm">
             <div class="card card-body" style="min-height: 365px">
                 <!-- Main content -->
                 <section class="content">
@@ -922,13 +972,13 @@
                                 <div class="row">
                                     <div class="col-sm-6">
 
-                                        <div class="form-group form-inline">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User ID</label>
-                                            <div class="col-sm-9 pr-0 row" id="useridCDS">
-                                                <div class="input-group col-sm-12 px-0">
+                                        <div class="form-group form-inline lbl-group">
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
+                                            <div class="col-sm-9 pr-0 row">
+                                                <div class="input-group col-sm-12 px-0 lbl-user-type">
                                                     <select class="form-control bootstrap-select w-select-100" data-live-search="true"
-                                                            data-style="btn-white" id="user_type" onchange="checkUserType()" required
-                                                            oninvalid="this.setCustomValidity('Please pick an user type')"
+                                                            data-style="btn-white" id="user_type" name="user_type" onchange="checkUserType()"
+
                                                     >
                                                         <option value="" disabled selected>Choose User Type</option>
                                                         @foreach($usertype as $p)
@@ -938,70 +988,15 @@
                                                 </div>
                                                 <label id="cekUser_type" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekUser_type"></label>
                                             </div>
-                                            <div class="col-sm-9 pr-0 d-none row" id="useridT">
-                                                <input class="form-control col-sm-12" type="text" placeholder="User Code" id="client_id_t" onchange="checking(this)" required/>
-                                                <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group form-inline lbl-group">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
-                                            <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="text" placeholder="User Name"
-                                                       id="user_name" onchange="checking(this)" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
-                                                />
-                                                <label id="cekUser_name" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_name"></label>
-                                            </div>
                                         </div>
                                         <div class="form-group form-inline lbl-group">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>
-                                            <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="email" placeholder="Email" id="email_address" onchange="checking(this)" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
-                                                />
-                                                <label id="cekEmail_address" class="error invalid-feedback small d-block col-sm-12 px-0" for="email_address"></label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-inline lbl-group">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">MSIDN</label>
-                                            <div class="col-sm-9 pr-0 row">
-                                                <input class="form-control col-sm-12" type="text" placeholder="MSIDN" id="msidn" onchange="checking(this)" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
-                                                />
-                                                <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group form-inline lbl-group">
-                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Type</label>
-                                            <div class="col-sm-9 pr-0 row">
-                                                <div class="input-group col-sm-12 px-0">
-                                                <select class="form-control bootstrap-select w-select-100" data-live-search="true"
-                                                        data-style="btn-white" id="user_status" onchange="checking(this)" required
-                                                        oninvalid="this.setCustomValidity('Please pick an user status')"
-                                                >
-                                                    <option value="" disabled selected>Choose User Status</option>
-                                                    @foreach($userstatus as $p)
-                                                        <option value="{{ $p->id }}">{{ $p->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                                </div>
-                                                <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_status"></label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-sm-6">
-
-                                        <div class="form-group form-inline">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Code</label>
                                             <div class="col-sm-9 pr-0 row" id="useridCDS">
                                                 <div class="input-group col-sm-12 px-0">
-                                                    <input class="form-control readonly" type="text" placeholder="User Code" id="client_id" required
-                                                           oninvalid="this.setCustomValidity('Field is required')"
+                                                    <input class="form-control readonly" type="text" placeholder="User Code" id="client_id" name="client_id"
+
                                                     />
-                                                    <input class="form-control" type="hidden" id="user_id" required/>
+                                                    <input class="form-control" type="hidden" id="user_id" />
                                                     <div class="input-group-append">
                                                         <span class="input-group-text btn btn-default" id="btn-clientid">
                                                             <i class="fa fa-search"></i>
@@ -1011,53 +1006,103 @@
                                                 <label id="cekClient_id" class="error invalid-feedback small col-sm-12 px-0" for="client_id" style="justify-content: flex-start;"></label>
                                             </div>
                                             <div class="col-sm-9 pr-0 d-none row" id="useridT">
-                                                <input class="form-control col-sm-12" type="text" placeholder="User Code" id="client_id_t" onchange="checking(this)" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
-                                                />
+                                                <input class="form-control col-sm-12" type="text" placeholder="User Code" id="client_id_t" name="client_id_t" onchange="checking(this)" />
                                                 <label id="cekClient_id_t" class="error invalid-feedback small col-sm-12 px-0" for="client_id_t"></label>
                                             </div>
                                         </div>
-                                        <div class="form-group form-inline">
+                                        <div class="form-group form-inline lbl-group">
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
+                                            <div class="col-sm-9 pr-0 row">
+                                                <input class="form-control col-sm-12" type="text" placeholder="User Name"
+                                                       id="user_name" name="user_name" onchange="checking(this)"
+
+                                                />
+                                                <label id="cekUser_name" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_name"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-inline lbl-group">
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Email</label>
+                                            <div class="col-sm-9 pr-0 row">
+                                                <input class="form-control col-sm-12" type="email" placeholder="Email" id="email_address" name="email_address" onchange="checking(this)"
+
+                                                />
+                                                <label id="cekEmail_address" class="error invalid-feedback small d-block col-sm-12 px-0" for="email_address"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-inline lbl-group">
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">MSIDN</label>
+                                            <div class="col-sm-9 pr-0 row">
+                                                <input class="form-control col-sm-12" type="text" placeholder="MSIDN" id="msidn" name="msidn" onchange="checking(this)"
+
+                                                />
+                                                <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-sm-6">
+
+                                        <div class="form-group form-inline lbl-group">
+                                            <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Status</label>
+                                            <div class="col-sm-9 pr-0 row">
+                                                <div class="input-group col-sm-12 px-0 lbl-user-status">
+                                                    <select class="form-control bootstrap-select w-select-100" data-live-search="true"
+                                                            data-style="btn-white" id="user_status" name="user_status" onchange="checking(this)"
+
+                                                    >
+                                                        <option value="" disabled selected>Choose User Status</option>
+                                                        @foreach($userstatus as $p)
+                                                            <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_status"></label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Password</label>
                                             <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input"
-                                                       id="password" onchange="checking(this)" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                       id="password" name="password" onchange="checking(this)"
+
                                                 />
                                                 <label id="cekPassword" class="error invalid-feedback small d-block col-sm-12 px-0" for="password"></label>
                                             </div>
                                         </div>
-                                        <div class="form-group form-inline">
+                                        <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Confirm Password</label>
                                             <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input"
-                                                       id="password-confirm" onchange="checking(this)" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                       id="password-confirm" name="password-confirm" onchange="checking(this)"
+
                                                 />
                                                 <label id="cekPassword-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="password-confirm"></label>
                                             </div>
                                         </div>
-                                        <div class="form-group form-inline">
+                                        <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">PIN</label>
                                             <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input"
-                                                       id="pin" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                       id="pin" name="pin" onchange="checking(this)" onkeypress="return hanyaAngka(event)" maxlength="6" pattern="\d+"
+
                                                 />
                                                 <label id="cekPin" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin"></label>
                                             </div>
                                         </div>
-                                        <div class="form-group form-inline">
+                                        <div class="form-group form-inline lbl-group">
                                             <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Confirm PIN</label>
                                             <div class="col-sm-9 pr-0 row">
                                                 <input class="form-control col-sm-12" type="password" placeholder="Please Input"
-                                                       id="pin-confirm" onchange="checking(this)" onkeypress="return hanyaAngka(event)"
-                                                       maxlength="6" pattern="\d+" required
-                                                       oninvalid="this.setCustomValidity('Field is required')"
+                                                       id="pin-confirm" name="pin-confirm" onchange="checking(this)" onkeypress="return hanyaAngka(event)"
+                                                       maxlength="6" pattern="\d+"
+
                                                 />
                                                 <label id="cekPin-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin-confirm"></label>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -1067,7 +1112,7 @@
             </div>
             <div class="card card-footer">
                 <div class="form-inline justify-content-end">
-                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="saveuser">Save</button>
+                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="saveUser">Save</button>
                     <button class="form-control-btn btn btn-info mb-2" type="button" onclick="resetApp()">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceluser">Cancel</button>
                 </div>

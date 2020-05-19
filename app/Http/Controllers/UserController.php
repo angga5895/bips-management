@@ -207,7 +207,7 @@ class UserController extends Controller
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
         try {
-            $query = User::create([
+            /*$query = User::create([
                 'user_id' => $user_id,
                 'user_name' => $user_name,
                 'email_address' => $email_address,
@@ -218,7 +218,20 @@ class UserController extends Controller
                 'last_teriminalid' => null,
                 'user_type' => $user_type,
                 'hash_pin' => $hash_pin,
-            ]);
+            ]);*/
+
+            $query = DB::insert('INSERT INTO users(user_id, user_name, email_address, msidn, hash_password, status, last_login, last_teriminalid, user_type, hash_pin)
+                          VALUES (\''.$user_id.'\',
+                            \''.$user_name.'\',
+                            \''.$email_address.'\',
+                            \''.$msidn.'\',
+                            crypt(\''.$hash_password.'\', gen_salt(\'md5\')),
+                            \''.$user_status.'\',
+                            \''.$current_time.'\',
+                            null,
+                            \''.$user_type.'\',
+                            crypt(\''.$hash_pin.'\', gen_salt(\'md5\')))'
+                );
 
             if ($query) {
                 if ($user_type === 'C') {
@@ -622,44 +635,51 @@ class UserController extends Controller
         $rowdata = $this->__getDataUser($userID);
 
         $newpassword =  substr(md5($userID),rand(0,19),12);
+        $hashPassword = $rowdata->hash_password;
 
         try {
-            User::where('user_id', $userID)->update([
+            /*User::where('user_id', $userID)->update([
                 'hash_password' => $newpassword,
-            ]);
+            ]);*/
 
+            DB::update('UPDATE users SET hash_password = crypt(\''.$newpassword.'\', gen_salt(\'md5\'))
+                                    WHERE user_id=\''.$userID.'\' ');
 
-        $name = explode(" ",$rowdata->user_name);
-        $name = $name[0];
-        $data = [
-            'name'=>$name,
-            'account'=>$rowdata->email_address,
-            'newpassword'=>$newpassword,
-            'type'=>'password'
-        ];
-        $body = [
-            'FromEmail' => "zaky@vsi.co.id",
-            'FromName' => "DX-TRADE",
-            'Subject' => "New Password Reset",
-            'Text-part' => "Dear ".$name.", Here is your new account password data account ".
-                $rowdata->email_address.": ".$newpassword."",
-            'Html-part' => view('emailTemplate',$data)->render(),
-            'Recipients' => [
-                [
-                    'Email' => $rowdata->email_address,
-                ]
-            ],
-        ];
-        $response = Mailjet::post(Resources::$Email, ['body' => $body]);
+            $name = explode(" ",$rowdata->user_name);
+            $name = $name[0];
+            $data = [
+                'name'=>$name,
+                'account'=>$rowdata->email_address,
+                'newpassword'=>$newpassword,
+                'type'=>'password'
+            ];
+            $body = [
+                'FromEmail' => "zaky@vsi.co.id",
+                'FromName' => "DX-TRADE",
+                'Subject' => "New Password Reset",
+                'Text-part' => "Dear ".$name.", Here is your new account password data account ".
+                    $rowdata->email_address.": ".$newpassword."",
+                'Html-part' => view('emailTemplate',$data)->render(),
+                'Recipients' => [
+                    [
+                        'Email' => $rowdata->email_address,
+                    ]
+                ],
+            ];
+            $response = Mailjet::post(Resources::$Email, ['body' => $body]);
 
-        if($response->success()){
-            $status = "00";
-            $msg = null;
+            if($response->success()){
+                $status = "00";
+                $msg = null;
 
-        }else{
-            $status = "01";
-            $msg = $response->getData();
-        }
+            } else{
+                User::where('user_id', $userID)->update([
+                    'hash_password' => $hashPassword,
+                ]);
+
+                $status = "01";
+                $msg = $response->getData();
+            }
         } catch (QueryException $r){
             $status = '01';
             $msg = $r->getMessage();
@@ -674,13 +694,18 @@ class UserController extends Controller
         $userID =$_GET['userID'];
         $rowdata = $this->__getDataUser($userID);
 
-        $newpassword =  substr(md5($userID),rand(0,23),6);
+        //$newpassword =  substr(md5($userID),rand(0,23),6);
+        //random only numeric
+        $newpassword =  mt_rand(100000,999999);
+        $hashPassword = $rowdata->hash_pin;
 
         try {
-            User::where('user_id', $userID)->update([
+            /*User::where('user_id', $userID)->update([
                 'hash_pin' => $newpassword,
-            ]);
+            ]);*/
 
+            DB::update('UPDATE users SET hash_pin = crypt(\''.$newpassword.'\', gen_salt(\'md5\'))
+                                    WHERE user_id=\''.$userID.'\' ');
 
             $name = explode(" ",$rowdata->user_name);
             $name = $name[0];
@@ -710,6 +735,10 @@ class UserController extends Controller
                 $msg = null;
 
             }else{
+                User::where('user_id', $userID)->update([
+                    'hash_pin' => $hashPassword,
+                ]);
+
                 $status = "01";
                 $msg = $response->getData();
             }

@@ -2,6 +2,151 @@
 
 @section('js')
     <script>
+        var rulesobj = {
+            "groupid" : {
+                required : true
+            },
+            "groupname" : {
+                required : true
+            },
+            "groupaddress" : {
+                required : true
+            },
+            "groupphone" : {
+                required : true,
+                digits : true
+            },
+            "groupmobilphone" : {
+                required : true,
+                digits : true
+            },
+            "groupemail" : {
+                required : true,
+                email :true
+            },
+
+        };
+
+        var messagesobj = {
+            "groupid" : {
+                required : "Field is required."
+            },
+            "groupname" : {
+                required : "Field is required."
+            },
+            "groupaddress" : {
+                required : "Field is required."
+            },
+            "groupphone" : {
+                required : "Field is required.",
+                digits : "Field must be a number."
+            },
+            "groupmobilphone" : {
+                required : "Field is required.",
+                digits : "Field must be a number."
+            },
+            "groupemail" : {
+                required : "Field is required.",
+                email : "Field must be a valid email address."
+            },
+
+        };
+
+        $(function () {
+            var $form = $('#myFormDealer');
+            $form.validate({
+                rules: rulesobj,
+                messages: messagesobj,
+                debug: false,
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback offset-label-error-sales');
+                    element.closest('.form-group').append(error);
+                    $(element).addClass('is-invalid');
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            $form.find("#saveGroup").on('click', function () {
+                if ($form.valid()) {
+                    var groupid = $("#groupid").val();
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url('getDealerId') }}",
+                        data: {
+                            'id': groupid,
+                        },
+                        success: function (res) {
+                            if (res.status === "01") {
+                                $("#cekGroupId").text('Dealer Id not available, try another ID');
+                                $("#groupid").addClass("is-invalid");
+                                $("#groupid").focus();
+                            } else {
+                                savegroup();
+                            }
+                        }
+                    });
+                } else {
+                    $('.lbl-group').removeClass('focused');
+                }
+                return false;
+            });
+
+            $form.find("#updateGroup").on('click', function () {
+                updateGroup($form);
+                return false;
+            });
+
+            $form.keypress(function(e) {
+                if(e.which == 13) {
+                    if ($("#hiddendealerid").val() === ''){
+                        $("#saveGroup").click();
+                        console.log('save');
+                    } else {
+                        updateGroup($form);
+                        console.log('edit');
+                    }
+                }
+            });
+        });
+
+        function updateGroup(form){
+            if (form.valid()) {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-success",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            updategroup();
+                        }
+                    }
+                )
+            }  else {
+                $('.lbl-group').removeClass('focused');
+            }
+        }
+
+        $(document).ready(function () {
+            getTableGroup();
+            getTableList();
+            $('.js-example-basic-single').select2({
+                placeholder: 'AOID'
+            });
+            $('.bootstrap-select').selectpicker();
+        });
+
         function getDateBips(tanggal){
             var datetime = tanggal.split(" ");
             var tgl = datetime[0].split("-");
@@ -38,15 +183,6 @@
 
             return date+" "+month+" "+year;
         }
-
-        $(document).ready(function () {
-            getTableGroup();
-            getTableList();
-            $('.js-example-basic-single').select2({
-                placeholder: 'AOID'
-            });
-            $('.bootstrap-select').selectpicker();
-        });
 
         function refreshTableList(){
             $('#table-grouplist').DataTable().ajax.reload();
@@ -173,7 +309,7 @@
             });
         }
 
-        $("#savegroup").on("click", function () {
+        function savegroup() {
             var groupname = $("#groupname").val();
             var groupid = $("#groupid").val();
             var groupaddress = $("#groupaddress").val();
@@ -181,194 +317,97 @@
             var groupphone = $("#groupphone").val();
             var groupemail = $("#groupemail").val();
 
-            if (validateGroup('save')){
-                $.get("/mockjax");
+            $.get("/mockjax");
 
-                $.ajax({
-                    type : "GET",
-                    url  : "{{ url('dealer-registrasi') }}",
-                    data : {
-                        'dealer_id' : groupid,
-                        'dealer_name' : groupname,
-                        'address' : groupaddress,
-                        'phone' : groupphone,
-                        'mobilephone' : groupmobile,
-                        'email' : groupemail,
-                    },
-                    success : function (res) {
-                        if ($.trim(res)){
-                            if (res.status === "00"){
-                                $('#table-reggroup').DataTable().ajax.reload();
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('dealer-registrasi') }}",
+                data : {
+                    'dealer_id' : groupid,
+                    'dealer_name' : groupname,
+                    'address' : groupaddress,
+                    'phone' : groupphone,
+                    'mobilephone' : groupmobile,
+                    'email' : groupemail,
+                },
+                success : function (res) {
+                    if ($.trim(res)){
+                        if (res.status === "00"){
+                            $('#table-reggroup').DataTable().ajax.reload();
 
-                                $("#add-group").removeClass("d-block");
-                                $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+                            $("#add-group").removeClass("d-block");
+                            $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
 
-                                $("#add-group").addClass("d-none");
-                                $("#main-group").removeClass("d-none");
-                                $("#main-group").addClass("d-block");
-                                $("#regisgroup").text(res.group);
-                                $("#alert-success-registrasi").removeClass("d-none");
-                                $("#alert-success-registrasi").addClass("d-block");
-                                $("#alert-success-update").removeClass("d-block");
-                                $("#alert-success-update").addClass("d-none");
-                            }else{
-                                $("#alert-error-registrasi").addClass('d-block');
-                                $("#alert-error-registrasi").removeClass('d-none');
-                                $("#err_msg").text(res.err_msg);
-                            }
+                            $("#add-group").addClass("d-none");
+                            $("#main-group").removeClass("d-none");
+                            $("#main-group").addClass("d-block");
+                            $("#regisgroup").text(res.group);
+                            $("#alert-success-registrasi").removeClass("d-none");
+                            $("#alert-success-registrasi").addClass("d-block");
+                            $("#alert-success-update").removeClass("d-block");
+                            $("#alert-success-update").addClass("d-none");
+                        }else{
+                            $("#alert-error-registrasi").addClass('d-block');
+                            $("#alert-error-registrasi").removeClass('d-none');
+                            $("#err_msg").text(res.err_msg);
                         }
                     }
-                });
-            }
-        });
-        function validateGroup(typeData){
-            var res = true;
-            var required = "Field is required.";
-
-            var groupname = $("#groupname").val();
-            var groupid = $("#groupid").val();
-            var groupaddress = $("#groupaddress").val();
-            var groupmobile = $("#groupmobilphone").val();
-            var groupphone = $("#groupphone").val();
-            var groupemail = $("#groupemail").val();
-
-            if (testEmail(groupemail) === false){
-                $("#cekGroupEmail").text('Email not valid');
-                $("#groupemail").addClass("is-invalid");
-                $("#groupemail").focus();
-                res = false;
-            }
-            if(groupemail === ''){
-                $("#cekGroupEmail").text(required);
-                $("#groupemail").addClass("is-invalid");
-                $("#groupemail").focus();
-                res = false;
-            }
-            var isnum = /^\d+$/.test(groupmobile);
-            if(isnum === false){
-                $("#cekGroupMobilePhone").text("Number only");
-                $("#groupmobilphone").addClass("is-invalid");
-                $("#groupmobilphone").focus();
-                res = false;
-            }
-            if(groupmobile === ''){
-                $("#cekGroupMobilePhone").text(required);
-                $("#groupmobilphone").addClass("is-invalid");
-                $("#groupmobilphone").focus();
-                res = false;
-            }
-            isnum2 = /^\d+$/.test(groupphone);
-            if(isnum2 === false){
-                $("#cekGroupPhone").text("Number only");
-                $("#groupphone").addClass("is-invalid");
-                $("#groupphone").focus();
-                res = false;
-            }
-            if(groupphone === ''){
-                $("#cekGroupPhone").text(required);
-                $("#groupphone").addClass("is-invalid");
-                $("#groupphone").focus();
-                res = false;
-            }
-            if(groupaddress === ''){
-                $("#cekGroupAddress").text(required);
-                $("#groupaddress").addClass("is-invalid");
-                $("#groupaddress").focus();
-                res = false;
-
-            }
-            if(groupname === ''){
-                $("#cekGroupname").text(required);
-                $("#groupname").addClass("is-invalid");
-                $("#groupname").focus();
-                res = false;
-
-            }
-            if(groupid === ''){
-                $("#cekGroupId").text(required);
-                $("#groupid").addClass("is-invalid");
-                $("#groupid").focus();
-                res = false;
-            }
-            if (groupid === '') {
-                    $("#cekGroupId").text(required);
-                    $("#groupid").addClass("is-invalid");
-                    $("#groupid").focus();
-                    res = false;
                 }
-            if(typeData == "save"){
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url('getDealerId') }}",
-                    data: {
-                        'id': groupid,
-                    },
-                    success: function (res) {
-                        if (res.status === "01") {
-                            $("#cekGroupId").text('Dealer Id not available, try another ID');
-                            $("#groupid").addClass("is-invalid");
-                            $("#groupid").focus();
-                            res = false;
-                        } else {
-                            res = true;
+            });
+        }
+
+        function updategroup() {
+            var groupid = $("#hiddendealerid").val();
+            var groupname = $("#groupname").val();
+            var groupaddress = $("#groupaddress").val();
+            var groupphone = $("#groupphone").val();
+            var groupmobilephone = $("#groupmobilphone").val();
+            var groupemail = $("#groupemail").val();
+
+            $.get("/mockjax");
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('dealer-update/submit') }}",
+                data : {
+                    'dealer_id' : groupid,
+                    'dealer_name' : groupname,
+                    'address': groupaddress,
+                    'phone': groupphone,
+                    'mobile_phone': groupmobilephone,
+                    'email': groupemail,
+                },
+                success : function (res) {
+                    if ($.trim(res)){
+                        if (res.status === "00"){
+                            $('#table-reggroup').DataTable().ajax.reload();
+
+                            $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
+                            $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
+
+                            $("#add-group").removeClass("d-block");
+                            $("#add-group").addClass("d-none");
+                            $("#main-group").removeClass("d-none");
+                            $("#main-group").addClass("d-block");
+                            $("#savegroupbutton").removeClass('d-none');
+                            $("#editgroupbutton").addClass('d-none');
+
+                            $("#update_dealer_notification").text(res.group);
+                            $("#alert-success-update").removeClass("d-none");
+                            $("#alert-success-update").addClass("d-block");
+                            $("#alert-success-registrasi").removeClass("d-block");
+                            $("#alert-success-registrasi").addClass("d-none");
+                        }else{
+                            $("#alert-error-registrasi").addClass('d-block');
+                            $("#alert-error-registrasi").removeClass('d-none');
+                            $("#err_msg").text(res.err_msg);
                         }
                     }
-               });
-            }
-            return res;
+                }
+            });
         }
-        function changeCheck(data){
 
-            switch (data) {
-                case 'groupid':
-                    var groupid = $("#groupid").val();
-                    if(groupid !== ''){
-                        $("#groupid").removeClass("is-invalid");
-                        $("#cekGroupId").text('');
-                    };
-                    break;
-                case 'groupname':
-                    var groupname = $("#groupname").val();
-                    if(groupname !== ''){
-                        $("#groupname").removeClass("is-invalid");
-                        $("#cekGroupname").text('');
-                    };
-                    break;
-                case 'groupaddress':
-                    var groupaddress = $("#groupaddress").val();
-                    if(groupaddress !== ''){
-                        $("#groupaddress").removeClass("is-invalid");
-                        $("#cekGroupAddress").text('');
-                    };
-                    break;
-                case 'groupphone':
-                    var groupphone = $("#groupphone").val();
-                    if(groupphone !== ''){
-                        $("#groupphone").removeClass("is-invalid");
-                        $("#cekGroupPhone").text('');
-                    };
-                    break;
-                case 'groupmobilephone':
-                    var groupmobile = $("#groupmobilphone").val();
-                    if(groupmobile !== ''){
-                        $("#groupmobilphone").removeClass("is-invalid");
-                        $("#cekGroupMobilePhone").text('');
-                    };
-                    break;
-                case 'groupemail':
-                    var groupemail = $("#groupemail").val();
-                    if(groupemail !== ''){
-                        $("#groupemail").removeClass("is-invalid");
-                        $("#cekGroupEmail").text('');
-                    };
-                    break;
-            }
-        }
-        function testEmail(email){
-            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email);
-        }
         function addGroup() {
+            $("#groupid").removeAttr( "disabled", "disabled" );
             var id = $("#addgroupID").val();
             $.ajax({
                 type : "GET",
@@ -380,17 +419,24 @@
                 }
             });
 
+            $("#hiddendealerid").val('');
             $("#groupname").val('');
+
             $("#add-group").removeClass("d-none");
             $("#add-group").addClass("d-block");
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Add");
+
+            $("#savegroupbutton").addClass('d-block');
+            $("#savegroupbutton").removeClass('d-none');
+            $("#editgroupbutton").removeClass('d-block');
+            $("#editgroupbutton").addClass('d-none');
+
             clearCache();
         }
+
         function assignSales(data){
-
-
             $.ajax({
                 type : "GET",
                 url  : "{{ url('dealer-update/') }}",
@@ -414,9 +460,11 @@
 
             getAssignSalesTable(data,"01");
         }
+
         $("#typeuser").on('change', function() {
             alert( this.value );
         });
+
         function getAssignSalesTable(data,typeRes){
             var id = $("#idCurrDealer").val();
             var select01 = "";
@@ -507,10 +555,11 @@
                 }]
             });
         }
+
         function selectChange(code){
             var data = $("#idCurrDealer").val();
-
         }
+
         function addThis(salesId){
             dealerId = $("#idCurrDealer").val();
             $.ajax({
@@ -535,6 +584,7 @@
                 }
             });
         }
+
         function removeThis(salesId){
             dealerId = $("#idCurrDealer").val();
             $.ajax({
@@ -561,7 +611,9 @@
                 }
             });
         }
+
         function editDealer(data){
+            $("#groupid").attr( "disabled", "disabled" );
             $.ajax({
                 type : "GET",
                 url  : "{{ url('dealer-update/') }}",
@@ -589,11 +641,14 @@
             $("#main-group").removeClass("d-block");
             $("#main-group").addClass("d-none");
             $("#savegroupbutton").addClass('d-none');
+            $("#savegroupbutton").removeClass('d-block');
             $("#editgroupbutton").removeClass('d-none');
+            $("#editgroupbutton").addClass('d-block');
             clearCache();
         }
 
         $("#resetgroup").on('click', function(){
+            cacheError();
             var data = $("#hiddendealerid").val()
             $.ajax({
                 type : "GET",
@@ -612,99 +667,17 @@
                 }
             });
         });
-        $("#updategroup").on("click", function () {
-            var groupid = $("#hiddendealerid").val();
-            var groupname = $("#groupname").val();
-            var groupaddress = $("#groupaddress").val();
-            var groupphone = $("#groupphone").val();
-            var groupmobilephone = $("#groupmobilphone").val();
-            var groupemail = $("#groupemail").val();
 
-            var required = "Field is required.";
-            if (validateGroup('update')){
-                $.get("/mockjax");
-                $.ajax({
-                    type : "GET",
-                    url  : "{{ url('dealer-update/submit') }}",
-                    data : {
-                        'dealer_id' : groupid,
-                        'dealer_name' : groupname,
-                        'address': groupaddress,
-                        'phone': groupphone,
-                        'mobile_phone': groupmobilephone,
-                        'email': groupemail,
-                    },
-                    success : function (res) {
-                        if ($.trim(res)){
-                            if (res.status === "00"){
-                                $("#resetgroupadd").click();
-                                $('#table-reggroup').DataTable().ajax.reload();
+        function cacheError() {
+            $('.lbl-group').removeClass('focused');
 
-                                $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
-                                $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
+            $("#groupid-error").text('');
+            $("#groupname-error").text('');
+            $("#groupaddress-error").text('');
+            $("#groupphone-error").text('');
+            $("#groupmobilphone-error").text('');
+            $("#groupemail-error").text('');
 
-                                $("#add-group").removeClass("d-block");
-                                $("#add-group").addClass("d-none");
-                                $("#main-group").removeClass("d-none");
-                                $("#main-group").addClass("d-block");
-                                $("#savegroupbutton").removeClass('d-none');
-                                $("#editgroupbutton").addClass('d-none');
-
-                                $("#update_dealer_notification").text(res.group);
-                                $("#alert-success-update").removeClass("d-none");
-                                $("#alert-success-update").addClass("d-block");
-                                $("#alert-success-registrasi").removeClass("d-block");
-                                $("#alert-success-registrasi").addClass("d-none");
-                            }else{
-                                $("#alert-error-registrasi").addClass('d-block');
-                                $("#alert-error-registrasi").removeClass('d-none');
-                                $("#err_msg").text(res.err_msg);
-                            }
-                        }
-                    }
-                });
-            }
-        });
-        $("#canceleditgroup").on("click", function () {
-            swal({
-                    title: "Are you sure?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "No",
-                    cancelButtonText: "Yes",
-                    closeOnCancel: true,
-                },
-                function(isConfirm) {
-                    if (!isConfirm) {
-                        $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
-                        $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
-                        $("#add-group").removeClass("d-block");
-                        $("#add-group").addClass("d-none");
-                        $("#main-group").removeClass("d-none");
-                        $("#main-group").addClass("d-block");
-
-                    }
-                }
-            )
-        });
-        function clearCache(){
-            $("#hiddendealerid").val('');
-            $("#groupid").val('');
-            $("#groupname").val('');
-            $("#groupaddress").val('');
-            $("#groupphone").val('');
-            $("#groupmobilphone").val('');
-            $("#groupemail").val('');
-
-            $("#cekGroupname").text('');
-            $("#cekGroupId").text('');
-            $("#cekGroupAddress").text('');
-            $("#cekGroupPhone").text('');
-            $("#cekGroupMobilePhone").text('');
-            $("#cekGroupEmail").text('');
-
-            $("#hiddendealerid").removeClass("is-invalid");
             $("#groupid").removeClass("is-invalid");
             $("#groupname").removeClass("is-invalid");
             $("#groupaddress").removeClass("is-invalid");
@@ -712,12 +685,38 @@
             $("#groupmobilphone").removeClass("is-invalid");
             $("#groupemail").removeClass("is-invalid");
 
+            $("#cekGroupname").text('');
+            $("#cekGroupId").text('');
+            $("#cekGroupAddress").text('');
+            $("#cekGroupPhone").text('');
+            $("#cekGroupMobilePhone").text('');
+            $("#cekGroupEmail").text('');
+        }
+
+        function clearCache(){
+            cacheError();
+            $("#groupid").val('');
+            $("#groupname").val('');
+            $("#groupaddress").val('');
+            $("#groupphone").val('');
+            $("#groupmobilphone").val('');
+            $("#groupemail").val('');
+
             $("#alert-error-registrasi").addClass('d-none');
             $("#alert-error-registrasi").removeClass('d-block');
 
             $("#alert-error-assign").addClass('d-none');
             $("#alert-error-assign").removeClass('d-block');
         }
+
+        $("#canceleditgroup").on("click", function () {
+            $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
+            $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
+            $("#add-group").removeClass("d-block");
+            $("#add-group").addClass("d-none");
+            $("#main-group").removeClass("d-none");
+            $("#main-group").addClass("d-block");
+        });
 
         $("#cancelgroup").on("click", function () {
             var res =  $("#groupid").val()+$("#groupname").val()+$("#groupaddress").val()+$("#groupphone").val()+$("#groupmobilphone").val()+$("#groupemail").val();
@@ -727,13 +726,14 @@
                     title: "Are you sure?",
                     type: "warning",
                     showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "No",
-                    cancelButtonText: "Yes",
+                    cancelButtonClass: "btn-danger",
+                    confirmButtonClass: "btn-default",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
                     closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (!isConfirm) {
+                    if (isConfirm) {
                         $("#add-group").removeClass("d-block");
                         $("#add-group").addClass("d-none");
                         $("#main-group").removeClass("d-none");
@@ -877,7 +877,7 @@
     </div>
 
     <div class="card shadow d-none" id="add-group">
-        <form>
+        <form id="myFormDealer">
             <input type="hidden" id="hiddendealerid">
 
             <div class="card card-body" style="min-height: 365px">
@@ -888,35 +888,35 @@
                         <div class="box-body">
 
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer ID</label>
-                                    <input class="form-control col-sm-6" id="groupid" type="text" onchange="changeCheck('groupid')" maxlength="20" placeholder="Dealer ID"/>
+                                    <input class="form-control col-sm-6" id="groupid" name="groupid" type="text" onchange="cacheError();" maxlength="20" placeholder="Dealer ID"/>
                                     <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
 
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Dealer Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Dealer Name" onchange="changeCheck('groupname')" required id="groupname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Dealer Name" onchange="cacheError();" id="groupname" name="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Address</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Address" required onchange="changeCheck('groupaddress')" id="groupaddress"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Address" onchange="cacheError();" id="groupaddress" name="groupaddress"/>
                                     <label id="cekGroupAddress" class="error invalid-feedback small d-block col-sm-4" for="groupaddress"></label>
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Phone</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Phone" maxlength="15" onchange="changeCheck('groupphone')" required id="groupphone"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Phone" maxlength="15" onchange="cacheError();" id="groupphone" name="groupphone"/>
                                     <label id="cekGroupPhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Mobile Phone</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Mobile Phone" maxlength="15" onchange="changeCheck('groupmobilephone')" required id="groupmobilphone"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Mobile Phone" maxlength="15" onchange="cacheError();" id="groupmobilphone" name="groupmobilphone"/>
                                     <label id="cekGroupMobilePhone" class="error invalid-feedback small d-block col-sm-4" for="groupphone"></label>
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Email</label>
-                                    <input class="form-control col-sm-6" type="email" placeholder="Email" onchange="changeCheck('groupemail')" required id="groupemail"/>
+                                    <input class="form-control col-sm-6" type="email" placeholder="Email" onchange="cacheError();" id="groupemail" name="groupemail"/>
                                     <label id="cekGroupEmail" class="error invalid-feedback small d-block col-sm-4" for="groupemail"></label>
                                 </div>
                             </div>
@@ -924,14 +924,14 @@
                     </div>
                 </section>
             </div>
-            <div class="card card-footer">
+            <div class="card card-footer text-right">
                 <div class="form-inline justify-content-end" id="savegroupbutton">
-                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
-                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroupadd">Reset</button>
+                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="saveGroup">Save</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" onclick="cacheError();">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelgroup">Cancel</button>
                 </div>
                 <div class="form-inline justify-content-end d-none" id="editgroupbutton">
-                    <button class="form-control-btn btn btn-success mb-2" type="button" id="updategroup">Update</button>
+                    <button class="form-control-btn btn btn-success mb-2" type="button" id="updateGroup">Update</button>
                     <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceleditgroup">Cancel</button>
                 </div>

@@ -40,13 +40,14 @@
                     title: "Are you sure?",
                     type: "warning",
                     showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "No",
-                    cancelButtonText: "Yes",
+                    cancelButtonClass: "btn-danger",
+                    confirmButtonClass: "btn-default",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
                     closeOnCancel: true,
                 },
                 function(isConfirm) {
-                    if (!isConfirm) {
+                    if (isConfirm) {
                         window.location.href="{{ route('useradmin.user') }}"
                     }
                 }

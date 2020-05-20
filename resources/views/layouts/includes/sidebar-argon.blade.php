@@ -145,7 +145,7 @@
                             </li>
                         @else
                             <li class="nav-item {{ $routeName == $p->cla_routename ? 'active' : '' }}">
-                                <a class="nav-link {{ $routeName == $p->cla_routename ? 'active' : '' }}" href="/{{ $p->cla_slug }}">
+                                <a class="nav-link {{ $routeName == $p->cla_routename ? 'active' : '' }}" href="/{{ $p->cla_routename }}">
                                     <i class="{{ $p->cla_icon }}"></i> {{ $p->cla_name }}
                                 </a>
                             </li>

@@ -579,29 +579,62 @@
         });
 
         $("#canceluser").on("click", function () {
-            swal({
-                    title: "Are you sure?",
-                    type: "warning",
-                    showCancelButton: true,
-                    cancelButtonClass: "btn-danger",
-                    confirmButtonClass: "btn-default",
-                    cancelButtonText: "No",
-                    confirmButtonText: "Yes",
-                    closeOnCancel: true,
-                },
-                function(isConfirm) {
-                    if (isConfirm) {
-                        $("#add-user").removeClass("d-block");
-                        $("#add-user").addClass("d-none");
-                        $("#main-user").removeClass("d-none");
-                        $("#main-user").addClass("d-block");
-                        $("#detail-user").removeClass("d-block");
-                        $("#detail-user").addClass("d-none");
-                        $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
+            var user_type = $("#user_type").val();
+            var user_status = $("#user_status").val();
+            var user_name = $("#user_name").val();
+            var password = $("#password").val();
+            var pin = $("#pin").val();
+            var cpassword = $("#password-confirm").val();
+            var cpin = $("#pin-confirm").val();
 
+            var email_address = $("#email_address").val();
+            var msidn = $("#msidn").val();
+
+            if (user_type === 'T'){
+                var user_id = $("#client_id_t").val();
+            } else {
+                var user_id = $("#client_id").val();
+            }
+
+            var res = user_id+user_name+email_address+msidn+password+cpassword+pin+cpin;
+            res = res.trim();
+            if(res.length > 0 || user_status !== null || user_type !== null) {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        cancelButtonText: "No",
+                        confirmButtonText: "Yes",
+                        closeOnCancel: true,
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $("#add-user").removeClass("d-block");
+                            $("#add-user").addClass("d-none");
+                            $("#main-user").removeClass("d-none");
+                            $("#main-user").addClass("d-block");
+                            $("#detail-user").removeClass("d-block");
+                            $("#detail-user").addClass("d-none");
+                            $("#breadAdditional").addClass("d-none");
+                            $("#breadAdditional").removeClass("d-block");
+                            $("#breadAdditional").text("");
+
+                        }
                     }
-                }
-            )
+                )
+            } else {
+                $("#add-user").removeClass("d-block");
+                $("#add-user").addClass("d-none");
+                $("#main-user").removeClass("d-none");
+                $("#main-user").addClass("d-block");
+                $("#detail-user").removeClass("d-block");
+                $("#detail-user").addClass("d-none");
+                $("#breadAdditional").addClass("d-none");
+                $("#breadAdditional").removeClass("d-block");
+                $("#breadAdditional").text("");
+            }
         });
 
         function checkUserType() {

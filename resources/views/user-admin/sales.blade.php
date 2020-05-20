@@ -2,6 +2,12 @@
 
 @section('js')
     <script>
+        var groupname = '';
+        var groupaddress = '';
+        var groupphone = '';
+        var groupmobilephone = '';
+        var groupemail = '';
+
         var rulesobj = {
             "groupid" : {
                 required : true
@@ -378,6 +384,8 @@
                             $("#update_sales_notification").text(res.group);
                             $("#alert-success-update").removeClass("d-none");
                             $("#alert-success-update").addClass("d-block");
+
+                            clearVariable();
                         } else {
                             $("#err_msg").text(res.err_msg);
                             $("#alert-error-registrasi").addClass("d-block");
@@ -437,6 +445,12 @@
                         $("#groupphone").val(res.phone);
                         $("#groupmobilphone").val(res.mobilephone);
                         $("#groupemail").val(res.email);
+
+                        groupname = res.sales_name;
+                        groupaddress = res.address;
+                        groupphone = res.phone;
+                        groupmobilephone = res.mobilephone;
+                        groupemail = res.email;
                 }
             });
 
@@ -559,13 +573,53 @@
             }
         });
 
-        $("#canceleditgroup").on("click", function () {
+        function clearVariable() {
+            groupname = '';
+            groupaddress = '';
+            groupphone = '';
+            groupmobilephone = '';
+            groupemail = '';
+        }
+
+        function cancelEdit(){
             $("#breadAdditional").removeClass("d-block").addClass("d-none").text('');
             $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
             $("#add-group").removeClass("d-block");
             $("#add-group").addClass("d-none");
             $("#main-group").removeClass("d-none");
             $("#main-group").addClass("d-block");
+
+            clearVariable();
+        }
+
+        $("#canceleditgroup").on("click", function () {
+            var groupnameN = $("#groupname").val();
+            var groupaddressN = $("#groupaddress").val();
+            var groupphoneN = $("#groupphone").val();
+            var groupmobilephoneN = $("#groupmobilphone").val();
+            var groupemailN = $("#groupemail").val();
+
+            if (groupname === groupnameN && groupaddress === groupaddressN && groupphone === groupphoneN &&
+                    groupmobilephone === groupmobilephoneN && groupemail === groupemailN) {
+                cancelEdit();
+            } else {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            cancelEdit();
+                        }
+                    }
+                )
+            }
         });
 
         $("#btn-current1").on("click", function(){

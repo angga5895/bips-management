@@ -2,6 +2,16 @@
 
 @section('js')
     <script>
+
+        $(document).ready(function () {
+            getTableGroup();
+            getTableList();
+            $('.js-example-basic-single').select2({
+                placeholder: 'AOID'
+            });
+            $('.bootstrap-select').selectpicker();
+        });
+
         function getDateBips(tanggal){
             var datetime = tanggal.split(" ");
             var tgl = datetime[0].split("-");
@@ -39,15 +49,6 @@
 
             return time+" "+date+" "+month+" "+year;
         }
-
-        $(document).ready(function () {
-            getTableGroup();
-            getTableList();
-            $('.js-example-basic-single').select2({
-                placeholder: 'AOID'
-            });
-            $('.bootstrap-select').selectpicker();
-        });
 
         function refreshTableList(){
             $('#table-grouplist').DataTable().ajax.reload();
@@ -610,24 +611,24 @@
                             </div>
 
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>
-                                    <input class="form-control col-sm-6" placeholder="Group ID" onchange="changeCheck('groupid')" type="text" id="groupid" maxlength="20"/>
+                                    <input class="form-control col-sm-6" placeholder="Group ID" onchange="changeCheck('groupid')" type="text" id="groupid" name="groupid" maxlength="20"/>
                                     <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Group name" onchange="changeCheck('groupname')" max="255" required id="groupname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Group name" onchange="changeCheck('groupname')" max="255" id="groupname" name="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head ID</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Head ID" onchange="changeCheck('grouphead')" maxlength="20" required id="grouphead"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Head ID" onchange="changeCheck('grouphead')" maxlength="20" id="grouphead" name="grouphead"/>
                                     <label id="cekGrouphead" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
-                                <div class="form-group form-inline">
+                                <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Head Name" onchange="changeCheck('groupheadname')" maxlength="50" required id="groupheadname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Head Name" onchange="changeCheck('groupheadname')" maxlength="50" id="groupheadname" name="groupheadname"/>
                                     <label id="cekGroupHeadName" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                             </div>

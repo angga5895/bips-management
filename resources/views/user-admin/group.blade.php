@@ -2,6 +2,125 @@
 
 @section('js')
     <script>
+        var groupname = '';
+        var grouphead = '';
+        var groupheadname = '';
+        var rulesobj = {
+            "groupid" : {
+                required : true
+            },
+            "groupname" : {
+                required : true
+            },
+            "grouphead" : {
+                required : true
+            },
+            "groupheadname" : {
+                required : true,
+            },
+
+        };
+
+        var messagesobj = {
+            "groupid" : {
+                required : "Field is required."
+            },
+            "groupname" : {
+                required : "Field is required."
+            },
+            "grouphead" : {
+                required : "Field is required."
+            },
+            "groupheadname" : {
+                required : "Field is required.",
+            },
+        };
+
+        $(function () {
+            var $form = $('#myFormGroup');
+            $form.validate({
+                rules: rulesobj,
+                messages: messagesobj,
+                debug: false,
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback offset-label-error-sales');
+                    element.closest('.form-group').append(error);
+                    $(element).addClass('is-invalid');
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            $form.find("#saveGroup").on('click', function () {
+                if ($form.valid()) {
+                    var groupid = $("#groupid").val();
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url('get-idgroup') }}",
+                        data: {
+                            'id': groupid,
+                        },
+                        success: function (res) {
+                            if (res.status === "01") {
+                                $("#cekGroupId").text('Group Id not available, try another ID');
+                                $("#groupid").addClass("is-invalid");
+                                $("#groupid").focus();
+                            } else {
+                                savegroup();
+                            }
+                        }
+                    });
+                } else {
+                    $('.lbl-group').removeClass('focused');
+                }
+                return false;
+            });
+
+            $form.find("#updateGroup").on('click', function () {
+                updateGroup($form);
+                return false;
+            });
+
+            $form.keypress(function(e) {
+                if(e.which == 13) {
+                    if ($("#hiddengroupid").val() === ''){
+                        $("#saveGroup").click();
+                        console.log('save');
+                    } else {
+                        updateGroup($form);
+                        console.log('edit');
+                    }
+                }
+            });
+        });
+
+        function updateGroup(form){
+            if (form.valid()) {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-success",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            updategroup();
+                        }
+                    }
+                )
+            }  else {
+                $('.lbl-group').removeClass('focused');
+            }
+        }
 
         $(document).ready(function () {
             getTableGroup();
@@ -152,135 +271,95 @@
             });
         }
 
-        $("#savegroup").on("click", function () {
+        function savegroup() {
             var groupid = $("#groupid").val();
             var groupname = $("#groupname").val();
             var grouphead = $("#grouphead").val();
             var groupheadname = $("#groupheadname").val();
 
-            if (validateField()){
-                $.get("/mockjax");
+            $.get("/mockjax");
 
-                $.ajax({
-                    type : "GET",
-                    url  : "{{ url('group-registrasi') }}",
-                    data : {
-                        'group_id' : groupid,
-                        'group_name' : groupname,
-                        'head_id' : grouphead,
-                        'head_name' : groupheadname,
-                    },
-                    success : function (res) {
-                        if ($.trim(res)){
-                            if (res.status === "00"){
-                                $('#table-reggroup').DataTable().ajax.reload();
-                                $("#add-group").removeClass("d-block");
-                                $("#add-group").addClass("d-none");
-                                $("#main-group").removeClass("d-none");
-                                $("#main-group").addClass("d-block");
-                                $("#regisgroup").text(res.group);
-                                $("#update_group_notification").text();
-                                $("#alert-success-registrasi").removeClass("d-none");
-                                $("#alert-success-registrasi").addClass("d-block");
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('group-registrasi') }}",
+                data : {
+                    'group_id' : groupid,
+                    'group_name' : groupname,
+                    'head_id' : grouphead,
+                    'head_name' : groupheadname,
+                },
+                success : function (res) {
+                    if ($.trim(res)){
+                        if (res.status === "00"){
+                            $('#table-reggroup').DataTable().ajax.reload();
+                            $("#add-group").removeClass("d-block");
+                            $("#add-group").addClass("d-none");
+                            $("#main-group").removeClass("d-none");
+                            $("#main-group").addClass("d-block");
+                            $("#regisgroup").text(res.group);
+                            $("#update_group_notification").text();
+                            $("#alert-success-registrasi").removeClass("d-none");
+                            $("#alert-success-registrasi").addClass("d-block");
 
-                                $("#alert-success-update").removeClass("d-block");
-                                $("#alert-success-update").addClass("d-none");
-                            }else{
-                                $("#err_msg").text(res.err_msg);
-                                $("#alert-error-registrasi").removeClass("d-none");
-                                $("#alert-error-registrasi").addClass("d-block");
-                            }
+                            $("#alert-success-update").removeClass("d-block");
+                            $("#alert-success-update").addClass("d-none");
+
+                            clearVariable();
+                        }else{
+                            $("#err_msg").text(res.err_msg);
+                            $("#alert-error-registrasi").removeClass("d-none");
+                            $("#alert-error-registrasi").addClass("d-block");
                         }
                     }
-                });
-            }
-        });
-        function validateField(data){
-            var groupid = $("#groupid").val();
+                }
+            });
+        }
+
+        function updategroup() {
+            var groupid = $("#hiddengroupid").val();
             var groupname = $("#groupname").val();
-            var grouphead = $("#grouphead").val();
+            var groupheadid = $("#grouphead").val();
             var groupheadname = $("#groupheadname").val();
+
             var required = "Field is required.";
 
-            res = true;
-            if(groupheadname === ''){
-                $("#cekGroupHeadName").text(required);
-                $("#groupheadname").addClass("is-invalid");
-                $("#groupheadname").focus();
-                res = false;
-            }
-            if(grouphead === ''){
-                $("#cekGrouphead").text(required);
-                $("#grouphead").addClass("is-invalid");
-                $("#grouphead").focus();
-                res = false;
-            }
-            if(groupname === ''){
-                $("#cekGroupname").text(required);
-                $("#groupname").addClass("is-invalid");
-                $("#groupname").focus();
-                res = false;
-            }
-            if(data !== "update") {
-                if (groupid === '') {
-                    $("#cekGroupId").text(required);
-                    $("#groupid").addClass("is-invalid");
-                    $("#groupid").focus();
-                    res = false;
-                }
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url('get-idgroup') }}",
-                    data: {
-                        'id': groupid,
-                    },
-                    success: function (res) {
-                        if (res.status === "01") {
-                            $("#cekGroupId").text('Group Id not available, try another ID');
-                            $("#groupid").addClass("is-invalid");
-                            $("#groupid").focus();
-                            res = false;
-                        } else {
-                            res = true;
+            $.get("/mockjax");
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('group-update/submit') }}",
+                data : {
+                    'group_id' : groupid,
+                    'name' : groupname,
+                    'head_id': groupheadid,
+                    'head_name': groupheadname,
+                },
+                success : function (res) {
+                    if ($.trim(res)){
+                        if (res.status === "00"){
+                            $('#table-reggroup').DataTable().ajax.reload();
+                            $("#add-group").removeClass("d-block");
+                            $("#add-group").addClass("d-none");
+                            $("#main-group").removeClass("d-none");
+                            $("#main-group").addClass("d-block");
+                            $("#update_group_notification").text(res.group);
+                            $("#alert-success-update").removeClass("d-none");
+                            $("#alert-success-update").addClass("d-block");
+                            $("#alert-success-registrasi").removeClass("d-block");
+                            $("#alert-success-registrasi").addClass("d-none");
+
+                            clearVariable();
+                        }else{
+                            $("#err_msg").text(res.err_msg);
+                            $("#alert-error-registrasi").removeClass("d-none");
+                            $("#alert-error-registrasi").addClass("d-block");
                         }
                     }
-                });
-            }
-            return res;
+                }
+            });
         }
-        function changeCheck(data){
-            switch (data) {
-                case 'groupid':
-                    var groupid = $("#groupid").val();
-                    if(groupid !== ''){
-                        $("#groupid").removeClass("is-invalid");
-                        $("#cekGroupId").text('');
-                    };
-                    break;
-                case 'groupname':
-                    var groupname = $("#groupname").val();
-                    if(groupname !== ''){
-                        $("#groupname").removeClass("is-invalid");
-                        $("#cekGroupname").text('');
-                    };
-                    break;
-                case 'grouphead':
-                    var grouphead = $("#grouphead").val();
-                    if(grouphead !== ''){
-                        $("#grouphead").removeClass("is-invalid");
-                        $("#cekGrouphead").text('');
-                    };
-                    break;
-                case 'groupheadname':
-                    var groupheadname = $("#groupheadname").val();
-                    if(groupheadname !== ''){
-                        $("#groupheadname").removeClass("is-invalid");
-                        $("#cekGroupHeadName").text('');
-                    };
-                    break;
-            }
-        }
+
         function addGroup() {
+            $("#groupid").removeAttr( "disabled", "disabled" );
             var id = $("#addgroupID").val();
             $.ajax({
                 type : "GET",
@@ -304,10 +383,12 @@
             $("#savegroupbutton").addClass('d-block');
             $("#editgroupbutton").removeClass('d-block');
             $("#editgroupbutton").addClass('d-none');
-            clearCache();
 
+            clearCache();
         }
+
         function editGroup(data){
+            $("#groupid").attr( "disabled", "disabled" );
             $.ajax({
                 type : "GET",
                 url  : "{{ url('group-update/') }}",
@@ -323,6 +404,10 @@
                     $("#groupheadname").val(res.head_name);
                     $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
                     $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res.name);
+
+                    groupname = res.name;
+                    grouphead = res.head_id;
+                    groupheadname = res.head_name;
                 }
             });
 
@@ -340,50 +425,9 @@
             clearCache();
 
         }
-        $("#updategroup").on("click", function () {
-            var groupid = $("#hiddengroupid").val();
-            var groupname = $("#groupname").val();
-            var groupheadid = $("#grouphead").val();
-            var groupheadname = $("#groupheadname").val();
 
-            var required = "Field is required.";
-            if (validateField('update')){
-                $.get("/mockjax");
-                $.ajax({
-                    type : "GET",
-                    url  : "{{ url('group-update/submit') }}",
-                    data : {
-                        'group_id' : groupid,
-                        'name' : groupname,
-                        'head_id': groupheadid,
-                        'head_name': groupheadname,
-                    },
-                    success : function (res) {
-                        if ($.trim(res)){
-                            if (res.status === "00"){
-                                $('#table-reggroup').DataTable().ajax.reload();
-                                $("#add-group").removeClass("d-block");
-                                $("#add-group").addClass("d-none");
-                                $("#main-group").removeClass("d-none");
-                                $("#main-group").addClass("d-block");
-                                $("#update_group_notification").text(res.group);
-                                $("#alert-success-update").removeClass("d-none");
-                                $("#alert-success-update").addClass("d-block");
-                                $("#alert-success-registrasi").removeClass("d-block");
-                                $("#alert-success-registrasi").addClass("d-none");
-                                clearCache();
-                            }else{
-                                $("#err_msg").text(res.err_msg);
-                                $("#alert-error-registrasi").removeClass("d-none");
-                                $("#alert-error-registrasi").addClass("d-block");
-                            }
-                        }
-                    }
-                });
-            }
-
-        });
         $("#resetgroup").on('click', function(){
+            cacheError();
             var data = $("#hiddengroupid").val()
             $.ajax({
                 type : "GET",
@@ -400,48 +444,74 @@
                 }
             });
         });
-        $("#canceleditgroup").on("click", function () {
-            swal({
-                    title: "Are you sure?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "No",
-                    cancelButtonText: "Yes",
-                    closeOnCancel: true,
-                },
-                function(isConfirm) {
-                    if (!isConfirm) {
-                        $("#add-group").removeClass("d-block");
-                        $("#add-group").addClass("d-none");
-                        $("#main-group").removeClass("d-none");
-                        $("#main-group").addClass("d-block");
-                        $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
-                        $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text("");
-                    }
-                }
-            )
-        });
 
-        function clearCache(){
-            $("#groupid").val('');
-            $("#groupname").val('');
-            $("#grouphead").val('');
-            $("#groupheadname").val('');
+        function cacheError() {
+            $('.lbl-group').removeClass('focused');
 
-            $("#cekGroupname").text('');
-            $("#cekGroupId").text('');
-            $("#cekGrouphead").text('');
-            $("#cekGroupHeadName").text('');
+            $("#groupid-error").text('');
+            $("#groupname-error").text('');
+            $("#grouphead-error").text('');
+            $("#groupheadname-error").text('');
 
             $("#groupid").removeClass("is-invalid");
             $("#groupname").removeClass("is-invalid");
             $("#grouphead").removeClass("is-invalid");
             $("#groupheadname").removeClass("is-invalid");
 
+            $("#cekGroupname").text('');
+            $("#cekGroupId").text('');
+            $("#cekGrouphead").text('');
+            $("#cekGroupHeadName").text('');
+        }
+
+        function clearCache(){
+            cacheError();
+            $("#groupid").val('');
+            $("#groupname").val('');
+            $("#grouphead").val('');
+            $("#groupheadname").val('');
+
             $("#alert-error-registrasi").removeClass('d-block');
             $("#alert-error-registrasi").addClass('d-none');
         }
+
+        function cancelEdit(){
+            $("#add-group").removeClass("d-block");
+            $("#add-group").addClass("d-none");
+            $("#main-group").removeClass("d-none");
+            $("#main-group").addClass("d-block");
+            $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
+            $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text("");
+
+            clearVariable();
+        }
+
+        $("#canceleditgroup").on("click", function () {
+            var groupnameN = $("#groupname").val();
+            var groupheadN = $("#grouphead").val();
+            var groupheadnameN = $("#groupheadname").val();
+
+            if (groupname === groupnameN && grouphead === groupheadN && groupheadname === groupheadnameN) {
+                cancelEdit();
+            } else {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            cancelEdit();
+                        }
+                    }
+                )
+            }
+        });
 
         $("#cancelgroup").on("click", function () {
             var res =  $("#hiddengroupid").val()+$("#groupid").val()+$("#groupname").val()+$("#grouphead").val()+$("#groupheadname").val();
@@ -451,19 +521,19 @@
                         title: "Are you sure?",
                         type: "warning",
                         showCancelButton: true,
-                        confirmButtonClass: "btn-danger",
-                        confirmButtonText: "No",
-                        cancelButtonText: "Yes",
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
                         closeOnCancel: true,
                     },
                     function(isConfirm) {
-                        if (!isConfirm) {
+                        if (isConfirm) {
                             $("#add-group").removeClass("d-block");
                             $("#add-group").addClass("d-none");
                             $("#main-group").removeClass("d-none");
                             $("#main-group").addClass("d-block");
                             $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
-                            clearCache();
                         }
                     }
                 )
@@ -474,9 +544,14 @@
                 $("#main-group").removeClass("d-none");
                 $("#main-group").addClass("d-block");
                 $("#breadAdditional").removeClass("d-block").addClass("d-none").text("");
-                clearCache();
             }
         });
+
+        function clearVariable() {
+            groupname = '';
+            grouphead = '';
+            groupheadname = '';
+        }
 
         $("#btn-current1").on("click", function(){
             getGroup();
@@ -591,7 +666,7 @@
     </div>
 
     <div class="card shadow d-none" id="add-group">
-        <form>
+        <form id="myFormGroup">
             <input type="hidden" id="hiddengroupid">
             <div class="card card-body" style="min-height: 365px">
                 <!-- Main content -->
@@ -613,22 +688,22 @@
                             <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                                 <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group ID</label>
-                                    <input class="form-control col-sm-6" placeholder="Group ID" onchange="changeCheck('groupid')" type="text" id="groupid" name="groupid" maxlength="20"/>
+                                    <input class="form-control col-sm-6" placeholder="Group ID" onchange="cacheError();" type="text" id="groupid" name="groupid" maxlength="20"/>
                                     <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
                                 <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Group Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Group name" onchange="changeCheck('groupname')" max="255" id="groupname" name="groupname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Group name" onchange="cacheError();" maxlength="255" id="groupname" name="groupname"/>
                                     <label id="cekGroupname" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                                 <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head ID</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Head ID" onchange="changeCheck('grouphead')" maxlength="20" id="grouphead" name="grouphead"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Head ID" onchange="cacheError();" maxlength="20" id="grouphead" name="grouphead"/>
                                     <label id="cekGrouphead" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
                                 </div>
                                 <div class="form-group form-inline lbl-group">
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Head Name</label>
-                                    <input class="form-control col-sm-6" type="text" placeholder="Head Name" onchange="changeCheck('groupheadname')" maxlength="50" id="groupheadname" name="groupheadname"/>
+                                    <input class="form-control col-sm-6" type="text" placeholder="Head Name" onchange="cacheError();" maxlength="50" id="groupheadname" name="groupheadname"/>
                                     <label id="cekGroupHeadName" class="error invalid-feedback small d-block col-sm-4" for="groupname"></label>
                                 </div>
                             </div>
@@ -638,12 +713,12 @@
             </div>
             <div class="card card-footer text-right">
                 <div class="form-inline justify-content-end" id="savegroupbutton">
-                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="savegroup">Save</button>
-                    <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
+                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="saveGroup">Save</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="reset" onclick="cacheError();">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelgroup">Cancel</button>
                 </div>
                 <div class="form-inline justify-content-end d-none" id="editgroupbutton">
-                    <button class="form-control-btn btn btn-success mb-2" type="button" id="updategroup">Update</button>
+                    <button class="form-control-btn btn btn-success mb-2" type="button" id="updateGroup">Update</button>
                     <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetgroup">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceleditgroup">Cancel</button>
                 </div>

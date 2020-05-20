@@ -351,6 +351,8 @@
                             $("#alert-success-registrasi").addClass("d-block");
                             $("#alert-success-update").removeClass("d-block");
                             $("#alert-success-update").addClass("d-none");
+
+                            clearVariable();
                         }else{
                             $("#alert-error-registrasi").addClass('d-block');
                             $("#alert-error-registrasi").removeClass('d-none');

@@ -342,6 +342,8 @@
                             $("#regisgroup").text(res.group);
                             $("#alert-success-registrasi").removeClass("d-none");
                             $("#alert-success-registrasi").addClass("d-block");
+
+                            clearVariable();
                         } else {
                             $("#err_msg").text(res.err_msg);
                             $("#alert-error-registrasi").addClass("d-block");

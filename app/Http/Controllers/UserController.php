@@ -531,6 +531,31 @@ class UserController extends Controller
         return DataTables::of($data)->make(true);
     }
 
+    public function unlockedUser(){
+        $user_id = $_GET['user_id'];
+        $users = $this->__getDataUser($user_id);
+
+        try{
+            User::where('user_id', $user_id)->update([
+                'login_attempt' => 0,
+                'pin_attempt' => 0,
+                'pin_locked' => false,
+                'status' => 'A'
+            ]);
+
+            $status = '00';
+            $msg = $users->user_name;
+        } catch (QueryException $ex){
+            $status = '01';
+            $msg = $ex->getMessage();
+        }
+
+        return response()->json([
+            'status' => $status,
+            'msg' => $msg,
+        ]);
+    }
+
     public function getDetailUser(){
         $user_id = $_GET['user_id'];
         $selectUser = DB::select('SELECT user_type."name" AS type_name, user_status."name" AS status_name, users.* FROM users

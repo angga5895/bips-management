@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth'], function() {
     //feature
     Route::get('/test', 'UserController@getMaxID');
     Route::get('get-detailUser', 'UserController@getDetailUser');
+    Route::get('user-unlocked', 'UserController@unlockedUser');
     Route::get('username-unique', 'UserController@uniqueUsername');
     Route::get('username-get', 'UserController@getUsername');
     Route::get('get-iduser', 'UserController@getIdUser');

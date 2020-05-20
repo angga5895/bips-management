@@ -467,10 +467,14 @@
                     {data : 'user_name', name: 'user_name'},
                     {data : 'user_id', name : 'user_id'},
                     {data : 'email_address', name: 'email_address'},
-                    /*{data : 'msidn', name: 'msidn'},*/
                     {data : 'usertype', name: 'usertype'},
+                    {data : 'msidn', name: 'msidn'},
                     {data : 'userstatus', name: 'userstatus'},
-                    /*{data : 'last_login', name: 'last_login'},*/
+                    {data : 'last_login', name: 'last_login'},
+                    {data : 'last_teriminalid', name: 'last_teriminalid'},
+                    {data : 'login_attempt', name: 'login_attempt'},
+                    {data : 'pin_attempt', name: 'pin_attempt'},
+                    {data : 'pin_locked', name: 'pin_locked'},
                 ],
                 columnDefs: [{
                     targets : [1],
@@ -493,6 +497,24 @@
                     targets : [5],
                 },{
                     searchable : true,
+                    targets : [6],
+                },{
+                    searchable : true,
+                    targets : [7],
+                },{
+                    searchable : true,
+                    targets : [8],
+                },{
+                    searchable : true,
+                    targets : [9],
+                },{
+                    searchable : true,
+                    targets : [10],
+                },{
+                    searchable : true,
+                    targets : [11],
+                },{
+                    searchable : true,
                     targets : [0],
                     className: 'text-center',
                     render : function (data, type, row) {
@@ -507,10 +529,57 @@
                             '</a>' +
                             '<a class="btn btn-sm btn-dark" href="/user/'+data+'/reset/pin" data-toggle="tooltip" data-placement="top" title="Reset PIN">' +
                             '<i class="fa fa-qrcode"></i>' +
-                            '</a>'
+                            '</a>' +
+                            '<button class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title="Unlocked User" onclick="unlockedUser(\''+data+'\');">' +
+                            '<i class="fa fa-user-lock"></i>' +
+                            '</button>'
                     }
                 }]
             });
+        }
+
+        function unlockedUser(userid) {
+            swal({
+                    title: "Are you sure?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-success",
+                    cancelButtonText: "No",
+                    confirmButtonText: "Yes",
+                    closeOnCancel: true,
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.get("/mockjax");
+
+                        $.ajax({
+                            type : "GET",
+                            url  : "{{ url('user-unlocked') }}",
+                            data : {
+                                'user_id' : userid,
+                            },
+                            success : function (res) {
+                                if ($.trim(res)) {
+                                    if (res.status === "00") {
+                                        swal({
+                                            title: res.msg,
+                                            text: "Has Unlocked",
+                                            type: "success",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-success',
+                                            confirmButtonText: 'OK'
+                                        }, function () {
+                                            $('#table-reggroup').DataTable().ajax.reload();
+                                        });
+                                    } else {
+                                        $('#table-reggroup').DataTable().ajax.reload();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            )
         }
 
         function detailUser(userid) {
@@ -977,10 +1046,14 @@
                                         <th>User Name</th>
                                         <th>User Code</th>
                                         <th>Email</th>
-                                        {{--<th>MSIDN</th>--}}
                                         <th>User Type</th>
+                                        <th>MSIDN</th>
                                         <th>Status</th>
-                                        {{--<th>Last Login</th>--}}
+                                        <th>Last Login</th>
+                                        <th>Last Teriminal ID</th>
+                                        <th>Login Attempt</th>
+                                        <th>PIN Attempt</th>
+                                        <th>PIN Locked</th>
                                     </tr>
                                     </thead>
                                 </table>

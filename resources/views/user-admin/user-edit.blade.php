@@ -115,7 +115,37 @@
         }
 
         $("#canceluser").on("click", function () {
-            window.location.href="{{ route('useradmin.user') }}"
+            var user_nameN = $("#user_name").val();
+            var email_addressN = $("#email_address").val();
+            var msidnN = $("#msidn").val();
+            var user_statusN = $("#user_status").val();
+
+            var user_name = $("#h_user_name").val();
+            var email_address = $("#h_email_address").val();
+            var msidn = $("#h_msidn").val();
+            var user_status = $("#h_user_status").val();
+
+            if (user_name === user_nameN && email_address === email_addressN &&
+                msidn === msidnN && user_status === user_statusN) {
+                window.location.href="{{ route('useradmin.user') }}"
+            } else {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            window.location.href="{{ route('useradmin.user') }}"
+                        }
+                    }
+                )
+            }
         });
 
         function saveUser() {
@@ -227,8 +257,8 @@
                                             <div class="form-group form-inline lbl-group">
                                                 <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">User Name</label>
                                                 <div class="col-sm-9 pr-0 row">
-                                                    <input class="form-control col-sm-12" type="text" placeholder="User Name" id="user_name" name="user_name" value="{{ $p->user_name }}" onchange="checking(this)"
-                                                    />
+                                                    <input class="form-control col-sm-12" type="text" placeholder="User Name" id="user_name" name="user_name" value="{{ $p->user_name }}" onchange="checking(this)" />
+                                                    <input type="hidden" id="h_user_name" value="{{ $p->user_name }}"/>
                                                     <label id="cekUser_name" class="error invalid-feedback small d-block col-sm-12 px-0" for="user_name"></label>
                                                 </div>
                                             </div>
@@ -242,6 +272,7 @@
                                                     <input class="form-control col-sm-12" type="email" placeholder="Email"
                                                            id="email_address" name="email_address" value="{{ $p->email_address }}" onchange="checking(this)"
                                                     />
+                                                    <input type="hidden" id="h_email_address" value="{{ $p->email_address }}"/>
                                                     <label id="cekEmail_address" class="error invalid-feedback small d-block col-sm-12 px-0" for="email_address"></label>
                                                 </div>
                                             </div>
@@ -251,6 +282,7 @@
                                                     <input class="form-control col-sm-12" type="text" placeholder="MSIDN"
                                                            id="msidn" name="msidn" value="{{ $p->msidn }}" onchange="checking(this)"
                                                     />
+                                                    <input type="hidden" id="h_msidn" value="{{ $p->msidn }}"/>
                                                     <label id="cekMsidn" class="error invalid-feedback small d-block col-sm-12 px-0" for="msidn"></label>
                                                 </div>
                                             </div>
@@ -267,6 +299,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
+                                                    <input type="hidden" id="h_user_status" value="{{ $p->status }}"/>
                                                     <label id="cekUser_status" class="error invalid-feedback small d-block col-sm-4" for="user_status"></label>
                                                 </div>
 

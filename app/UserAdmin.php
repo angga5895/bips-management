@@ -16,7 +16,7 @@ class UserAdmin extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'password',
+        'username', 'password', 'email_verified', 'remember_token', 'role_app'
     ];
 
     /**
@@ -34,7 +34,7 @@ class UserAdmin extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified' => 'datetime',
     ];
     public function getAuthPassword()
     {

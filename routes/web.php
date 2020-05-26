@@ -24,8 +24,18 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/customer', 'CustomerController@customer')->name('masterdata.customer');
     Route::get('/assign', 'AssignController@index')->name('masterdata.assign');
     Route::get('/group', 'GroupController@group')->name('masterdata.group');
+    // page new
+    Route::get('/useradmin', 'PrivilegeController@useradmin')->name('adminprivilege.upadmin');
+    Route::get('/roleadmin', 'PrivilegeController@roleadmin')->name('adminprivilege.uradmin');
 
     //feature
+    Route::get('useradmin-delete/submit', 'PrivilegeController@deleteUseradmin');
+    Route::get('useradmin-update', 'PrivilegeController@useradminEdit');
+    Route::get('useradmin-update/submit', 'PrivilegeController@updateUseradmin');
+    Route::get('usernameadmin-registrasi', 'PrivilegeController@registrasiUserAdmin');
+    Route::get('usernameadmin-get', 'PrivilegeController@getUsernameAdmin');
+    Route::get('usernameadmin-check', 'PrivilegeController@checkUsernameAdmin');
+    Route::get('get-dataAdmin/{id}', 'PrivilegeController@dataAdmin')->name('data-admin');
     Route::get('/test', 'UserController@getMaxID');
     Route::get('get-detailUser', 'UserController@getDetailUser');
     Route::get('user-unlocked', 'UserController@unlockedUser');

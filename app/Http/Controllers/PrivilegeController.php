@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\ClPermissionApp;
+use App\ClPermissionAppMod;
 use App\RoleApp;
 use App\UserAdmin;
 use Illuminate\Database\QueryException;
@@ -47,6 +49,8 @@ class PrivilegeController extends Controller
 
     public function roleadmin()
     {
+        $roleApp = RoleApp::orderBy('id','ASC')->get();
+
         $role_app = Auth::user()->role_app;
         $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
                                     JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
@@ -69,7 +73,10 @@ class PrivilegeController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('privilege-admin.roleadmin', compact('clapp', 'role_app'), ['title' => 'User Admin']);
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app
+                                        ORDER BY cl_app.cla_order;
+                            ');
+            return view('privilege-admin.roleadmin', compact('clapp', 'role_app', 'roleApp', 'clapps'), ['title' => 'User Admin']);
         }
     }
 
@@ -249,4 +256,289 @@ class PrivilegeController extends Controller
         $pass = DB::select('SELECT password FROM user_admins WHERE id=\''.$id.'\' ')[0];
         return response()->json([$user,$pass]);
     }
+
+    public function dataRole(Request $request){
+        $requestData = $request->all();
+
+        $userID = $requestData['search_param']['userID'];
+
+        $where_userID = "";
+        if ($userID != ""){
+            $where_userID = ' AND id = \''.$userID.'\' ';
+        }
+
+        $query = 'SELECT * FROM role_app
+                  WHERE id is NOT NULL
+                  '.$where_userID;
+        $data = DB::select($query);
+        return DataTables::of($data)->make(true);
+    }
+
+    public function checkNameAdmin(){
+        $user = $_GET['name'];
+        $username = RoleApp::select("name")
+            ->where("name",$user)
+            ->get();
+
+        if (count($username) > 0){
+            $result = [
+                'status' => '01'
+            ];
+        } else {
+            $result = [
+                'status' => '00'
+            ];
+        }
+
+        return response()->json($result);
+    }
+
+    public function roleadminEdit()
+    {
+        $id = $_GET['id'];
+        $user = RoleApp::where('id',$id)->get()[0];
+
+        return response()->json([$user]);
+    }
+
+    public function registrasiRoleAdmin(){
+        $name = $_GET['name'];
+
+        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
+
+        try {
+            $query = RoleApp::create([
+                'name' => $name,
+                'updated_at' => $current_time,
+                'created_at' => $current_time
+            ]);
+
+            if ($query) {
+                $status = '00';
+                $user = $name;
+                $message = 'Success';
+            } else {
+                $status = "01";
+                $user = "";
+                $message = 'Error';
+            }
+        } catch (QueryException $e){
+            $status = '01';
+            $user = $name;
+            $message = $e->getMessage();
+        }
+
+        return response()->json([
+            'status' => $status,
+            'user' => $user,
+            'message' => $message
+        ]);
+    }
+
+    public function updateRoleadmin(){
+        $id = $_GET['id'];
+        $name = $_GET['name'];
+
+        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
+
+        try {
+            $query = RoleApp::where('id', $id)->update([
+                'name' => $name,
+                'updated_at' => $current_time
+            ]);
+
+            if ($query) {
+                $status = '00';
+                $user = $name;
+                $message = 'Success';
+            } else {
+                $status = "01";
+                $user = "";
+                $message = 'Error';
+            }
+        }catch(QueryException $ex){
+            $status = "01";
+            $user = null;
+            $message = $ex->getMessage();
+        }
+
+        return response()->json([
+            'status' => $status,
+            'user' => $user,
+            'message' => $message,
+        ]);
+    }
+
+    public function getRolenameAdmin(){
+        $id = $_GET['id'];
+        $username = RoleApp::select("name")
+            ->where("id",$id)
+            ->get();
+        return response()->json($username);
+    }
+
+    public function checkclApp(){
+        $role_app = $_GET['role_app'];
+
+        $clapp = DB::select('SELECT cl_permission_app_mod.clp_role_app, cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app_mod
+                                LEFT JOIN cl_app ON cl_app.cla_id = cl_app_mod.clam_cla_id
+                                LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                                LEFT JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
+                                LEFT JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                LEFT JOIN role_app ON role_app.id = cl_permission_app_mod.clp_role_app
+                                WHERE cl_app_mod.clam_show = TRUE
+                                AND cl_permission_app_mod.clp_role_app = '.$role_app.'
+                                AND cl_permission_app.clp_role_app = '.$role_app.' 
+                                ORDER BY cl_app_mod.id;');
+        return response()->json($clapp);
+    }
+
+    public function updateRoleadminPrivilege(){
+        $name = $_GET['name'];
+        $role_app = $_GET['role_app'];
+        $clapp = $_GET['clapp'];
+        $clappmod = $_GET['clappmod'];
+
+        $cl_app = ClPermissionApp::where('clp_role_app',$role_app)->get();
+        $cl_app_mod = ClPermissionAppMod::where('clp_role_app',$role_app)->get();
+
+        $status = '00';
+        $user = $name;
+        $message = 'Not access all menus.';
+
+        if ($clapp === "0" || $clappmod === "0"){
+            try {
+                if (count($cl_app) > 0){
+                    try{
+                        $delclapp = ClPermissionApp::where('clp_role_app',$role_app)->delete();
+
+                        if ($delclapp){
+                            if (count($cl_app_mod) > 0){
+                                try{
+                                    $delclappmod = ClPermissionAppMod::where('clp_role_app',$role_app)->delete();
+
+                                    if ($delclappmod){
+                                        $status = '00';
+                                        $user = $name;
+                                        $message = 'Success';
+                                    } else {
+                                        $status = "01";
+                                        $user = "";
+                                        $message = 'Error';
+                                    }
+                                } catch (QueryException $exclappmod){
+                                    $status = "01";
+                                    $user = "";
+                                    $message = $exclappmod->getMessage();
+                                }
+                            }
+                        } else {
+                            $status = "01";
+                            $user = "";
+                            $message = 'Error';
+                        }
+                    } catch (QueryException $exclapp){
+                        $status = "01";
+                        $user = "";
+                        $message = $exclapp->getMessage();
+                    }
+                }
+            } catch(QueryException $ex){
+                $status = "01";
+                $user = null;
+                $message = $ex->getMessage();
+            }
+        } else {
+            try {
+                if (count($cl_app) > 0){
+                    try{
+                        $delclapp = ClPermissionApp::where('clp_role_app',$role_app)->delete();
+
+                        if ($delclapp){
+                            $execclapp = 1;
+                        } else {
+                            $execclapp = 0;
+                        }
+                    } catch (QueryException $exclapp){
+                        $exclapp->getMessage();
+                        $execclapp = 0;
+                    }
+
+                    if ($execclapp === 1){
+                        foreach ($clapp as $p){
+                            $query = ClPermissionApp::create([
+                                'clp_role_app' => $role_app,
+                                'clp_app' => $p
+                            ]);
+                        }
+                    }
+                } else {
+                    foreach ($clapp as $p){
+                        $query = ClPermissionApp::create([
+                            'clp_role_app' => $role_app,
+                            'clp_app' => $p
+                        ]);
+                    }
+                }
+
+                if ($query) {
+                    if (count($cl_app_mod) > 0){
+                        try{
+                            $delclappmod = ClPermissionAppMod::where('clp_role_app',$role_app)->delete();
+
+                            if ($delclappmod){
+                                $execclappmod = 1;
+                            } else {
+                                $execclappmod = 0;
+                            }
+                        } catch (QueryException $exclappmod){
+                            $exclappmod->getMessage();
+                            $execclappmod = 0;
+                        }
+
+                        if ($execclappmod === 1){
+                            foreach ($clappmod as $r){
+                                $querys = ClPermissionAppMod::create([
+                                    'clp_role_app' => $role_app,
+                                    'clp_app_mod' => $r
+                                ]);
+                            }
+                        }
+                    } else {
+                        foreach ($clappmod as $r){
+                            $querys = ClPermissionAppMod::create([
+                                'clp_role_app' => $role_app,
+                                'clp_app_mod' => $r
+                            ]);
+                        }
+                    }
+
+                    if ($querys){
+                        $status = '00';
+                        $user = $name;
+                        $message = 'Success';
+                    } else {
+                        $status = "01";
+                        $user = "";
+                        $message = 'Error';
+                    }
+                } else {
+                    $status = "01";
+                    $user = "";
+                    $message = 'Error';
+                }
+            } catch(QueryException $ex){
+                $status = "01";
+                $user = null;
+                $message = $ex->getMessage();
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'user' => $user,
+            'message' => $message,
+        ]);
+    }
+
 }

@@ -29,6 +29,15 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/roleadmin', 'PrivilegeController@roleadmin')->name('adminprivilege.uradmin');
 
     //feature
+    Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
+    Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');
+    Route::get('roleadmin-update', 'PrivilegeController@roleadminEdit');
+    Route::get('rolenameadmin-registrasi', 'PrivilegeController@registrasiRoleAdmin');
+    Route::get('roleadmin-update/submit', 'PrivilegeController@updateRoleadmin');
+    Route::get('rolenameadmin-get', 'PrivilegeController@getRolenameAdmin');
+    Route::get('rolenameadmin-checkclapp', 'PrivilegeController@checkclApp');
+    Route::get('roleadmin-privilege/submit', 'PrivilegeController@updateRoleadminPrivilege');
+
     Route::get('useradmin-delete/submit', 'PrivilegeController@deleteUseradmin');
     Route::get('useradmin-update', 'PrivilegeController@useradminEdit');
     Route::get('useradmin-update/submit', 'PrivilegeController@updateUseradmin');
@@ -36,6 +45,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('usernameadmin-get', 'PrivilegeController@getUsernameAdmin');
     Route::get('usernameadmin-check', 'PrivilegeController@checkUsernameAdmin');
     Route::get('get-dataAdmin/{id}', 'PrivilegeController@dataAdmin')->name('data-admin');
+
     Route::get('/test', 'UserController@getMaxID');
     Route::get('get-detailUser', 'UserController@getDetailUser');
     Route::get('user-unlocked', 'UserController@unlockedUser');

@@ -1,3 +1,75 @@
+@media (max-width: 199px){
+    .px-collapse{
+        padding-left: .0rem !important;
+        padding-right: .0rem !important;
+    }
+    .w-collapse {
+        width: 85% !important;
+    }
+}
+@media (min-width: 200px) and (max-width: 348px){
+    .px-collapse{
+        padding-left: .2rem !important;
+        padding-right: .2rem !important;
+    }
+    .w-collapse {
+        width: 90% !important;
+    }
+}
+@media (min-width: 349px) and (max-width: 476px){
+    .px-collapse{
+        padding-left: .4rem !important;
+        padding-right: .4rem !important;
+    }
+    .w-collapse {
+        width: 92% !important;
+    }
+}
+@media (min-width: 477px) and (max-width: 814px){
+    .px-collapse{
+        padding-left: .7rem !important;
+        padding-right: .7rem !important;
+    }
+    .w-collapse {
+        width: 95% !important;
+    }
+}
+@media (min-width: 815px) and (max-width: 999px){
+    .px-collapse{
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    .w-collapse {
+        width: 96% !important;
+    }
+}
+@media (min-width: 1000px) and (max-width: 1300px) {
+    .px-collapse{
+        padding-left: 1.3rem !important;
+        padding-right: 1.3rem !important;
+    }
+    .w-collapse {
+        width: 97% !important;
+    }
+}
+@media (min-width: 1301px) {
+    .px-collapse{
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    .w-collapse {
+        width: 98% !important;
+    }
+}
+
+.text-collapse{
+    font-family: Open Sans, sans-serif!important;
+    font-size: 1rem!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    color: #525f7f!important;
+}
+
 .dataTables_length {
     display: none;
 }

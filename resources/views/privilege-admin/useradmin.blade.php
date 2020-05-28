@@ -625,7 +625,7 @@
             conpass = 0;
             conusername = 0;
             cacheError();
-            $("#hiddenduseradminid").val('');
+            $("#hiddenuseradminid").val('');
 
             $("#username").val('');
             $("#password").val('');

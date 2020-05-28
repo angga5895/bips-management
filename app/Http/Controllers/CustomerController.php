@@ -35,7 +35,7 @@ class CustomerController extends Controller
         $permission = DB::select('SELECT count(*) FROM cl_permission_app_mod 
                             JOIN cl_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
                             JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
-                            WHERE cl_module.clm_slug = \'dealer\' AND cl_permission_app_mod.clp_role_app = '.$role_app);
+                            WHERE cl_module.clm_slug = \'customer\' AND cl_permission_app_mod.clp_role_app = '.$role_app);
 
         $countpermission = 0;
         foreach ($permission as $p){

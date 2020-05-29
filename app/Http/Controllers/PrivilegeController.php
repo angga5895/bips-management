@@ -402,9 +402,7 @@ class PrivilegeController extends Controller
         $cl_app = ClPermissionApp::where('clp_role_app',$role_app)->get();
         $cl_app_mod = ClPermissionAppMod::where('clp_role_app',$role_app)->get();
 
-        $status = '00';
-        $user = $name;
-        $message = 'Not access all menus.';
+        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
         if ($clapp === "0" || $clappmod === "0"){
             try {
@@ -418,9 +416,25 @@ class PrivilegeController extends Controller
                                     $delclappmod = ClPermissionAppMod::where('clp_role_app',$role_app)->delete();
 
                                     if ($delclappmod){
-                                        $status = '00';
-                                        $user = $name;
-                                        $message = 'Success';
+                                        try{
+                                            $q = RoleApp::where('id', $role_app)->update([
+                                                'updated_at' => $current_time
+                                            ]);
+
+                                            if ($q){
+                                                $status = '00';
+                                                $user = $name;
+                                                $message = 'Success';
+                                            } else {
+                                                $status = "01";
+                                                $user = "";
+                                                $message = 'Error';
+                                            }
+                                        } catch (QueryException $exupd){
+                                            $status = "01";
+                                            $user = "";
+                                            $message = $exupd->getMessage();
+                                        }
                                     } else {
                                         $status = "01";
                                         $user = "";
@@ -441,6 +455,26 @@ class PrivilegeController extends Controller
                         $status = "01";
                         $user = "";
                         $message = $exclapp->getMessage();
+                    }
+                } else {
+                    try{
+                        $qqq = RoleApp::where('id', $role_app)->update([
+                            'updated_at' => $current_time
+                        ]);
+
+                        if ($qqq){
+                            $status = '00';
+                            $user = $name;
+                            $message = 'Success';
+                        } else {
+                            $status = "01";
+                            $user = "";
+                            $message = 'Error';
+                        }
+                    } catch (QueryException $exupddd){
+                        $status = "01";
+                        $user = "";
+                        $message = $exupddd->getMessage();
                     }
                 }
             } catch(QueryException $ex){
@@ -514,9 +548,25 @@ class PrivilegeController extends Controller
                     }
 
                     if ($querys){
-                        $status = '00';
-                        $user = $name;
-                        $message = 'Success';
+                        try{
+                            $qq = RoleApp::where('id', $role_app)->update([
+                                'updated_at' => $current_time
+                            ]);
+
+                            if ($qq){
+                                $status = '00';
+                                $user = $name;
+                                $message = 'Success';
+                            } else {
+                                $status = "01";
+                                $user = "";
+                                $message = 'Error';
+                            }
+                        } catch (QueryException $exupds){
+                            $status = "01";
+                            $user = "";
+                            $message = $exupds->getMessage();
+                        }
                     } else {
                         $status = "01";
                         $user = "";

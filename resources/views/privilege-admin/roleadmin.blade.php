@@ -528,16 +528,29 @@
                             },
                             success : function (res) {
                                 // console.log(res.name);
-                                swal({
-                                    title: res.user,
-                                    text: "Has Updated",
-                                    type: "success",
-                                    showCancelButton: false,
-                                    confirmButtonClass: 'btn-success',
-                                    confirmButtonText: 'OK'
-                                }, function () {
-                                    window.location.href = "{{ route('adminprivilege.uradmin') }}";
-                                });
+                                if(res.status === '00'){
+                                    swal({
+                                        title: res.user,
+                                        text: "Has Updated",
+                                        type: "success",
+                                        showCancelButton: false,
+                                        confirmButtonClass: 'btn-success',
+                                        confirmButtonText: 'OK'
+                                    }, function () {
+                                        window.location.href = "{{ route('adminprivilege.uradmin') }}";
+                                    });
+                                } else {
+                                    swal({
+                                        title: res.user,
+                                        text: res.message,
+                                        type: "error",
+                                        showCancelButton: false,
+                                        confirmButtonClass: 'btn-danger',
+                                        confirmButtonText: 'OK'
+                                    }, function () {
+                                        window.location.href = "{{ route('adminprivilege.uradmin') }}";
+                                    });
+                                }
                             }
                         });
                     }

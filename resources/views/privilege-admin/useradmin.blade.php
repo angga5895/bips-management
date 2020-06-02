@@ -455,41 +455,53 @@
         }
 
         function deleteUser(data){
-            swal({
-                    title: "Are you sure?",
-                    type: "warning",
-                    showCancelButton: true,
-                    cancelButtonClass: "btn-default",
-                    confirmButtonClass: "btn-danger",
-                    confirmButtonText: "Yes",
-                    cancelButtonText: "No",
-                    closeOnCancel: true,
-                },
-                function(isConfirm) {
-                    if (isConfirm) {
-                        $.ajax({
-                            type : "GET",
-                            url  : "{{ url('useradmin-delete/submit') }}",
-                            data : {
-                                'id' : data,
-                            },
-                            success : function (res) {
-                                // console.log(res.name);
-                                swal({
-                                    title: res.user,
-                                    text: "Has Deleted",
-                                    type: "success",
-                                    showCancelButton: false,
-                                    confirmButtonClass: 'btn-success',
-                                    confirmButtonText: 'OK'
-                                }, function () {
-                                    $('#table-reggroup').DataTable().ajax.reload();
-                                });
-                            }
-                        });
+            var idlogin = "{{ $idlogin }}";
+            if (parseInt(idlogin) === parseInt(data)){
+                swal({
+                    title: "Can't be deleted",
+                    text: "User admin is currently in use.",
+                    type: "error",
+                    showCancelButton: false,
+                    confirmButtonClass: 'btn-danger',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-default",
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $.ajax({
+                                type: "GET",
+                                url: "{{ url('useradmin-delete/submit') }}",
+                                data: {
+                                    'id': data,
+                                },
+                                success: function (res) {
+                                    // console.log(res.name);
+                                    swal({
+                                        title: res.user,
+                                        text: "Has Deleted",
+                                        type: "success",
+                                        showCancelButton: false,
+                                        confirmButtonClass: 'btn-success',
+                                        confirmButtonText: 'OK'
+                                    }, function () {
+                                        $('#table-reggroup').DataTable().ajax.reload();
+                                    });
+                                }
+                            });
+                        }
                     }
-                }
-            )
+                )
+            }
         }
 
         $("#resetuser").on('click', function(){

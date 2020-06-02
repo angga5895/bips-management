@@ -43,7 +43,8 @@ class PrivilegeController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('privilege-admin.useradmin', compact('clapp', 'role_app', 'roleApp'), ['title' => 'User Admin']);
+            $idlogin = Auth::user()->id;
+            return view('privilege-admin.useradmin', compact('clapp', 'role_app', 'roleApp','idlogin'), ['title' => 'User Admin']);
         }
     }
 

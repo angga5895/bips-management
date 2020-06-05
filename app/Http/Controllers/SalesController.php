@@ -20,6 +20,7 @@ class SalesController extends Controller
         $group_list = Sales::all();
         $dealer_list = Dealer::all();
 
+        $row = 0;
         foreach ($group_list as $p){
             $row = $p->count;
         }

@@ -19,6 +19,7 @@ class CustomerController extends Controller
     {
         $group_list = Customer::all();
 
+        $row = 0;
         foreach ($group_list as $p){
             $row = $p->count;
         }

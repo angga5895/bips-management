@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" sizes="60x60" href="{{url('favicon/apple-icon-60x60.png')}}">
     <link rel="apple-touch-icon" sizes="72x72" href="{{url('favicon/apple-icon-72x72.png')}}">
     <link rel="apple-touch-icon" sizes="76x76" href="{{url('favicon/apple-icon-76x76.png')}}">
-    <link rel="apple-touch-icon" sizes="114x114" href={{url('favicon/apple-icon-114x114.png')}}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{url('favicon/apple-icon-114x114.png')}}">
     <link rel="apple-touch-icon" sizes="120x120" href="{{url('favicon/apple-icon-120x120.png')}}">
     <link rel="apple-touch-icon" sizes="144x144" href="{{url('favicon/apple-icon-144x144.png')}}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{url('favicon/apple-icon-152x152.png')}}">
@@ -29,7 +29,7 @@
     {{--<link href="./assets/img/brand/favicon.png" rel="icon" type="image/png">--}}
     {{--<link rel="icon" type="image/png" href="{{ url('adminlte/dist/img/p.png') }}">--}}
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    <link href="{{ asset('fonts.googleapis.css') }}" rel="stylesheet">
     <!-- Icons -->
     <link href="{{ url('argon/vendor/nucleo/css/nucleo.css') }}" rel="stylesheet">
     <link href="{{ url('argon/vendor/@fortawesome/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
@@ -137,7 +137,7 @@
 <script src="{{ url('bootstrap-sweetalert/bootstrap-sweetalert.js') }}"></script>
 <script type="text/javascript" charset="utf8"  src="{{ asset('jquery.dataTables.min.js') }}"></script>
 
-<script src="{{ asset('forms_pickers.js') }}"></script>
+{{--<script src="{{ asset('forms_pickers.js') }}"></script>--}}
 <script src="{{ asset('layout_mockJax.js') }}"></script>
 
 <script src="{{ url('js/dataTables.responsive.min.js') }}"></script>

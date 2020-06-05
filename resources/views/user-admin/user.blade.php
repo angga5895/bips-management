@@ -246,6 +246,17 @@
             $("#pin-confirm").val(hash_pin);
 
             $("#myForm").valid();
+
+            if (user_id === ''){
+                swal({
+                    title: "User Code Empty",
+                    text: "Please, contact back office.",
+                    type: "error",
+                    showCancelButton: false,
+                    confirmButtonClass: 'btn-danger',
+                    confirmButtonText: 'OK'
+                });
+            }
         }
 
         function clientlist(){
@@ -314,30 +325,32 @@
                         var usertype = $("#user_type").val();
                         var arrRow = [];
                         if (usertype === 'C'){
-                            var user_id = row.user_id.toLowerCase(); //user_id
-                            var user_name = row.custname; //user_name
-                            var email_address = row.email; //email_address
-                            var msidn = row.phonecell; //msidn
+                            var user_id = (row.user_id === null) ? '' : row.user_id.toLowerCase(); //user_id
+                            var user_name = (row.custname === null) ? '' : row.custname; //user_name
+                            var email_address = (row.email === null) ? '' : row.email; //email_address
+                            var msidn = (row.phonecell === null) ? '' : row.phonecell; //msidn
                             var hash_password = (row.user_password === null) ? '' : row.user_password; //hash_password
                             var hash_pin = (row.user_pin === null) ? '' : row.user_pin; //hash_pin
                         } else if (usertype === 'D'){
-                            var user_id = row.user_id.toLowerCase(); //user_id
-                            var user_name = row.dealer_name; //user_name
+                            var user_id = (row.user_id === null) ? '' : row.user_id.toLowerCase(); //user_id
+                            var user_name = (row.dealer_name === null) ? '' : row.dealer_name; //user_name
                             var email_address = (row.email === null) ? '' : row.email; //email_address
                             var msidn = (row.mobilephone === null) ? '' : row.mobilephone; //msidn
                             var hash_password = ''; //hash_password
                             var hash_pin = ''; //hash_pin
                         } else if (usertype === 'S'){
-                            var user_id = row.user_id.toLowerCase(); //user_id
-                            var user_name = row.sales_name; //user_name
+                            var user_id = (row.user_id === null) ? '' : row.user_id.toLowerCase(); //user_id
+                            var user_name = (row.sales_name === null) ? '' : row.sales_name; //user_name
                             var email_address = (row.email === null) ? '' : row.email; //email_address
                             var msidn = (row.mobilephone === null) ? '' : row.mobilephone; //msidn
                             var hash_password = ''; //hash_password
                             var hash_pin = ''; //hash_pin
                         }
 
+                        var dataid = (data === null) ? '' : data.toLowerCase();
+
                         return '<button class="btn btn-sm btn-primary" type="button" data-dismiss= "modal" onclick="clickOKClient(\''
-                            +data.toLowerCase()+'\',\''
+                            +dataid+'\',\''
                             +user_name+'\',\''
                             +email_address+'\',\''
                             +msidn+'\',\''

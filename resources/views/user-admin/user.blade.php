@@ -251,9 +251,9 @@
                 swal({
                     title: "User Code Empty",
                     text: "Please, contact back office.",
-                    type: "error",
+                    type: "warning",
                     showCancelButton: false,
-                    confirmButtonClass: 'btn-danger',
+                    confirmButtonClass: 'btn-warning',
                     confirmButtonText: 'OK'
                 });
             }

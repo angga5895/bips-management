@@ -238,7 +238,7 @@
 
                                 $("#usercode").val(res.data[0].custcode);
                                 $("#username").val(res.data[0].custname);
-                                $("#status").val(res.data[0].custstatus);
+                                $("#status").val("Status : \""+res.data[0].custstatus+"\"");
 
                                 $("#tempadditionallimit").attr("disabled", false);
                                 $("#updateUser").attr("disabled", false);

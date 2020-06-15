@@ -1,3 +1,108 @@
+@media (min-width: 5001px) {
+    .px-risk {
+        padding: 0 0 0 95px;
+    }
+}@media (min-width: 4001px) and (max-width: 5000px) {
+    .px-risk {
+        padding: 0 0 0 75px;
+    }
+}@media (min-width: 3181px) and (max-width: 4000px)  {
+    .px-risk {
+        padding: 0 0 0 60px;
+    }
+}@media (min-width: 2901px) and (max-width: 3180px) {
+    .px-risk {
+        padding: 0 0 0 50px;
+    }
+}@media (min-width: 2731px) and (max-width: 2900px) {
+    .px-risk {
+        padding: 0 0 0 45px;
+    }
+}@media (min-width: 2731px) and (max-width: 2900px) {
+    .px-risk {
+        padding: 0 0 0 45px;
+    }
+}@media (min-width: 2591px) and (max-width: 2730px) {
+    .px-risk {
+        padding: 0 0 0 42px;
+    }
+}@media (min-width: 2431px) and (max-width: 2590px) {
+    .px-risk {
+        padding: 0 0 0 39px;
+    }
+}@media (min-width: 2301px) and (max-width: 2430px) {
+    .px-risk {
+        padding: 0 0 0 36px;
+    }
+}@media (min-width: 2130px) and (max-width: 2300px) {
+    .px-risk {
+        padding: 0 0 0 33px;
+    }
+}@media (min-width: 2001px) and (max-width: 2129px) {
+    .px-risk {
+        padding: 0 0 0 30px;
+    }
+}@media (min-width: 1826px) and (max-width: 2000px) {
+    .px-risk {
+        padding: 0 0 0 27px;
+    }
+}@media (min-width: 1701px) and (max-width: 1825px) {
+    .px-risk {
+        padding: 0 0 0 24px;
+    }
+}@media (min-width: 1521px) and (max-width: 1700px) {
+    .px-risk {
+        padding: 0 0 0 21px;
+    }
+}@media (min-width: 1401px) and (max-width: 1520px) {
+    .px-risk {
+        padding: 0 0 0 18px;
+    }
+}@media (min-width: 1200px) and (max-width: 1400px) {
+    .px-risk {
+        padding: 0 0 0 15px;
+    }
+}@media (min-width: 800px) and (max-width: 1199px) {
+    .px-risk {
+        padding: 0 0 0 9px;
+    }
+}@media (min-width: 768px) and  (max-width: 799px) {
+    .px-risk {
+        padding: 0 0 0 5px;
+    }
+}@media (min-width: 576px) and  (max-width: 767px) {
+    .px-risk {
+        padding: 0 0 0 9px;
+    }
+}@media (max-width: 575px) {
+    .px-risk {
+        padding: .25rem 0;
+    }
+}
+
+@media (min-width: 576px){
+    .col-sm-label-risk {
+        max-width: 10.5%;
+        flex: 0 0 10.5%;
+        align-self: center;
+    }
+
+    .col-sm-form-risk {
+        max-width: 89.5%;
+        flex: 0 0 89.5%;
+    }
+}
+
+.col-sm-label-risk,
+.col-sm-form-risk{
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+
 @media (max-width: 199px){
     .px-collapse{
         padding-left: .0rem !important;

@@ -77,7 +77,7 @@ class PrivilegeController extends Controller
             $clapps = DB::select('SELECT cl_app.* FROM cl_app
                                         ORDER BY cl_app.cla_order;
                             ');
-            return view('privilege-admin.roleadmin', compact('clapp', 'role_app', 'roleApp', 'clapps'), ['title' => 'User Admin']);
+            return view('privilege-admin.roleadmin', compact('clapp', 'role_app', 'roleApp', 'clapps'), ['title' => 'Role Admin']);
         }
     }
 

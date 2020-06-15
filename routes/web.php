@@ -27,6 +27,8 @@ Route::group(['middleware' => 'auth'], function() {
     // page new
     Route::get('/useradmin', 'PrivilegeController@useradmin')->name('adminprivilege.upadmin');
     Route::get('/roleadmin', 'PrivilegeController@roleadmin')->name('adminprivilege.uradmin');
+    //page risk management
+    Route::get('/tradelimit', 'RiskManagementController@tradelimit')->name('riskmanagement.tradelimit');
 
     //feature
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');

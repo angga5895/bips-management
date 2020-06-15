@@ -60,7 +60,9 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp', 'role_app'), ['title' => 'User']);
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'useradmin\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'user\' ');
+            return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp', 'role_app', 'clapps', 'clmodule'), ['title' => 'User']);
         }
     }
 
@@ -92,7 +94,9 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user-edit', compact('usertype', 'userstatus', 'userbips', 'clapp', 'role_app'), ['title' => 'Edit User']);
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'useradmin\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'user\' ');
+            return view('user-admin.user-edit', compact('usertype', 'userstatus', 'userbips', 'clapp', 'role_app', 'clapps', 'clmodule'), ['title' => 'Edit User']);
         }
     }
 
@@ -122,7 +126,9 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user-reset-password', compact('userbips', 'clapp', 'role_app'), ['title' => 'Reset Password User']);
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'useradmin\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'user\' ');
+            return view('user-admin.user-reset-password', compact('userbips', 'clapp', 'role_app', 'clapps', 'clmodule'), ['title' => 'Reset Password User']);
         }
     }
 
@@ -152,7 +158,9 @@ class UserController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.user-reset-pin', compact('userbips', 'clapp', 'role_app'), ['title' => 'Reset PIN User']);
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'useradmin\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'user\' ');
+            return view('user-admin.user-reset-pin', compact('userbips', 'clapp', 'role_app', 'clapps', 'clmodule'), ['title' => 'Reset PIN User']);
         }
     }
 

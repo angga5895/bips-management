@@ -43,7 +43,9 @@ class AssignController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
-            return view('user-admin.assign', ['title' => 'Dealer Group', 'countgroup' => $countgroup, 'clapp' => $clapp, 'role_app' => $role_app]);
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'masterdata\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'assign\' ');
+            return view('user-admin.assign', ['title' => 'Dealer Group', 'countgroup' => $countgroup, 'clapp' => $clapp, 'role_app' => $role_app, 'clapps' => $clapps, 'clmodule' => $clmodule]);
         }
     }
 

@@ -45,6 +45,8 @@ class GroupController extends Controller
         if ($countpermission === 0  || $countpermission === '0'){
             return view('permission');
         } else {
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'masterdata\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'group\' ');
             return view('user-admin/group',
                 [
                     'title' => 'Group',
@@ -53,6 +55,8 @@ class GroupController extends Controller
                     'countgroup' => $row,
                     'clapp' => $clapp,
                     'role_app' => $role_app,
+                    'clapps' => $clapps,
+                    'clmodule' => $clmodule
                 ]
             );
         }

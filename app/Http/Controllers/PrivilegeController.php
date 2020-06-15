@@ -44,7 +44,9 @@ class PrivilegeController extends Controller
             return view('permission');
         } else {
             $idlogin = Auth::user()->id;
-            return view('privilege-admin.useradmin', compact('clapp', 'role_app', 'roleApp','idlogin'), ['title' => 'User Admin']);
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'adminprivilege\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'useradmin\' ');
+            return view('privilege-admin.useradmin', compact('clapp', 'role_app', 'roleApp','idlogin','clapps','clmodule'), ['title' => 'User Admin']);
         }
     }
 
@@ -77,7 +79,9 @@ class PrivilegeController extends Controller
             $clapps = DB::select('SELECT cl_app.* FROM cl_app
                                         ORDER BY cl_app.cla_order;
                             ');
-            return view('privilege-admin.roleadmin', compact('clapp', 'role_app', 'roleApp', 'clapps'), ['title' => 'Role Admin']);
+            $clappss = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'adminprivilege\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'roleadmin\' ');
+            return view('privilege-admin.roleadmin', compact('clapp', 'role_app', 'roleApp', 'clapps', 'clappss', 'clmodule'), ['title' => 'Role Admin']);
         }
     }
 

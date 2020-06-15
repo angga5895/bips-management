@@ -224,69 +224,59 @@
                 $('#table-reggroup').DataTable().ajax.reload();
             } else {
                 $.ajax({
-                    type : "GET",
-                    url  : "{{ url('username-get') }}",
-                    data : {
-                        'id' : id,
+                    type: "GET",
+                    url: "{{ url('get-becust') }}",
+                    data: {
+                        'custcode': id,
                     },
-                    success : function (res) {
-                        if ($.trim(res)){
-                            $("#usernameGet").val(res[0].user_name);
+                    success: function (res) {
+                        if (res.status === '1'){
+                            if ($.trim(res.data)) {
+                                /*console.log(res);
+                                console.log(res.data[0].custname);*/
+                                $("#usernameGet").val(res.data[0].custname);
+
+                                $("#usercode").val(res.data[0].custcode);
+                                $("#username").val(res.data[0].custname);
+                                $("#status").val(res.data[0].custstatus);
+
+                                $("#tempadditionallimit").attr("disabled", false);
+                                $("#updateUser").attr("disabled", false);
+                            } else {
+                                swal({
+                                    title: "Not Found",
+                                    text: "User code : "+id+", not found.",
+                                    type: "error",
+                                    showCancelButton: false,
+                                    confirmButtonClass: 'btn-danger',
+                                    confirmButtonText: 'OK'
+                                }, function () {
+                                    $("#usernameGet").val('');
+                                    $("#usercode").val('');
+                                    $("#username").val('');
+                                    $("#status").val('');
+                                    $("#tempadditionallimit").attr("disabled", true);
+                                    $("#updateUser").attr("disabled", true);
+                                });
+                            }
                         } else {
-                            $("#usernameGet").val('');
+                            swal({
+                                title: "Error",
+                                text: "Service from backend error.",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonClass: 'btn-danger',
+                                confirmButtonText: 'OK'
+                            }, function () {
+                                $("#usernameGet").val('');
+                                $("#usercode").val('');
+                                $("#username").val('');
+                                $("#status").val('');
+                                $("#tempadditionallimit").attr("disabled", true);
+                                $("#updateUser").attr("disabled", true);
+                            });
                         }
                         $('#table-reggroup').DataTable().ajax.reload();
-                        $.ajax({
-                            type: "GET",
-                            url: "{{ url('get-becust') }}",
-                            data: {
-                                'custcode': id,
-                            },
-                            success: function (res) {
-                                if (res.status === '1'){
-                                    if ($.trim(res.data)) {
-                                        /*console.log(res);
-                                        console.log(res.data[0].custname);*/
-                                        $("#usercode").val(res.data[0].custcode);
-                                        $("#username").val(res.data[0].custname);
-                                        $("#status").val(res.data[0].custstatus);
-
-                                        $("#tempadditionallimit").attr("disabled", false);
-                                        $("#updateUser").attr("disabled", false);
-                                    } else {
-                                        swal({
-                                            title: "Not Found",
-                                            text: "User code : "+id+", not found.",
-                                            type: "error",
-                                            showCancelButton: false,
-                                            confirmButtonClass: 'btn-danger',
-                                            confirmButtonText: 'OK'
-                                        }, function () {
-                                            $("#usercode").val('');
-                                            $("#username").val('');
-                                            $("#status").val('');
-                                            $("#tempadditionallimit").attr("disabled", true);
-                                            $("#updateUser").attr("disabled", true);
-                                        });
-                                    }
-                                } else {
-                                    swal({
-                                        title: "Error",
-                                        text: "Service from backend error.",
-                                        type: "error",
-                                        showCancelButton: false,
-                                        confirmButtonClass: 'btn-danger',
-                                        confirmButtonText: 'OK'
-                                    }, function () {
-                                        $("#usercode").val('');
-                                        $("#username").val('');
-                                        $("#status").val('');
-                                        $("#tempadditionallimit").attr("disabled", true);
-                                        $("#updateUser").attr("disabled", true);
-                                    });
-                                }
-                            }
-                        });
                     }
                 });
             }

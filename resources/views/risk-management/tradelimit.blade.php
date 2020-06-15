@@ -11,6 +11,88 @@
             });
         });
 
+        // Jquery Dependency
+        $("input[data-type='currency']").on({
+            keyup: function() {
+                formatCurrency($(this));
+            },
+            blur: function() {
+                formatCurrency($(this), "blur");
+            }
+        });
+
+        function formatNumber(n) {
+            // format number 1000000 to 1,234,567
+            return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        }
+
+        function formatCurrency(input, blur) {
+            // appends $ to value, validates decimal side
+            // and puts cursor back in right position.
+
+            // get input value
+            var input_val = input.val();
+
+            // don't validate empty input
+            if (input_val === "") { return; }
+
+            // original length
+            var original_len = input_val.length;
+
+            // initial caret position
+            var caret_pos = input.prop("selectionStart");
+
+            // check for decimal
+            if (input_val.indexOf(".") >= 0) {
+
+                // get position of first decimal
+                // this prevents multiple decimals from
+                // being entered
+                var decimal_pos = input_val.indexOf(".");
+
+                // split number by decimal point
+                var left_side = input_val.substring(0, decimal_pos);
+                var right_side = input_val.substring(decimal_pos);
+
+                // add commas to left side of number
+                left_side = formatNumber(left_side);
+
+                // validate right side
+                right_side = formatNumber(right_side);
+
+                // On blur make sure 2 numbers after decimal
+                if (blur === "blur") {
+                    right_side += "00";
+                }
+
+                // Limit decimal to only 2 digits
+                right_side = right_side.substring(0, 2);
+
+                // join number by .
+                input_val = "" + left_side + "." + right_side;
+
+            } else {
+                // no decimal entered
+                // add commas to number
+                // remove all non-digits
+                input_val = formatNumber(input_val);
+                input_val = "" + input_val;
+
+                // final formatting
+                if (blur === "blur") {
+                    input_val += ".00";
+                }
+            }
+
+            // send updated string to input
+            input.val(input_val);
+
+            // put caret back in the right position
+            var updated_len = input_val.length;
+            caret_pos = updated_len - original_len + caret_pos;
+            input[0].setSelectionRange(caret_pos, caret_pos);
+        }
+
         function refreshTablemember(){
             $('#table-listmember').DataTable().ajax.reload();
         }
@@ -154,6 +236,57 @@
                             $("#usernameGet").val('');
                         }
                         $('#table-reggroup').DataTable().ajax.reload();
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ url('get-becust') }}",
+                            data: {
+                                'custcode': id,
+                            },
+                            success: function (res) {
+                                if (res.status === '1'){
+                                    if ($.trim(res.data)) {
+                                        /*console.log(res);
+                                        console.log(res.data[0].custname);*/
+                                        $("#usercode").val(res.data[0].custcode);
+                                        $("#username").val(res.data[0].custname);
+                                        $("#status").val(res.data[0].custstatus);
+
+                                        $("#tempadditionallimit").attr("disabled", false);
+                                        $("#updateUser").attr("disabled", false);
+                                    } else {
+                                        swal({
+                                            title: "Not Found",
+                                            text: "User code : "+id+", not found.",
+                                            type: "error",
+                                            showCancelButton: false,
+                                            confirmButtonClass: 'btn-danger',
+                                            confirmButtonText: 'OK'
+                                        }, function () {
+                                            $("#usercode").val('');
+                                            $("#username").val('');
+                                            $("#status").val('');
+                                            $("#tempadditionallimit").attr("disabled", true);
+                                            $("#updateUser").attr("disabled", true);
+                                        });
+                                    }
+                                } else {
+                                    swal({
+                                        title: "Error",
+                                        text: "Service from backend error.",
+                                        type: "error",
+                                        showCancelButton: false,
+                                        confirmButtonClass: 'btn-danger',
+                                        confirmButtonText: 'OK'
+                                    }, function () {
+                                        $("#usercode").val('');
+                                        $("#username").val('');
+                                        $("#status").val('');
+                                        $("#tempadditionallimit").attr("disabled", true);
+                                        $("#updateUser").attr("disabled", true);
+                                    });
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -305,13 +438,13 @@
                                         <label class="form-control-label form-inline-label col-sm-3 mb-2 px-0">Temp. Limit</label>
                                         <div class="col-sm-9 pr-0 row">
                                             <input class="form-control col-sm-12 text-right" type="text" placeholder="Temp. Additional Limit"
-                                                   id="tempadditionallimit" name="tempadditionallimit" onchange="checking(this)"/>
+                                                   id="tempadditionallimit" name="tempadditionallimit" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" value="" data-type="currency" disabled/>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-inline justify-content-end pr-2">
-                                <button class="form-control-btn btn btn-primary mb-2" type="button" id="saveUser">Update</button>
+                                <button class="form-control-btn btn btn-primary mb-2" type="button" id="updateUser" disabled onclick="alert('click update')">Update</button>
                             </div>
                         </div>
                     </div>

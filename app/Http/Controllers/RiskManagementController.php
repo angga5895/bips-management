@@ -37,4 +37,28 @@ class RiskManagementController extends Controller
             return view('risk-management.tradelimit', compact('clapp', 'role_app', 'clmodule', 'clapps'), ['title' => 'Trade Limit']);
         }
     }
+
+    public function getBECust(){
+        $custcode = $_GET['custcode'];
+
+        $json = array(
+            'custcode' => strtoupper($custcode),
+        );
+        $hostBE = '/customer/info';
+        $arr = backendCallGET($json,$hostBE);
+
+        if ($arr == '01'){
+            $status = '0';
+            $data = [];
+        } else {
+            $status = '1';
+            $data = $arr['data'];
+        }
+
+        $result = ([
+            'status' => $status,
+            'data' => $data
+        ]);
+        return response()->json($result);
+    }
 }

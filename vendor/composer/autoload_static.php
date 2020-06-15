@@ -26,6 +26,7 @@ class ComposerStaticInit90e3fac3a00209eb82e5249d1e3a8723
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '0d8253363903f0ac7b0978dcde4e28a0' => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/helpers.php',
         '0b47d6d4a00ca9112ba3953b49e7c9a4' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/helper.php',
+        'e2a858fb3290e94b4eed66f494ec65d9' => __DIR__ . '/../..' . '/app/Helpers/bips_function.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -453,6 +454,7 @@ class ComposerStaticInit90e3fac3a00209eb82e5249d1e3a8723
         'App\\Http\\Controllers\\GroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/GroupController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\PrivilegeController' => __DIR__ . '/../..' . '/app/Http/Controllers/PrivilegeController.php',
+        'App\\Http\\Controllers\\RiskManagementController' => __DIR__ . '/../..' . '/app/Http/Controllers/RiskManagementController.php',
         'App\\Http\\Controllers\\SalesController' => __DIR__ . '/../..' . '/app/Http/Controllers/SalesController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',

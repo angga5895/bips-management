@@ -29,6 +29,7 @@ return array(
     'App\\Http\\Controllers\\GroupController' => $baseDir . '/app/Http/Controllers/GroupController.php',
     'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
     'App\\Http\\Controllers\\PrivilegeController' => $baseDir . '/app/Http/Controllers/PrivilegeController.php',
+    'App\\Http\\Controllers\\RiskManagementController' => $baseDir . '/app/Http/Controllers/RiskManagementController.php',
     'App\\Http\\Controllers\\SalesController' => $baseDir . '/app/Http/Controllers/SalesController.php',
     'App\\Http\\Controllers\\UserController' => $baseDir . '/app/Http/Controllers/UserController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',

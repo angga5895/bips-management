@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/tradelimit', 'RiskManagementController@tradelimit')->name('riskmanagement.tradelimit');
 
     Route::get('get-becust', 'RiskManagementController@getBECust');
+    Route::get('get-becuststock/{id}', 'RiskManagementController@getBECustStock');
     //feature
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');

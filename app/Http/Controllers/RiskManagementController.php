@@ -61,4 +61,30 @@ class RiskManagementController extends Controller
         ]);
         return response()->json($result);
     }
+
+    public function getBECustStock(Request $request){
+        $requestData = $request->all();
+
+        $custcode = $requestData['search_param']['custcode'];
+
+        $json = array(
+            'custcode' => strtoupper($custcode),
+        );
+        $hostBE = '/customer/stock';
+        $arr = backendCallGET($json,$hostBE);
+
+        if ($arr == '01'){
+            $status = '0';
+            $data = [];
+        } else {
+            $status = '1';
+            $data = $arr['data'];
+        }
+
+        $result = ([
+            'status' => $status,
+            'data' => $data
+        ]);
+        return response()->json($result);
+    }
 }

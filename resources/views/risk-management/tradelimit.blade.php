@@ -147,66 +147,40 @@
 
                 aaSorting: [[0, 'desc']],
                 ajax : {
-                    url: '{{ url("get-dataRegistrasi/get") }}',
+                    url: '{{ url("get-becuststock/get") }}',
                     data: function (d) {
                         var search_data = {
-                            userID:$("#userID").val(),
-                            userStatus:"",
-                            userType:"C"
+                            custcode:$("#userID").val()
                         };
                         d.search_param = search_data;
                     }
                 },
                 columns : [
-                    {data : 'user_name', name: 'user_name'},
-                    {data : 'user_id', name : 'user_id'},
-                    {data : 'email_address', name: 'email_address'},
-                    {data : 'usertype', name: 'usertype'},
-                    {data : 'msidn', name: 'msidn'},
-                    {data : 'userstatus', name: 'userstatus'},
-                    {data : 'last_login', name: 'last_login'},
-                    {data : 'last_teriminalid', name: 'last_teriminalid'},
-                    {data : 'login_attempt', name: 'login_attempt'},
-                    {data : 'pin_attempt', name: 'pin_attempt'},
-                    {data : 'pin_locked', name: 'pin_locked'},
+                    {data : 'stockcode', name: 'stockcode'},
+                    {data : 'tnqty', name : 'tnqty'},
+                    {data : 'totalqty', name: 'totalqty'},
+                    {data : 'sellableqty', name: 'sellableqty'},
+                    {data : 'averageprice', name: 'averageprice'},
                 ],
                 columnDefs: [{
                     targets : [0],
-                    searchable : false
-                },{
-                    targets : [1],
                     orderable : true,
                     searchable : true,
                 },{
-                    targets : [2],
+                    targets : [1],
                     searchable : true,
                     render : function (data, type, row) {
                         return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
                     }
                 },{
-                    targets : [3],
+                    targets : [2],
                     searchable : true,
+                },{
+                    searchable : true,
+                    targets : [3],
                 },{
                     searchable : true,
                     targets : [4],
-                },{
-                    searchable : true,
-                    targets : [5],
-                },{
-                    searchable : true,
-                    targets : [6],
-                },{
-                    searchable : true,
-                    targets : [7],
-                },{
-                    searchable : true,
-                    targets : [8],
-                },{
-                    searchable : true,
-                    targets : [9],
-                },{
-                    searchable : true,
-                    targets : [10],
                 }]
             });
         }
@@ -222,6 +196,12 @@
             if(id === ''){
                 $("#usernameGet").val('');
                 $('#table-reggroup').DataTable().ajax.reload();
+                $("#usercode").val('');
+                $("#username").val('');
+                $("#status").val('');
+                $("#tempadditionallimit").val('');
+                $("#tempadditionallimit").attr("disabled", true);
+                $("#updateUser").attr("disabled", true);
             } else {
                 $.ajax({
                     type: "GET",
@@ -445,17 +425,11 @@
                             <table class="table table-striped table-bordered table-hover" id="table-reggroup">
                                 <thead class="bg-gradient-primary text-lighter">
                                 <tr>
-                                    <th>User Name</th>
-                                    <th>User Code</th>
-                                    <th>Email</th>
-                                    <th>User Type</th>
-                                    <th>MSIDN</th>
-                                    <th>Status</th>
-                                    <th>Last Login</th>
-                                    <th>Last Teriminal ID</th>
-                                    <th>Login Attempt</th>
-                                    <th>PIN Attempt</th>
-                                    <th>PIN Locked</th>
+                                    <th>Stock Code</th>
+                                    <th>Tn Qty</th>
+                                    <th>Total Qty</th>
+                                    <th>Sellable Qty</th>
+                                    <th>Average Price</th>
                                 </tr>
                                 </thead>
                             </table>

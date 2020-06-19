@@ -80,6 +80,7 @@ class SalesController extends Controller
         $phone = $_GET['phone'];
         $mobile = $_GET['mobile_phone'];
         $email = $_GET['email'];
+        $user_id = $_GET['user_id'];
         try {
             $query = Sales::where('sales_id', $id)->update([
                 'sales_name' => $name,
@@ -87,6 +88,7 @@ class SalesController extends Controller
                 'phone' => $phone,
                 'mobilephone' => $mobile,
                 'email' => $email,
+                'user_id' => $user_id
             ]);
             $status = "00";
             $group = $name;
@@ -151,6 +153,7 @@ class SalesController extends Controller
         $phone = $_GET['phone'];
         $mobile = $_GET['mobilephone'];
         $email = $_GET['email'];
+        $user_id = $_GET['user_id'];
         try{
             $query = Sales::create([
                 'sales_id' => $id,
@@ -159,7 +162,7 @@ class SalesController extends Controller
                 'phone' => $phone,
                 'mobilephone' => $mobile,
                 'email' => $email,
-                'user_id'=> $id,
+                'user_id'=> $user_id,
             ]);
             $status = "00";
             $group = $name;

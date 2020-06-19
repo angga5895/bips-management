@@ -7,8 +7,13 @@
         var groupphone = '';
         var groupmobilephone = '';
         var groupemail = '';
+        var salescode = '';
 
         var rulesobj = {
+            "salescode" : {
+                required : true
+            },
+
             "groupid" : {
                 required : true
             },
@@ -34,6 +39,10 @@
         };
 
         var messagesobj = {
+            "salescode" : {
+                required : "Field is required."
+            },
+
             "groupid" : {
                 required : "Field is required."
             },
@@ -316,6 +325,7 @@
             var groupmobile = $("#groupmobilphone").val();
             var groupphone = $("#groupphone").val();
             var groupemail = $("#groupemail").val();
+            var salescode = $("#salescode").val();
 
             var required = "Field is required.";
             $.get("/mockjax");
@@ -325,6 +335,7 @@
                 url: "{{ url('sales-registrasi') }}",
                 data: {
                     'sales_id': groupid,
+                    'user_id': salescode,
                     'sales_name': groupname,
                     'address': groupaddress,
                     'phone': groupphone,
@@ -355,6 +366,7 @@
         }
 
         function updategroup() {
+            var salescode = $("#salescode").val();
             var groupid = $("#hiddensalesid").val();
             var groupname = $("#groupname").val();
             var groupaddress = $("#groupaddress").val();
@@ -369,6 +381,7 @@
                 url: "{{ url('sales-update/submit') }}",
                 data: {
                     'sales_id': groupid,
+                    'user_id': salescode,
                     'sales_name': groupname,
                     'address': groupaddress,
                     'phone': groupphone,
@@ -447,12 +460,14 @@
                         $("#groupphone").val(res.phone);
                         $("#groupmobilphone").val(res.mobilephone);
                         $("#groupemail").val(res.email);
+                        $("#salescode").val(res.user_id);
 
                         groupname = res.sales_name;
                         groupaddress = res.address;
                         groupphone = res.phone;
                         groupmobilephone = res.mobilephone;
                         groupemail = res.email;
+                        salescode = res.user_id;
                 }
             });
 
@@ -484,6 +499,7 @@
                     $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
                     $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res.sales_name);
                     $("#groupid").val(data);
+                    $("#salescode").val(res.user_id);
                     $("#groupname").val(res.sales_name);
                     $("#groupaddress").val(res.address);
                     $("#groupphone").val(res.phone);
@@ -496,6 +512,8 @@
         function cacheError() {
             $('.lbl-group').removeClass('focused');
 
+            $("#salescode-error").text('');
+
             $("#groupid-error").text('');
             $("#groupname-error").text('');
             $("#groupaddress-error").text('');
@@ -503,12 +521,16 @@
             $("#groupmobilphone-error").text('');
             $("#groupemail-error").text('');
 
+            $("#salescode").removeClass("is-invalid");
+
             $("#groupid").removeClass("is-invalid");
             $("#groupname").removeClass("is-invalid");
             $("#groupaddress").removeClass("is-invalid");
             $("#groupphone").removeClass("is-invalid");
             $("#groupmobilphone").removeClass("is-invalid");
             $("#groupemail").removeClass("is-invalid");
+
+            $("#cekSalesCode").text('');
 
             $("#cekGroupname").text('');
             $("#cekGroupId").text('');
@@ -520,6 +542,8 @@
 
         function clearCache(){
             cacheError();
+            $("#salescode").val('');
+
             $("#hiddendealerid").val('');
             $("#groupid").val('');
             $("#groupname").val('');
@@ -542,7 +566,7 @@
         }
 
         $("#cancelgroup").on("click", function () {
-            var res =  $("#hiddensalesid").val()+$("#groupid").val()+$("#groupname").val()+$("#groupaddress").val()+$("#groupphone").val()+$("#groupmobilphone").val()+$("#groupemail").val();
+            var res =  $("#hiddensalesid").val()+$("#salescode").val()+$("#groupid").val()+$("#groupname").val()+$("#groupaddress").val()+$("#groupphone").val()+$("#groupmobilphone").val()+$("#groupemail").val();
             res = res.trim();
             if(res.length > 0){
                 swal({
@@ -581,6 +605,8 @@
             groupphone = '';
             groupmobilephone = '';
             groupemail = '';
+
+            salescode = '';
         }
 
         function cancelEdit(){
@@ -601,8 +627,10 @@
             var groupmobilephoneN = $("#groupmobilphone").val();
             var groupemailN = $("#groupemail").val();
 
+            var salescodeN = $("#salescode").val();
+
             if (groupname === groupnameN && groupaddress === groupaddressN && groupphone === groupphoneN &&
-                    groupmobilephone === groupmobilephoneN && groupemail === groupemailN) {
+                    groupmobilephone === groupmobilephoneN && groupemail === groupemailN && salescode === salescodeN) {
                 cancelEdit();
             } else {
                 swal({
@@ -765,6 +793,12 @@
                                     <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales ID</label>
                                     <input class="form-control col-sm-6" id="groupid" name="groupid" type="text" maxlength="20" placeholder="Sales ID" onchange="cacheError();"/>
                                     <label id="cekGroupId" class="error invalid-feedback small d-block col-sm-4" for="groupid"></label>
+
+                                </div>
+                                <div class="form-group form-inline lbl-group">
+                                    <label class="form-control-label form-inline-label col-sm-2 mb-2 px-0">Sales Code</label>
+                                    <input class="form-control col-sm-6" id="salescode" name="salescode" type="text" maxlength="20" placeholder="Sales Code" onchange="cacheError();"/>
+                                    <label id="cekSalesCode" class="error invalid-feedback small d-block col-sm-4" for="salescode"></label>
 
                                 </div>
                                 <div class="form-group form-inline lbl-group">

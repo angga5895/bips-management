@@ -1,82 +1,158 @@
+.chart-empty{
+    padding-top: 180px;
+    padding-bottom: 180px;
+    vertical-align: middle!important;
+    text-align: center!important;
+}
+
+.morris-default-style{
+    padding: .25rem .5rem;
+    background-color: #46494d;
+    font-size: .75rem;
+    border-radius: .25rem;
+    text-align: left!important;
+}
+
 @media (min-width: 5001px) {
     .px-risk {
         padding: 0 0 0 95px;
+    }
+    .chart-height{
+        height: 2200px;
     }
 }@media (min-width: 4001px) and (max-width: 5000px) {
     .px-risk {
         padding: 0 0 0 75px;
     }
+    .chart-height{
+        height: 1620px;
+    }
 }@media (min-width: 3181px) and (max-width: 4000px)  {
     .px-risk {
         padding: 0 0 0 60px;
+    }
+    .chart-height{
+        height: 1500px;
     }
 }@media (min-width: 2901px) and (max-width: 3180px) {
     .px-risk {
         padding: 0 0 0 50px;
     }
-}@media (min-width: 2731px) and (max-width: 2900px) {
-    .px-risk {
-        padding: 0 0 0 45px;
+    .chart-height{
+        height: 965px;
     }
 }@media (min-width: 2731px) and (max-width: 2900px) {
     .px-risk {
         padding: 0 0 0 45px;
+    }
+    .chart-height{
+        height: 900px;
+    }
+}@media (min-width: 2731px) and (max-width: 2900px) {
+    .px-risk {
+        padding: 0 0 0 45px;
+    }
+    .chart-height{
+        height: 865px;
     }
 }@media (min-width: 2591px) and (max-width: 2730px) {
     .px-risk {
         padding: 0 0 0 42px;
     }
+    .chart-height{
+        height: 800px;
+    }
 }@media (min-width: 2431px) and (max-width: 2590px) {
     .px-risk {
         padding: 0 0 0 39px;
+    }
+    .chart-height{
+        height: 765px;
     }
 }@media (min-width: 2301px) and (max-width: 2430px) {
     .px-risk {
         padding: 0 0 0 36px;
     }
+    .chart-height{
+        height: 700px;
+    }
 }@media (min-width: 2130px) and (max-width: 2300px) {
     .px-risk {
         padding: 0 0 0 33px;
+    }
+    .chart-height{
+        height: 665px;
     }
 }@media (min-width: 2001px) and (max-width: 2129px) {
     .px-risk {
         padding: 0 0 0 30px;
     }
+    .chart-height{
+        height: 600px;
+    }
 }@media (min-width: 1826px) and (max-width: 2000px) {
     .px-risk {
         padding: 0 0 0 27px;
+    }
+    .chart-height{
+        height: 565px;
     }
 }@media (min-width: 1701px) and (max-width: 1825px) {
     .px-risk {
         padding: 0 0 0 24px;
     }
+    .chart-height{
+        height: 500px;
+    }
 }@media (min-width: 1521px) and (max-width: 1700px) {
     .px-risk {
         padding: 0 0 0 21px;
+    }
+    .chart-height{
+        height: 465px;
     }
 }@media (min-width: 1401px) and (max-width: 1520px) {
     .px-risk {
         padding: 0 0 0 18px;
     }
+    .chart-height{
+        height: 400px;
+    }
 }@media (min-width: 1200px) and (max-width: 1400px) {
     .px-risk {
         padding: 0 0 0 15px;
+    }
+    .chart-height{
+        height: 365px;
     }
 }@media (min-width: 800px) and (max-width: 1199px) {
     .px-risk {
         padding: 0 0 0 9px;
     }
+    .chart-height{
+        height: 365px;
+    }
 }@media (min-width: 768px) and  (max-width: 799px) {
     .px-risk {
         padding: 0 0 0 5px;
+    }
+    .chart-height{
+        height: 365px;
     }
 }@media (min-width: 576px) and  (max-width: 767px) {
     .px-risk {
         padding: 0 0 0 9px;
     }
+    .chart-height{
+        height: 365px;
+    }
 }@media (max-width: 575px) {
     .px-risk {
         padding: .25rem 0;
+    }
+
+    .chart-height{
+        height: 365px;
     }
 }
 

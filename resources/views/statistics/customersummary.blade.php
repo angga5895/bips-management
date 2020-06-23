@@ -29,10 +29,8 @@
 
             var lastmonth = new Date($("#tgl_awal").val());
             var thismonth = new Date($("#tgl_akhir").val());
-
             $("#tgl_awal_current").datepicker("setDate",lastmonth);
             $("#tgl_akhir_current").datepicker("setDate",thismonth);
-
             chartSummary();
         });
 
@@ -127,7 +125,7 @@
             console.log(getlastdate+" & "+getthisdate);
             $.ajax({
                 type: "GET",
-                url: "{{ url('charttradesummary-get') }}",
+                url: "{{ url('chartcustomersummary-get') }}",
                 data: {
                     'tgl_awal': getlastdate,
                     'tgl_akhir': getthisdate,
@@ -164,8 +162,8 @@
                             element: 'morrisjs-graph',
                             data: res,
                             xkey: 'rec_date',
-                            ykeys: ['total_val'],
-                            labels: ['Total Val'],
+                            ykeys: ['total'],
+                            labels: ['Total'],
                             xLabelFormat: function (x) {
                                 Date.prototype.toShortFormat = function () {
 
@@ -188,9 +186,11 @@
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total Val : " + row.total_val + "</div>" +
-                                    "<div class='text-success'>Total Vol : " + row.total_vol + "</div>" +
-                                    "<div class='text-danger'>Total Freq : " + row.total_freq + "</div>";
+                                    "<div style='color: #FFC107'>Total : " + row.total + "</div>" +
+                                    "<div class='text-primary'>Active : " + row.active + "</div>" +
+                                    "<div class='text-light'>Suspend Trade : " + row.suspend_trade + "</div>" +
+                                    "<div class='text-danger'>Suspend Buy : " + row.suspend_buy + "</div>" +
+                                    "<div class='text-success'>Suspend Sell : " + row.suspend_sell + "</div>";
                             },
                             lineWidth: 1,
                             pointSize: 4,
@@ -204,8 +204,8 @@
                             element: 'morrisjs-bars',
                             data: res,
                             xkey: 'rec_date',
-                            ykeys: ['total_val'],
-                            labels: ['Total Val'],
+                            ykeys: ['total'],
+                            labels: ['Total'],
                             xLabelFormat: function (x) {
                                 return getMonthBipsShort(x.src.rec_date);
                             },
@@ -213,9 +213,11 @@
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total Val : " + row.total_val + "</div>" +
-                                    "<div class='text-success'>Total Vol : " + row.total_vol + "</div>" +
-                                    "<div class='text-danger'>Total Freq : " + row.total_freq + "</div>";
+                                    "<div style='color: #FFC107'>Total : " + row.total + "</div>" +
+                                    "<div class='text-primary'>Active : " + row.active + "</div>" +
+                                    "<div class='text-light'>Suspend Trade : " + row.suspend_trade + "</div>" +
+                                    "<div class='text-danger'>Suspend Buy : " + row.suspend_buy + "</div>" +
+                                    "<div class='text-success'>Suspend Sell : " + row.suspend_sell + "</div>";
                             },
                             barRatio: 0.4,
                             /*xLabelAngle: 35,*/
@@ -229,8 +231,8 @@
                             element: 'morrisjs-area',
                             data: res,
                             xkey: 'rec_date',
-                            ykeys: ['total_val'],
-                            labels: ['Total Val'],
+                            ykeys: ['total'],
+                            labels: ['Total'],
                             xLabelFormat: function (x) {
                                 Date.prototype.toShortFormat = function () {
 
@@ -253,9 +255,11 @@
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total Val : " + row.total_val + "</div>" +
-                                    "<div class='text-success'>Total Vol : " + row.total_vol + "</div>" +
-                                    "<div class='text-danger'>Total Freq : " + row.total_freq + "</div>";
+                                    "<div style='color: #FFC107'>Total : " + row.total + "</div>" +
+                                    "<div class='text-primary'>Active : " + row.active + "</div>" +
+                                    "<div class='text-light'>Suspend Trade : " + row.suspend_trade + "</div>" +
+                                    "<div class='text-danger'>Suspend Buy : " + row.suspend_buy + "</div>" +
+                                    "<div class='text-success'>Suspend Sell : " + row.suspend_sell + "</div>";
                             },
                             hideHover: 'auto',
                             lineColors: ['#673AB7', '#0288D1', '#9E9E9E'],
@@ -327,11 +331,11 @@
                 </select>
                 &nbsp;&nbsp;
                 <div class="ml-input-2 input-daterange input-group" id="datepicker-range">
-                    <input type="text" class="form-control" name="start" id="tgl_awal_current" value="{{ $lastmonth }}" onchange="chartSummary();" readonly>
+                    <input type="text" class="form-control" name="start" id="tgl_awal_current" readonly value="{{ $lastmonth }}" onchange="chartSummary();">
                     <div class="input-group-prepend">
                         <span class="input-group-text">To</span>
                     </div>
-                    <input type="text" class="form-control" name="end" id="tgl_akhir_current" value="{{ $thismonth }}" onchange="chartSummary();" readonly>
+                    <input type="text" class="form-control" name="end" id="tgl_akhir_current" readonly value="{{ $thismonth }}" onchange="chartSummary();">
                 </div>&nbsp;&nbsp;
                 <button class="form-control-btn btn btn-primary mb-1" type="button" id="btn-current" onclick="chartSummary();">Refresh</button>
                 <input value="{{ $lastmonth }}" type="hidden" id="tgl_awal"/>

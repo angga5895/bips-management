@@ -87,7 +87,7 @@ class StatisticController extends Controller
 
             $lastmonth = date_format(date_create($bulanlalu),"Y/m/d");
             $thismonth = date_format(date_create($bulanini),"Y/m/d");
-            return view('statistics.tradesummary', compact('clapp', 'role_app', 'clmodule', 'clapps', 'lastmonth', 'thismonth'), ['title' => 'Statistics Customer Summary']);
+            return view('statistics.customersummary', compact('clapp', 'role_app', 'clmodule', 'clapps', 'lastmonth', 'thismonth'), ['title' => 'Statistics Customer Summary']);
         }
     }
 

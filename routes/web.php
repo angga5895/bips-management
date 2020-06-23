@@ -30,11 +30,13 @@ Route::group(['middleware' => 'auth'], function() {
     //page risk management
     Route::get('/tradelimit', 'RiskManagementController@tradelimit')->name('riskmanagement.tradelimit');
     Route::get('/statistics/tradesummary', 'StatisticController@tradesummary')->name('statistic.tradesummary');
+    Route::get('/statistics/customersummary', 'StatisticController@customersummary')->name('statistic.customersummary');
 
     Route::get('get-becust', 'RiskManagementController@getBECust');
     Route::get('get-becuststock/{id}', 'RiskManagementController@getBECustStock');
     //feature
     Route::get('charttradesummary-get', 'StatisticController@chartTradeSummary');
+    Route::get('chartcustomersummary-get', 'StatisticController@chartCustomerSummary');
 
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');

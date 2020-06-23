@@ -1,5 +1,6 @@
 // Bootstrap Datepicker
 $(function() {
+    var sd = new Date(), ed = new Date();
     var isRtl = $('html').attr('dir') === 'rtl';
 
     $('#datepicker-base').datepicker({
@@ -33,7 +34,13 @@ $(function() {
         }
     });
     $('#datepicker-range').datepicker({
-        orientation: isRtl ? 'auto right' : 'auto left'
+        orientation: isRtl ? 'auto right' : 'auto left',
+        startDate: '01/01/1920',
+        autoclose: true,
+        endDate : sd,
+        /*todayHighlight: true,*/
+        format: "dd MM yyyy",
+        todayBtn: "linked",
     });
     $('#datepicker-inline').datepicker();
 });
@@ -92,7 +99,7 @@ $(function() {
 
     cb(start, end);
 });
-
+/*
 // Bootstrap Material DateTimePicker
 $(function() {
     $('#b-m-dtp-date').bootstrapMaterialDatePicker({
@@ -188,4 +195,4 @@ $(function() {
     $('#minicolors-hidden').minicolors({
         position: 'top ' + (isRtl ? 'right' : 'left'),
     });
-});
+});*/

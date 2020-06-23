@@ -2,6 +2,8 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ url('chart/morris/morris.css') }}">
+    <link rel="stylesheet" href="{{ url('bootstrap-datepicker/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet" href="{{ url('bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}">
 @endsection
 
 @section('js')
@@ -10,15 +12,26 @@
     <script src="{{ url('chart/raphael/raphael.js') }}"></script>
     <script src="{{ url('chart/morris/morris.js') }}"></script>
 
+    <script src="{{ url('moment/moment.js') }}"></script>
+    <script src="{{ url('bootstrap-datepicker/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ url('bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
+
+    <script src="{{ url('forms_pickers.js') }}"></script>
+
     {{--<script src="{{ url('charts_morrisjs.js') }}"></script>--}}
 
     <script type="text/javascript">
         $(document).ready(function () {
-            chartSummary();
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
             $('.bootstrap-select').selectpicker();
+
+            var lastmonth = new Date($("#tgl_awal").val());
+            var thismonth = new Date($("#tgl_akhir").val());
+            $("#tgl_awal_current").datepicker("setDate",lastmonth);
+            $("#tgl_akhir_current").datepicker("setDate",thismonth);
+            chartSummary();
         });
 
         function getDateBipsShort(tanggal){
@@ -95,15 +108,32 @@
             return month+" "+year;
         }
 
+        function appendLeadingZeroes(n){
+            if(n <= 9){
+                return "0" + n;
+            }
+            return n
+        }
+
         function chartSummary(){
+            let tgllast = new Date($("#tgl_awal_current").val());
+            let getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
+
+            let tglthis = new Date($("#tgl_akhir_current").val());
+            let getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1) + "/" + appendLeadingZeroes(tglthis.getDate());
+
+            console.log(getlastdate+" & "+getthisdate);
             $.ajax({
                 type: "GET",
                 url: "{{ url('charttradesummary-get') }}",
+                data: {
+                    'tgl_awal': getlastdate,
+                    'tgl_akhir': getthisdate,
+                },
                 success: function (res) {
                     $("#morrisjs-graph").empty();
                     $("#morrisjs-area").empty();
                     $("#morrisjs-bars").empty();
-
 
                     var charttype = $("#chartType").val();
 
@@ -294,7 +324,16 @@
                     <option value="3">Chart Area</option>
                 </select>
                 &nbsp;&nbsp;
-                <button class="form-control-btn btn btn-primary mb-2" type="button" id="btn-current" onclick="chartSummary();">Refresh</button>
+                <div class="ml-input-2 input-daterange input-group" id="datepicker-range">
+                    <input type="text" class="form-control" name="start" id="tgl_awal_current" readonly onchange="chartSummary();">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">To</span>
+                    </div>
+                    <input type="text" class="form-control" name="end" id="tgl_akhir_current" readonly onchange="chartSummary();">
+                </div>&nbsp;&nbsp;
+                <button class="form-control-btn btn btn-primary mb-1" type="button" id="btn-current" onclick="chartSummary();">Refresh</button>
+                <input value="{{ $lastmonth }}" type="hidden" id="tgl_awal"/>
+                <input value="{{ $thismonth }}" type="hidden" id="tgl_akhir"/>
             </form>
         </div>
         <div class="card card-body" style="min-height: 365px">

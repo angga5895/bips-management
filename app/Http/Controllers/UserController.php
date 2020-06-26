@@ -6,6 +6,7 @@ use App\Account;
 use App\Customer;
 use App\Dealer;
 use App\DealerSales;
+use App\Mail\DXTradeMail;
 use App\Sales;
 use App\User;
 use App\User_bips;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
+use Illuminate\Support\Facades\Mail;
 use Mailjet\LaravelMailjet\Facades\Mailjet;
 use Mailjet\Resources;
 
@@ -669,53 +671,87 @@ class UserController extends Controller
 
         $newpassword =  substr(md5($userID),rand(0,19),12);
         $hashPassword = $rowdata->hash_password;
+        $lastStatus = $rowdata->status;
+        $lastChgPwd = $rowdata->chg_pwd;
+        $lastLoginAttempt = $rowdata->login_attempt;
 
         try {
             /*User::where('user_id', $userID)->update([
                 'hash_password' => $newpassword,
             ]);*/
 
-            DB::update('UPDATE users SET hash_password = crypt(\''.$newpassword.'\', gen_salt(\'md5\'))
+            DB::update('UPDATE users SET hash_password = crypt(\''.$newpassword.'\', gen_salt(\'md5\')),
+                                    login_attempt = 0,
+                                    status = \'A\',
+                                    chg_pwd=\'f\'
                                     WHERE user_id=\''.$userID.'\' ');
 
-            $name = explode(" ",$rowdata->user_name);
-            $name = $name[0];
-            $data = [
-                'name'=>$name,
-                'account'=>$rowdata->email_address,
-                'newpassword'=>$newpassword,
-                'type'=>'password'
-            ];
-            $body = [
-                'FromEmail' => "zaky@vsi.co.id",
-                'FromName' => "DX-TRADE",
-                'Subject' => "New Password Reset",
-                'Text-part' => "Dear ".$name.", Here is your new account password data account ".
-                    $rowdata->email_address.": ".$newpassword."",
-                'Html-part' => view('emailTemplate',$data)->render(),
-                'Recipients' => [
-                    [
-                        'Email' => $rowdata->email_address,
-                    ]
-                ],
-            ];
-            $response = Mailjet::post(Resources::$Email, ['body' => $body]);
+            $names = explode(" ",$rowdata->user_name);
 
-            if($response->success()){
-                $status = "00";
-                $msg = null;
+            $name = $names[0];
+            $account = $rowdata->email_address;
+            $type='password';
+            $subj = 'New Password Reset';
+            $emailfrom = 'cs@bahana.co.id';
+            $namefrom = 'Helpdesk-DXTrade';
 
-            } else{
+            try {
+                Mail::to($account)->send(new DXTradeMail($subj, $name, $account, $type, $emailfrom, $newpassword, $namefrom));
+
+                /*$data = [
+                        'name'=>$name,
+                        'account'=>$rowdata->email_address,
+                        'newpassword'=>$newpassword,
+                        'type'=>'pin',
+                    ];
+                    $body = [
+                    'FromEmail' => "zaky@vsi.co.id",
+                    'FromName' => "DX-TRADE",
+                    'Subject' => "New Password Reset",
+                    'Text-part' => "Dear ".$name.", Here is your new account password data account ".
+                        $rowdata->email_address.": ".$newpassword."",
+                    'Html-part' => view('emailTemplate',$data)->render(),
+                    'Recipients' => [
+                        [
+                            'Email' => $rowdata->email_address,
+                        ]
+                    ],
+                ];
+                $response = Mailjet::post(Resources::$Email, ['body' => $body]);
+                if($response->success()){
+                    $status = "00";
+                    $msg = null;
+                }*/
+
+                if (!Mail::failures()) {
+                    $status = "00";
+                    $msg = null;
+
+                } else {
+                    User::where('user_id', $userID)->update([
+                        'hash_password' => $hashPassword,
+                        'status' => $lastStatus,
+                        'chg_pwd' => $lastChgPwd,
+                        'login_attempt' => $lastLoginAttempt,
+                    ]);
+
+                    $status = "01";
+                    $msg = "Password Not Reset, Please check recipient email.";
+                }
+            } catch (\Exception $e){
                 User::where('user_id', $userID)->update([
                     'hash_password' => $hashPassword,
+                    'status' => $lastStatus,
+                    'chg_pwd' => $lastChgPwd,
+                    'login_attempt' => $lastLoginAttempt,
                 ]);
 
                 $status = "01";
-                $msg = $response->getData();
+                $msg = "Password Not Reset, ".$e->getMessage();
             }
         } catch (QueryException $r){
             $status = '01';
-            $msg = $r->getMessage();
+            $msg = "Password Not Reset, ".$r->getMessage();
         }
 
         return response()->json([
@@ -723,6 +759,7 @@ class UserController extends Controller
             'msg' => $msg,
         ]);
     }
+
     public function resetPin(){
         $userID =$_GET['userID'];
         $rowdata = $this->__getDataUser($userID);
@@ -731,53 +768,86 @@ class UserController extends Controller
         //random only numeric
         $newpassword =  mt_rand(100000,999999);
         $hashPassword = $rowdata->hash_pin;
+        $lastPinAttempt = $rowdata->pin_attempt;
+        $lastPinLocked = $rowdata->pin_locked;
 
         try {
             /*User::where('user_id', $userID)->update([
                 'hash_pin' => $newpassword,
             ]);*/
 
-            DB::update('UPDATE users SET hash_pin = crypt(\''.$newpassword.'\', gen_salt(\'md5\'))
+            DB::update('UPDATE users SET hash_pin = crypt(\''.$newpassword.'\', gen_salt(\'md5\')),
+                                    pin_attempt=0,
+                                    pin_locked=\'f\'
                                     WHERE user_id=\''.$userID.'\' ');
 
-            $name = explode(" ",$rowdata->user_name);
-            $name = $name[0];
-            $data = [
-                'name'=>$name,
-                'account'=>$rowdata->email_address,
-                'newpassword'=>$newpassword,
-                'type'=>'pin',
-            ];
-            $body = [
-                'FromEmail' => "zaky@vsi.co.id",
-                'FromName' => "DX-TRADE",
-                'Subject' => "New Pin Reset",
-                'Text-part' => "Dear ".$name.", Here is your new account pin data account ".
-                    $rowdata->email_address.": ".$newpassword."",
-                'Html-part' => view('emailTemplate',$data)->render(),
-                'Recipients' => [
-                    [
-                        'Email' => $rowdata->email_address,
-                    ]
-                ],
-            ];
-            $response = Mailjet::post(Resources::$Email, ['body' => $body]);
+            $names = explode(" ",$rowdata->user_name);
 
-            if($response->success()){
-                $status = "00";
-                $msg = null;
+            $name = $names[0];
+            $account = $rowdata->email_address;
+            $type='pin';
+            $subj = 'New PIN Reset';
+            $emailfrom = 'cs@bahana.co.id';
+            $namefrom = 'Helpdesk-DXTrade';
 
-            }else{
+            try {
+                Mail::to($account)->send(new DXTradeMail($subj, $name, $account, $type, $emailfrom, $newpassword, $namefrom));
+
+
+                /*$data = [
+                    'name'=>$name,
+                    'account'=>$rowdata->email_address,
+                    'newpassword'=>$newpassword,
+                    'type'=>'pin',
+                ];
+                $body = [
+                    'FromEmail' => "zaky@vsi.co.id",
+                    'FromName' => "DX-TRADE",
+                    'Subject' => "New Pin Reset",
+                    'Text-part' => "Dear ".$name.", Here is your new account pin data account ".
+                        $rowdata->email_address.": ".$newpassword."",
+                    'Html-part' => view('emailTemplate',$data)->render(),
+                    'Recipients' => [
+                        [
+                            'Email' => $rowdata->email_address,
+                        ]
+                    ],
+                ];
+                $response = Mailjet::post(Resources::$Email, ['body' => $body]);
+
+                if($response->success()){
+                    $status = "00";
+                    $msg = null;
+
+                } */
+
+                if (!Mail::failures()) {
+                    $status = "00";
+                    $msg = null;
+                } else {
+                    User::where('user_id', $userID)->update([
+                        'hash_pin' => $hashPassword,
+                        'pin_attempt' => $lastPinAttempt,
+                        'pin_locked' => $lastPinLocked
+                    ]);
+
+                    $status = "01";
+                    $msg = "PIN Not Reset, Please check recipient email.";
+                }
+            }
+            catch (\Exception $e){
                 User::where('user_id', $userID)->update([
                     'hash_pin' => $hashPassword,
+                    'pin_attempt' => $lastPinAttempt,
+                    'pin_locked' => $lastPinLocked
                 ]);
 
                 $status = "01";
-                $msg = $response->getData();
+                $msg = "PIN Not Reset, ".$e->getMessage();
             }
         } catch (QueryException $r){
             $status = '01';
-            $msg = $r->getMessage();
+            $msg = "PIN Not Reset, ".$r->getMessage();
         }
 
         return response()->json([

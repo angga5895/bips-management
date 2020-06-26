@@ -551,6 +551,9 @@
                                         window.location.href = "{{ route('adminprivilege.uradmin') }}";
                                     });
                                 }
+
+
+                                window.location.href = "{{ route('adminprivilege.uradmin') }}";
                             }
                         });
                     }

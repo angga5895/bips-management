@@ -301,9 +301,15 @@
     </tr>
     <tr>
         <td class="container bg-lime">
-            <span style="font-size: 17px; color:#f4f4f4; font-weight: bold;">
-                Here is the new DX-TRADE {{$type}} that you need to login to account {{$account}}:
-            </span>
+            @if( $type === 'password')
+                <span style="font-size: 17px; color:#f4f4f4; font-weight: bold;">
+                    Here is the new DX-TRADE {{$type}} that you need to login to account {{$account}}:
+                </span>
+            @else
+                <span style="font-size: 17px; color:#f4f4f4; font-weight: bold;">
+                    Here is the new DX-TRADE {{$type}} that you need to the trading proccess to account {{$account}}:
+                </span>
+            @endif
         </td>
     </tr>
     <tr>
@@ -315,17 +321,31 @@
     </tr>
     <tr>
         <td class="container bg-lime">
-            <div style="background-color: #ffffffdb; color: #727272; padding: 30px 15px 15px 15px; font-size: 12px;">
-                This email was generated because of a request reset {{$type}} from Administrator.
+            @if( $type === 'password')
+                <div style="background-color: #ffffffdb; color: #727272; padding: 30px 15px 15px 15px; font-size: 12px;">
+                    This email was generated because of a request reset {{$type}} from Administrator.
 
-                The new login attempt included your correct account name and {{$type}}.<br><br>
+                    The new login attempt included your correct account name and {{$type}}.<br><br>
 
-                The New {{$type}} is required to complete the login. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
-                <br><br>
+                    The New {{$type}} is required to complete the login. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
+                    <br><br>
 
-                <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
-                <br><br>
-            </div>
+                    <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
+                    <br><br>
+                </div>
+            @else
+                <div style="background-color: #ffffffdb; color: #727272; padding: 30px 15px 15px 15px; font-size: 12px;">
+                    This email was generated because of a request reset {{$type}} from Administrator.
+
+                    The new pin attempt included your correct account name and {{$type}}.<br><br>
+
+                    The New {{$type}} is required to complete the trading proccess. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
+                    <br><br>
+
+                    <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
+                    <br><br>
+                </div>
+            @endif
             <br><br>
         </td>
     </tr>

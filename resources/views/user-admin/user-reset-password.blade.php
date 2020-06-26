@@ -70,7 +70,7 @@
                             if (res.status === "00") {
                                 swal({
                                     title: "Email Sent",
-                                    text: "Check email for the new password",
+                                    text: "Password Has Been Reset, Check email for the new password.",
                                     type: "success",
                                     showCancelButton: false,
                                     confirmButtonClass: 'btn-success',
@@ -81,7 +81,7 @@
                             } else {
                                 swal({
                                     title: "Email Not Sent",
-                                    text: res.message,
+                                    text: res.msg,
                                     type: "warning",
                                     showCancelButton: false,
                                     confirmButtonClass: 'btn-danger',

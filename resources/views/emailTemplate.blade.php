@@ -1,13 +1,16 @@
-<!doctype html>
+<html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>DX TRADE Email</title>
     <style>
-        /* -------------------------------------
-            GLOBAL RESETS
-        ------------------------------------- */
+        div.infodiv, #div_infodiv{
+            background: #ffffffdb;
+            color: #727272;
+            padding: 30px 15px 15px 15px;
+            font-size: 12px;
+        }
         img {
             border: none;
             -ms-interpolation-mode: bicubic;
@@ -34,15 +37,10 @@
             font-size: 14px;
             vertical-align: top; }
 
-        /* -------------------------------------
-            BODY & CONTAINER
-        ------------------------------------- */
-
-        .body {
+       .body {
             background-color: #f7fafc;
             width: 100%; }
 
-        /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
         .container {
             display: block;
             Margin: 0 auto !important;
@@ -51,7 +49,6 @@
             padding: 10px 20px 10px 20px;
             width: 420px; }
 
-        /* This should also be a block element, so that it will fill 100% of the .container */
         .content {
             box-sizing: border-box;
             display: block;
@@ -59,9 +56,6 @@
             max-width: 580px;
             padding: 10px; }
 
-        /* -------------------------------------
-            HEADER, FOOTER, MAIN
-        ------------------------------------- */
         .main {
             background: #ffffff;
             border-radius: 3px;
@@ -89,9 +83,6 @@
             font-size: 12px;
             text-align: center; }
 
-        /* -------------------------------------
-            TYPOGRAPHY
-        ------------------------------------- */
         h1,
         h2,
         h3,
@@ -127,9 +118,6 @@
             color: #3498db;
             text-decoration: underline; }
 
-        /* -------------------------------------
-            BUTTONS
-        ------------------------------------- */
         .btn {
             box-sizing: border-box;
             width: 100%; }
@@ -164,9 +152,6 @@
             border-color: #3498db;
             color: #ffffff; }
 
-        /* -------------------------------------
-            OTHER STYLES THAT MIGHT BE USEFUL
-        ------------------------------------- */
         .last {
             margin-bottom: 0; }
 
@@ -211,9 +196,6 @@
             border-bottom: 1px solid #f6f6f6;
             Margin: 20px 0; }
 
-        /* -------------------------------------
-            RESPONSIVE AND MOBILE FRIENDLY STYLES
-        ------------------------------------- */
         @media only screen and (max-width: 620px) {
             table[class=body] h1 {
                 font-size: 28px !important;
@@ -246,9 +228,6 @@
                 max-width: 100% !important;
                 width: auto !important; }}
 
-        /* -------------------------------------
-            PRESERVE THESE STYLES IN THE HEAD
-        ------------------------------------- */
         @media all {
             .ExternalClass {
                 width: 100%; }
@@ -273,7 +252,6 @@
                 border-color: #34495e !important; } }
 
 
-            /*Custom class*/
             .cn-logo img {
                 display: block;
                 margin-left:auto;
@@ -287,20 +265,17 @@
 <body class="">
 <table border="0" cellpadding="0" cellspacing="0" class="body">
     <tr>
-        <td class="container cn-logo">
-            {{--<img class="logo-dx" src="{{asset('logo_bahana_dx_trade.png')}}" width="70px"--}}
-                 {{--height="70px">--}}
-        </td>
+        <td class="container cn-logo"></td>
     </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" class="body">
     <tr>
-        <td class="container bg-lime">
+        <td bgcolor="#5ECBAF" class="container bg-lime" style="background: linear-gradient(87deg, #2ac4f4 0, #bcd630 100%) !important;">
             <span style="font-size: 27px; color:white;font-weight: bold;">Dear {{$name}},</span>
         </td>
     </tr>
     <tr>
-        <td class="container bg-lime">
+        <td bgcolor="#8BD071" class="container bg-lime" style="background: linear-gradient(87deg, #2ac4f4 0, #bcd630 100%) !important;">
             @if( $type === 'password')
                 <span style="font-size: 17px; color:#f4f4f4; font-weight: bold;">
                     Here is the new DX-TRADE {{$type}} that you need to login to account {{$account}}:
@@ -313,38 +288,58 @@
         </td>
     </tr>
     <tr>
-        <td class="container bg-lime">
+        <td bgcolor="#5ECBAF" class="container bg-lime" style="background: linear-gradient(87deg, #2ac4f4 0, #bcd630 100%) !important;">
             <div style="font-weight: bold; color: black;padding: 5px; font-size: 27px;">
             {{$newpassword}}
             </div>
         </td>
     </tr>
     <tr>
-        <td class="container bg-lime">
+        <td bgcolor="#8BD071" class="container bg-lime" style="background: linear-gradient(87deg, #2ac4f4 0, #bcd630 100%) !important;">
             @if( $type === 'password')
-                <div style="background-color: #ffffffdb; color: #727272; padding: 30px 15px 15px 15px; font-size: 12px;">
-                    This email was generated because of a request reset {{$type}} from Administrator.
+                <table bgcolor="#ECF8EE" class="infodiv" id="div_infodiv" style="background: #ffffffdb;color: #727272;padding: 30px 15px 15px 15px;font-size: 12px;">
+                    <tr>
+                        <td>
+                            This email was generated because of a request reset {{$type}} from Administrator.
 
-                    The new login attempt included your correct account name and {{$type}}.<br><br>
-
-                    The New {{$type}} is required to complete the login. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
-                    <br><br>
-
-                    <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
-                    <br><br>
-                </div>
+                            The new login attempt included your correct account name and {{$type}}.<br><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            The New {{$type}} is required to complete the login. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
+                            <br><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
+                            <br><br>
+                        </td>
+                    </tr>
+                </table>
             @else
-                <div style="background-color: #ffffffdb; color: #727272; padding: 30px 15px 15px 15px; font-size: 12px;">
-                    This email was generated because of a request reset {{$type}} from Administrator.
+                <table bgcolor="#ECF8EE" class="infodiv" id="div_infodiv" style="background: #ffffffdb;color: #727272;padding: 30px 15px 15px 15px;font-size: 12px;">
+                    <tr>
+                        <td>
+                            This email was generated because of a request reset {{$type}} from Administrator.
 
-                    The new pin attempt included your correct account name and {{$type}}.<br><br>
-
-                    The New {{$type}} is required to complete the trading proccess. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
-                    <br><br>
-
-                    <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
-                    <br><br>
-                </div>
+                            The new pin attempt included your correct account name and {{$type}}.<br><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            The New {{$type}} is required to complete the trading proccess. <span style="font-weight: bold;">No one can access your account without also accessing this email</span>.
+                            <br><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span style="font-weight: bold;">If you are not requesting to reset {{$type}}</span> then please contact our customer service, and consider changing your email {{$type}} as well to ensure your account security.
+                            <br><br>
+                        </td>
+                    </tr>
+                </table>
             @endif
             <br><br>
         </td>

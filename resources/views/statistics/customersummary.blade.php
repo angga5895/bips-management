@@ -285,14 +285,26 @@
                                 return x.toShortFormat();
                             },
                             hoverCallback: function (index, options, content, row) {
+                                var total = row.total;
+                                var active = row.active;
+                                var suspend_trade = row.suspend_trade;
+                                var suspend_buy = row.suspend_buy;
+                                var suspend_sell = row.suspend_sell;
+
+                                if (total === null){total = '-';}
+                                if (active === null){active = '-';}
+                                if (suspend_trade === null){suspend_trade = '-';}
+                                if (suspend_buy === null){suspend_buy = '-';}
+                                if (suspend_sell === null){suspend_sell = '-';}
+
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total : " + row.total + "</div>" +
-                                    "<div class='text-primary'>Active : " + row.active + "</div>" +
-                                    "<div class='text-light'>Suspend Trade : " + row.suspend_trade + "</div>" +
-                                    "<div class='text-danger'>Suspend Buy : " + row.suspend_buy + "</div>" +
-                                    "<div class='text-success'>Suspend Sell : " + row.suspend_sell + "</div>";
+                                    "<div style='color: #FFC107'>Total : " + total + "</div>" +
+                                    "<div class='text-primary'>Active : " + active + "</div>" +
+                                    "<div class='text-light'>Suspend Trade : " + suspend_trade + "</div>" +
+                                    "<div class='text-danger'>Suspend Buy : " + suspend_buy + "</div>" +
+                                    "<div class='text-success'>Suspend Sell : " + suspend_sell + "</div>";
                             },
                             lineWidth: 1,
                             pointSize: 4,
@@ -339,14 +351,26 @@
                                 return getDateBipsShort(x.src.rec_date);
                             },
                             hoverCallback: function (index, options, content, row) {
+                                var total = row.total;
+                                var active = row.active;
+                                var suspend_trade = row.suspend_trade;
+                                var suspend_buy = row.suspend_buy;
+                                var suspend_sell = row.suspend_sell;
+
+                                if (total === null){total = '-';}
+                                if (active === null){active = '-';}
+                                if (suspend_trade === null){suspend_trade = '-';}
+                                if (suspend_buy === null){suspend_buy = '-';}
+                                if (suspend_sell === null){suspend_sell = '-';}
+
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total : " + row.total + "</div>" +
-                                    "<div class='text-primary'>Active : " + row.active + "</div>" +
-                                    "<div class='text-light'>Suspend Trade : " + row.suspend_trade + "</div>" +
-                                    "<div class='text-danger'>Suspend Buy : " + row.suspend_buy + "</div>" +
-                                    "<div class='text-success'>Suspend Sell : " + row.suspend_sell + "</div>";
+                                    "<div style='color: #FFC107'>Total : " + total + "</div>" +
+                                    "<div class='text-primary'>Active : " + active + "</div>" +
+                                    "<div class='text-light'>Suspend Trade : " + suspend_trade + "</div>" +
+                                    "<div class='text-danger'>Suspend Buy : " + suspend_buy + "</div>" +
+                                    "<div class='text-success'>Suspend Sell : " + suspend_sell + "</div>";
                             },
                             barRatio: 0.4,
                             /*xLabelAngle: 35,*/
@@ -407,14 +431,25 @@
                                 return x.toShortFormat();
                             },
                             hoverCallback: function (index, options, content, row) {
+                                var total = row.total;
+                                var active = row.active;
+                                var suspend_trade = row.suspend_trade;
+                                var suspend_buy = row.suspend_buy;
+                                var suspend_sell = row.suspend_sell;
+
+                                if (total === null){total = '-';}
+                                if (active === null){active = '-';}
+                                if (suspend_trade === null){suspend_trade = '-';}
+                                if (suspend_buy === null){suspend_buy = '-';}
+                                if (suspend_sell === null){suspend_sell = '-';}
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total : " + row.total + "</div>" +
-                                    "<div class='text-primary'>Active : " + row.active + "</div>" +
-                                    "<div class='text-light'>Suspend Trade : " + row.suspend_trade + "</div>" +
-                                    "<div class='text-danger'>Suspend Buy : " + row.suspend_buy + "</div>" +
-                                    "<div class='text-success'>Suspend Sell : " + row.suspend_sell + "</div>";
+                                    "<div style='color: #FFC107'>Total : " + total + "</div>" +
+                                    "<div class='text-primary'>Active : " + active + "</div>" +
+                                    "<div class='text-light'>Suspend Trade : " + suspend_trade + "</div>" +
+                                    "<div class='text-danger'>Suspend Buy : " + suspend_buy + "</div>" +
+                                    "<div class='text-success'>Suspend Sell : " + suspend_sell + "</div>";
                             },
                             hideHover: 'auto',
                             lineColors: areaColor,

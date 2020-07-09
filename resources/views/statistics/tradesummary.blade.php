@@ -287,12 +287,26 @@
                                 return x.toShortFormat();
                             },
                             hoverCallback: function (index, options, content, row) {
+                                var total_val = row.total_val;
+                                var total_vol = row.total_vol;
+                                var order_val = row.order_val;
+                                var order_vol = row.order_vol;
+                                var total_freq = row.total_freq;
+
+                                if (total_val === null){total_val = '-';}
+                                if (total_vol === null){total_vol = '-';}
+                                if (order_val === null){order_val = '-';}
+                                if (order_vol === null){order_vol = '-';}
+                                if (total_freq === null){total_freq = '-';}
+
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total Val : " + row.total_val + "</div>" +
-                                    "<div class='text-success'>Total Vol : " + row.total_vol + "</div>" +
-                                    "<div class='text-danger'>Total Freq : " + row.total_freq + "</div>";
+                                    "<div style='color: #FFC107'>Total Val : " + total_val + "</div>" +
+                                    "<div class='text-success'>Total Vol : " + total_vol + "</div>" +
+                                    "<div class='text-light'>Order Val : " + order_val + "</div>" +
+                                    "<div class='text-primary'>Order Vol : " + order_vol + "</div>" +
+                                    "<div class='text-danger'>Total Freq : " + total_freq + "</div>";
                             },
                             lineWidth: 1,
                             pointSize: 4,
@@ -338,12 +352,26 @@
                                 return getDateBipsShort(x.src.rec_date);
                             },
                             hoverCallback: function (index, options, content, row) {
+                                var total_val = row.total_val;
+                                var total_vol = row.total_vol;
+                                var order_val = row.order_val;
+                                var order_vol = row.order_vol;
+                                var total_freq = row.total_freq;
+
+                                if (total_val === null){total_val = '-';}
+                                if (total_vol === null){total_vol = '-';}
+                                if (order_val === null){order_val = '-';}
+                                if (order_vol === null){order_vol = '-';}
+                                if (total_freq === null){total_freq = '-';}
+
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total Val : " + row.total_val + "</div>" +
-                                    "<div class='text-success'>Total Vol : " + row.total_vol + "</div>" +
-                                    "<div class='text-danger'>Total Freq : " + row.total_freq + "</div>";
+                                    "<div style='color: #FFC107'>Total Val : " + total_val + "</div>" +
+                                    "<div class='text-success'>Total Vol : " + total_vol + "</div>" +
+                                    "<div class='text-light'>Order Val : " + order_val + "</div>" +
+                                    "<div class='text-primary'>Order Vol : " + order_vol + "</div>" +
+                                    "<div class='text-danger'>Total Freq : " + total_freq + "</div>";
                             },
                             barRatio: 0.4,
                             /*xLabelAngle: 35,*/
@@ -404,12 +432,26 @@
                                 return x.toShortFormat();
                             },
                             hoverCallback: function (index, options, content, row) {
+                                var total_val = row.total_val;
+                                var total_vol = row.total_vol;
+                                var order_val = row.order_val;
+                                var order_vol = row.order_vol;
+                                var total_freq = row.total_freq;
+
+                                if (total_val === null){total_val = '-';}
+                                if (total_vol === null){total_vol = '-';}
+                                if (order_val === null){order_val = '-';}
+                                if (order_vol === null){order_vol = '-';}
+                                if (total_freq === null){total_freq = '-';}
+
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total Val : " + row.total_val + "</div>" +
-                                    "<div class='text-success'>Total Vol : " + row.total_vol + "</div>" +
-                                    "<div class='text-danger'>Total Freq : " + row.total_freq + "</div>";
+                                    "<div style='color: #FFC107'>Total Val : " + total_val + "</div>" +
+                                    "<div class='text-success'>Total Vol : " + total_vol + "</div>" +
+                                    "<div class='text-light'>Order Val : " + order_val + "</div>" +
+                                    "<div class='text-primary'>Order Vol : " + order_vol + "</div>" +
+                                    "<div class='text-danger'>Total Freq : " + total_freq + "</div>";
                             },
                             hideHover: 'auto',
                             lineColors: areaColor,

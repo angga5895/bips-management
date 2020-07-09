@@ -537,3 +537,11 @@ table.dataTable tbody tr.selected {
 table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
     top: 8px !important;
 }
+
+.mbox {
+    display: inline-block;
+    width: 70px;
+    height: 10px;
+    margin: 10px 55px 10px 25px;
+    padding-left: 4px;
+}

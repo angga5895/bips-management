@@ -21,6 +21,16 @@
     {{--<script src="{{ url('charts_morrisjs.js') }}"></script>--}}
 
     <script type="text/javascript">
+        var chartBar = 0;
+        var chartLine = 0;
+        var chartArea = 0;
+
+        var barshow1 = 0;
+        var barshow2 = 0;
+        var lineshow1 = 0;
+        var lineshow2 = 0;
+        var areashow1 = 0;
+        var areashow2 = 0;
         $(document).ready(function () {
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
@@ -117,6 +127,74 @@
             return n
         }
 
+        function rgb2hex(rgb){
+            rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+            return (rgb && rgb.length === 4) ? "#" +
+                ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+                ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+                ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+        }
+
+        function clickLegendBar(theese) {
+            var idlgnd = $(theese).attr('id');
+            if (idlgnd === 'barlgnd0'){
+                barshow1 ++
+                if (barshow1%2 === 0){
+                    $("#barlgnd0").css('color', rgb2hex($("#barlgnd0").css('color')).substr(0,7));
+                } else {
+                    $("#barlgnd0").css('color', rgb2hex($("#barlgnd0").css('color'))+'40');
+                }
+            } else {
+                barshow2++
+                if (barshow2%2 === 0){
+                    $("#barlgnd1").css('color', rgb2hex($("#barlgnd1").css('color')).substr(0,7));
+                } else {
+                    $("#barlgnd1").css('color', rgb2hex($("#barlgnd1").css('color'))+'40');
+                }
+            }
+            chartSummary();
+        }
+
+        function clickLegendLine(theese) {
+            var idlgnd = $(theese).attr('id');
+            if (idlgnd === 'linelgnd0'){
+                lineshow1 ++
+                if (lineshow1%2 === 0){
+                    $("#linelgnd0").css('color', rgb2hex($("#linelgnd0").css('color')).substr(0,7));
+                } else {
+                    $("#linelgnd0").css('color', rgb2hex($("#linelgnd0").css('color'))+'40');
+                }
+            } else {
+                lineshow2++
+                if (lineshow2%2 === 0){
+                    $("#linelgnd1").css('color', rgb2hex($("#linelgnd1").css('color')).substr(0,7));
+                } else {
+                    $("#linelgnd1").css('color', rgb2hex($("#linelgnd1").css('color'))+'40');
+                }
+            }
+            chartSummary();
+        }
+
+        function clickLegendArea(theese) {
+            var idlgnd = $(theese).attr('id');
+            if (idlgnd === 'arealgnd0'){
+                areashow1 ++
+                if (areashow1%2 === 0){
+                    $("#arealgnd0").css('color', rgb2hex($("#arealgnd0").css('color')).substr(0,7));
+                } else {
+                    $("#arealgnd0").css('color', rgb2hex($("#arealgnd0").css('color'))+'40');
+                }
+            } else {
+                areashow2++
+                if (areashow2%2 === 0){
+                    $("#arealgnd1").css('color', rgb2hex($("#arealgnd1").css('color')).substr(0,7));
+                } else {
+                    $("#arealgnd1").css('color', rgb2hex($("#arealgnd1").css('color'))+'40');
+                }
+            }
+            chartSummary();
+        }
+
         function chartSummary(){
             let tgllast = new Date($("#tgl_awal_current").val());
             let getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
@@ -143,29 +221,53 @@
                         if (charttype === '1') {
                             $("#morrisjs-bars").removeClass('chart-empty');
                             $("#morrisjs-bars").removeClass('d-none');
+                            $("#legendBars").removeClass('d-none');
+                            $("#legendLine").addClass('d-none');
+                            $("#legendArea").addClass('d-none');
                             $("#morrisjs-graph").addClass('d-none');
                             $("#morrisjs-area").addClass('d-none');
                         }
                         if (charttype === '2') {
                             $("#morrisjs-graph").removeClass('chart-empty');
                             $("#morrisjs-graph").removeClass('d-none');
+                            $("#legendLine").removeClass('d-none');
+                            $("#legendBars").addClass('d-none');
+                            $("#legendArea").addClass('d-none');
                             $("#morrisjs-bars").addClass('d-none');
                             $("#morrisjs-area").addClass('d-none');
                         }
                         if (charttype === '3') {
                             $("#morrisjs-area").removeClass('chart-empty');
                             $("#morrisjs-area").removeClass('d-none');
+                            $("#legendArea").removeClass('d-none');
+                            $("#legendBars").addClass('d-none');
+                            $("#legendLine").addClass('d-none');
                             $("#morrisjs-bars").addClass('d-none');
                             $("#morrisjs-graph").addClass('d-none');
                         }
 
+                        //chart line
+                        var ykeysLine = ['total_val','order_val'];
+                        var lineColor = ['#5ECBAF','#ABD448'];
+                        if (lineshow1%2 === 0 && lineshow2%2 !== 0){
+                            ykeysLine = ['total_val'];
+                            lineColor = ['#5ECBAF','#ABD44840'];
+                        } else if (lineshow1%2 !== 0 && lineshow2%2 === 0){
+                            ykeysLine = ['order_val'];
+                            lineColor = ['#ABD448', '#5ECBAF40'];
+                        } else if (lineshow1%2 !== 0 && lineshow2%2 !== 0){
+                            ykeysLine = ['',''];
+                            lineColor = ['#ABD44840', '#5ECBAF40'];
+                        }
+
                         var gridBorder = '#eeeeee';
-                        new Morris.Line({
+                        var mLine = new Morris.Line({
                             element: 'morrisjs-graph',
-                            data: res,
+                            data: res.sort(function(a, b){
+                                return new Date(a.rec_date) - new Date(b.rec_date)}),
                             xkey: 'rec_date',
-                            ykeys: ['total_val'],
-                            labels: ['Total Val'],
+                            ykeys: ykeysLine,
+                            labels: ['Total Val', 'Order Val'],
                             xLabelFormat: function (x) {
                                 Date.prototype.toShortFormat = function () {
 
@@ -180,7 +282,7 @@
 
                                     let year = this.getFullYear();
 
-                                    return `${monthName}-${year}`;
+                                    return `${day} ${monthName} ${year}`;
                                 };
                                 return x.toShortFormat();
                             },
@@ -197,17 +299,43 @@
                             gridLineColor: gridBorder,
                             resize: true,
                             hideHover: 'auto',
-                            lineColors: ['#FFC107', '#E91E63'],
+                            lineColors: lineColor,
                         });
 
-                        new Morris.Bar({
+                        mLine.options.labels.forEach(function(label, i){
+                            var colorLegendLine = mLine.options.lineColors[i];
+                            var legendlabel= $('<span style="display: inline-block; font-size: 12px;"><i id="linelgnd'+i+'" class="fa fa-square" style="color:'+colorLegendLine+'; padding: 0 2px 0 0; cursor: pointer;" onclick="clickLegendLine(this)"></i>'+label+'</span>')
+                            var legendItem = $('<div class="mbox"></div>').append(legendlabel)
+
+                            if (chartLine === 0){
+                                $('#legendLine').append(legendItem)
+                            }
+                        });
+                        chartLine++;
+
+                        //chart bar
+                        var ykeysBars = ['total_val','order_val'];
+                        var barsColor = ['#5ECBAF','#ABD448'];
+                        if (barshow1%2 === 0 && barshow2%2 !== 0){
+                            ykeysBars = ['total_val'];
+                            barsColor = ['#5ECBAF','#ABD44840'];
+                        } else if (barshow1%2 !== 0 && barshow2%2 === 0){
+                            ykeysBars = ['order_val'];
+                            barsColor = ['#ABD448', '#5ECBAF40'];
+                        } else if (barshow1%2 !== 0 && barshow2%2 !== 0){
+                            ykeysBars = [];
+                            barsColor = ['#ABD44840', '#5ECBAF40'];
+                        }
+
+                        var mBar = new Morris.Bar({
                             element: 'morrisjs-bars',
-                            data: res,
+                            data: res.sort(function(a, b){
+                                return new Date(a.rec_date) - new Date(b.rec_date)}),
                             xkey: 'rec_date',
-                            ykeys: ['total_val'],
-                            labels: ['Total Val'],
+                            ykeys: ykeysBars,
+                            labels: ['Total Val', 'Order Val'],
                             xLabelFormat: function (x) {
-                                return getMonthBipsShort(x.src.rec_date);
+                                return getDateBipsShort(x.src.rec_date);
                             },
                             hoverCallback: function (index, options, content, row) {
                                 return "" +
@@ -220,17 +348,43 @@
                             barRatio: 0.4,
                             /*xLabelAngle: 35,*/
                             hideHover: 'auto',
-                            barColors: ['#CDDC39'],
+                            barColors: barsColor,
                             gridLineColor: gridBorder,
                             resize: true
                         });
 
-                        new Morris.Area({
+                        mBar.options.labels.forEach(function(label, i){
+                            var colorLegendBars = mBar.options.barColors[i];
+                            var legendlabel= $('<span style="display: inline-block; font-size: 12px;"><i id="barlgnd'+i+'" class="fa fa-square" style="color:'+colorLegendBars+'; padding: 0 2px 0 0; cursor: pointer;" onclick="clickLegendBar(this)"></i>'+label+'</span>')
+                            var legendItem = $('<div class="mbox"></div>').append(legendlabel)
+
+                            if (chartBar === 0){
+                                $('#legendBars').append(legendItem)
+                            }
+                        });
+                        chartBar++;
+
+                        //chart area
+                        var ykeysArea = ['total_val','order_val'];
+                        var areaColor = ['#5ECBAF','#ABD448','#ff0200'];
+                        if (areashow1%2 === 0 && areashow2%2 !== 0){
+                            ykeysArea = ['total_val'];
+                            areaColor = ['#5ECBAF','#ABD44840'];
+                        } else if (areashow1%2 !== 0 && areashow2%2 === 0){
+                            ykeysArea = ['order_val'];
+                            areaColor = ['#ABD448', '#5ECBAF40'];
+                        } else if (areashow1%2 !== 0 && areashow2%2 !== 0){
+                            ykeysArea = [''];
+                            areaColor = ['#ABD44840', '#5ECBAF40'];
+                        }
+
+                        var mArea = new Morris.Area({
                             element: 'morrisjs-area',
-                            data: res,
+                            data: res.sort(function(a, b){
+                                return new Date(a.rec_date) - new Date(b.rec_date)}),
                             xkey: 'rec_date',
-                            ykeys: ['total_val'],
-                            labels: ['Total Val'],
+                            ykeys: ykeysArea,
+                            labels: ['Total Val', 'Order Val'],
                             xLabelFormat: function (x) {
                                 Date.prototype.toShortFormat = function () {
 
@@ -245,7 +399,7 @@
 
                                     let year = this.getFullYear();
 
-                                    return `${monthName}-${year}`;
+                                    return `${day} ${monthName} ${year}`;
                                 };
                                 return x.toShortFormat();
                             },
@@ -258,7 +412,7 @@
                                     "<div class='text-danger'>Total Freq : " + row.total_freq + "</div>";
                             },
                             hideHover: 'auto',
-                            lineColors: ['#673AB7', '#0288D1', '#9E9E9E'],
+                            lineColors: areaColor,
                             fillOpacity: 0.1,
                             behaveLikeLine: true,
                             lineWidth: 1,
@@ -266,6 +420,17 @@
                             gridLineColor: gridBorder,
                             resize: true
                         });
+
+                        mArea.options.labels.forEach(function(label, i){
+                            var colorLegendArea = mArea.options.lineColors[i];
+                            var legendlabel= $('<span style="display: inline-block; font-size: 12px;"><i id="arealgnd'+i+'" class="fa fa-square" style="color:'+colorLegendArea+'; padding: 0 2px 0 0; cursor: pointer;" onclick="clickLegendArea(this)"></i>'+label+'</span>')
+                            var legendItem = $('<div class="mbox"></div>').append(legendlabel)
+
+                            if (chartArea === 0){
+                                $('#legendArea').append(legendItem)
+                            }
+                        });
+                        chartArea++;
                     } else {
                         if (charttype === '1') {
                             $("#morrisjs-bars").addClass('chart-empty');
@@ -340,9 +505,12 @@
         </div>
         <div class="card card-body" style="min-height: 365px">
             <div class="demo-vertical-spacing-lg">
-                <div id="morrisjs-bars" class="chart-empty chart-height"></div>
-                <div id="morrisjs-graph" class="d-none chart-height"></div>
-                <div id="morrisjs-area" class="d-none chart-height"></div>
+                <div id="morrisjs-bars" class="chart-empty chart-height" style="width:auto"></div>
+                <div id="legendBars" style="text-align: center"></div>
+                <div id="morrisjs-graph" class="d-none chart-height" style="width:auto"></div>
+                <div id="legendLine" class="d-none" style="text-align: center"></div>
+                <div id="morrisjs-area" class="d-none chart-height" style="width:auto"></div>
+                <div id="legendArea" class="d-none" style="text-align: center"></div>
             </div>
         </div>
     </div>

@@ -211,14 +211,14 @@
                     },
                     success: function (res) {
                         if (res.status === '1'){
-                            if ($.trim(res.data)) {
+                            if ($.trim(res.data.custinfo)) {
                                 /*console.log(res);
                                 console.log(res.data[0].custname);*/
-                                $("#usernameGet").val(res.data[0].custname);
+                                $("#usernameGet").val(res.data.custinfo[0].custname);
 
-                                $("#usercode").val(res.data[0].custcode);
-                                $("#username").val(res.data[0].custname);
-                                $("#status").val("Status : \""+res.data[0].custstatus+"\"");
+                                $("#usercode").val(res.data.custinfo[0].custcode);
+                                $("#username").val(res.data.custinfo[0].custname);
+                                $("#status").val("Status : \""+res.data.custinfo[0].custstatus+"\"");
 
                                 $("#tempadditionallimit").attr("disabled", false);
                                 $("#updateUser").attr("disabled", false);

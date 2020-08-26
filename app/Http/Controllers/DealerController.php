@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DealerSales;
+use App\UserAccount;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -70,6 +71,12 @@ class DealerController extends Controller
         $id = $_GET['id'];
         $dealer = Dealer::where('dealer_id',$id)->get()[0];
         return response()->json($dealer);
+    }
+
+    public function dealerNoUser(){
+        $dealer_id = $_GET['dealer_id'];
+        $users = DB::select('SELECT users.user_id FROM users WHERE users.user_id=\''.$dealer_id.'\'');
+        return response()->json($users);
     }
 
     public function updateDealer(){
@@ -248,9 +255,46 @@ class DealerController extends Controller
         $sales_id = $_GET['sales_id'];
         try{
             DB::insert("INSERT INTO dealer_sales values ('$dealer_id','$sales_id')");
-            $status = "00";
-            $group = null;
-            $err_msg = null;
+
+            $selectdealer =  DB::select('SELECT dealer.* FROM dealer WHERE dealer.dealer_id = \''.$dealer_id.'\'');
+            foreach ($selectdealer as $pd){
+                $user_id = $pd->user_id;
+            }
+
+            $insertaccountsalescust = 0;
+            $exSalesCust = '';
+
+            $selectcust = DB::select('SELECT customer.custcode FROM customer
+                              JOIN account ON account.account_no = customer.custcode
+                              WHERE customer.sales_id=\''.$sales_id.'\'');
+
+            foreach ($selectcust as $ps){
+                try{
+                    UserAccount::create([
+                        'user_id' => $user_id,
+                        'account_no' => $ps->custcode,
+                        'access_flag' => 'T',
+                    ]);
+                } catch (QueryException $exs){
+                    if (UserAccount::where([
+                        'user_id' => $user_id,
+                        'account_no' => $ps->custcode,
+                    ])->delete()) {
+                        $insertaccountsalescust = '1';
+                        $exSalesCust = $exs->getMessage();
+                    }
+                }
+            }
+
+            if ($insertaccountsalescust === '1'){
+                $status = "01";
+                $group = null;
+                $err_msg = $exSalesCust;
+            } else {
+                $status = "00";
+                $group = null;
+                $err_msg = null;
+            }
         }catch (QueryException $ex){
             $status = "01";
             $group = null;
@@ -272,9 +316,46 @@ class DealerController extends Controller
                 'dealer_id' => $dealer_id,
                 'sales_id' => $sales_id,
             ])->delete();
-            $status = "00";
-            $group = null;
-            $err_msg = null;
+
+            $selectdealer =  DB::select('SELECT dealer.* FROM dealer WHERE dealer.dealer_id = \''.$dealer_id.'\'');
+            foreach ($selectdealer as $pd){
+                $user_id = $pd->user_id;
+            }
+
+            $insertaccountsalescust = 0;
+            $exSalesCust = '';
+
+            $selectcust = DB::select('SELECT customer.custcode FROM customer
+                              JOIN account ON account.account_no = customer.custcode
+                              WHERE customer.sales_id=\''.$sales_id.'\'');
+
+            foreach ($selectcust as $ps){
+                try{
+                    UserAccount::where([
+                        'user_id' => $user_id,
+                        'account_no' => $ps->custcode
+                    ])->delete();
+                } catch (QueryException $exs){
+                    if (UserAccount::create([
+                        'user_id' => $user_id,
+                        'account_no' => $ps->custcode,
+                        'access_flag' => 'T',
+                    ])) {
+                        $insertaccountsalescust = '1';
+                        $exSalesCust = $exs->getMessage();
+                    }
+                }
+            }
+
+            if ($insertaccountsalescust === '1'){
+                $status = "01";
+                $group = null;
+                $err_msg = $exSalesCust;
+            } else {
+                $status = "00";
+                $group = null;
+                $err_msg = null;
+            }
         }catch (QueryException $ex){
             $status = "01";
             $group = null;

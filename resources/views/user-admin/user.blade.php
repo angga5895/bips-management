@@ -366,6 +366,7 @@
                 case 'T': return 'Trade Disabled'; break;
                 case 'B': return 'Suspend Buy'; break;
                 case 'S': return 'Suspend Sell'; break;
+                case 'I': return 'Inactive'; break;
             }
         }
         function tablelistaccount() {

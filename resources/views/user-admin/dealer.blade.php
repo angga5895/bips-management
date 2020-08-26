@@ -447,27 +447,45 @@
 
         function assignSales(data){
             $.ajax({
-                type : "GET",
-                url  : "{{ url('dealer-update/') }}",
-                data : {
-                    'id' : data,
+                type: "GET",
+                url : "{{ url('dealer-nouser') }}",
+                data: {
+                    'dealer_id': data,
                 },
-                success : function (res) {
-                        $("#groupID").val(res.dealer_id);
-                        $("#groupGetSales").val(res.dealer_name);
-                        $("#breadAdditional").removeClass("d-none").addClass("d-block").text(res.dealer_name);
-                        $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text('Assign Sales');
-                        $("#sales-group").removeClass("d-none");
-                        $("#sales-group").addClass("d-block");
-                        $("#main-group").removeClass("d-block");
-                        $("#main-group").addClass("d-none");
-                        $("#idCurrDealer").val(data);
-                        clearCache();
+                success: function (res) {
+                    if ($.trim(res)){
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ url('dealer-update/') }}",
+                            data: {
+                                'id': data,
+                            },
+                            success: function (res) {
+                                $("#groupID").val(res.dealer_id);
+                                $("#groupGetSales").val(res.dealer_name);
+                                $("#breadAdditional").removeClass("d-none").addClass("d-block").text(res.dealer_name);
+                                $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text('Assign Sales');
+                                $("#sales-group").removeClass("d-none");
+                                $("#sales-group").addClass("d-block");
+                                $("#main-group").removeClass("d-block");
+                                $("#main-group").addClass("d-none");
+                                $("#idCurrDealer").val(data);
+                                clearCache();
+                            }
+                        });
+                        getAssignSalesTable(data, "01");
+                    } else {
+                        swal({
+                            title: "No Assign",
+                            text: "Please create users for dealer, before assign sales to dealer.",
+                            type: "warning",
+                            showCancelButton: false,
+                            confirmButtonClass: 'btn-warning',
+                            confirmButtonText: 'OK'
+                        });
+                    }
                 }
             });
-
-
-            getAssignSalesTable(data,"01");
         }
 
         $("#typeuser").on('change', function() {
@@ -571,54 +589,85 @@
 
         function addThis(salesId){
             dealerId = $("#idCurrDealer").val();
-            $.ajax({
-                type : "GET",
-                url  : "{{ url('dealerAssign/add/') }}",
-                data : {
-                    'dealer_id' : dealerId,
-                    'sales_id': salesId,
+
+            swal({
+                    title: "Are you sure?",
+                    type: "warning",
+                    showCancelButton: true,
+                    cancelButtonClass: "btn-danger",
+                    confirmButtonClass: "btn-success",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
+                    closeOnCancel: true,
                 },
-                success : function (res) {
-                    if(res.status == "00"){
-                        $("#alert-addsuccess").removeClass("d-none");
-                        $("#alert-addsuccess").addClass("d-block");
-                        $("#alert-del").removeClass("d-block");
-                        $("#alert-del").addClass("d-none");
-                    }else{
-                        $("#alert-error-assign").removeClass('d-none');
-                        $("#alert-error-assign").addClass('d-block');
-                        $("#err_msg_assign").text(res.err_msg);
+                function(isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            type : "GET",
+                            url  : "{{ url('dealerAssign/add/') }}",
+                            data : {
+                                'dealer_id' : dealerId,
+                                'sales_id': salesId,
+                            },
+                            success : function (res) {
+                                if(res.status == "00"){
+                                    $("#alert-addsuccess").removeClass("d-none");
+                                    $("#alert-addsuccess").addClass("d-block");
+                                    $("#alert-del").removeClass("d-block");
+                                    $("#alert-del").addClass("d-none");
+                                }else{
+                                    $("#alert-error-assign").removeClass('d-none');
+                                    $("#alert-error-assign").addClass('d-block');
+                                    $("#err_msg_assign").text(res.err_msg);
+                                }
+                                $('#table-dealer-sales').DataTable().ajax.reload();
+                            }
+                        });
                     }
-                    $('#table-dealer-sales').DataTable().ajax.reload();
                 }
-            });
+            );
         }
 
         function removeThis(salesId){
             dealerId = $("#idCurrDealer").val();
-            $.ajax({
-                type : "GET",
-                url  : "{{ url('dealerAssign/remove/') }}",
-                data : {
-                    'dealer_id' : dealerId,
-                    'sales_id': salesId,
+
+            swal({
+                    title: "Are you sure?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonClass: "btn-success",
+                    cancelButtonText: "No",
+                    confirmButtonText: "Yes",
+                    closeOnCancel: true,
                 },
-                success : function (res) {
-                    if(res.status == "00") {
-                        $("#alert-del").removeClass("d-none");
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            type : "GET",
+                            url  : "{{ url('dealerAssign/remove/') }}",
+                            data : {
+                                'dealer_id' : dealerId,
+                                'sales_id': salesId,
+                            },
+                            success : function (res) {
+                                if(res.status == "00") {
+                                    $("#alert-del").removeClass("d-none");
 
-                        $("#alert-del").addClass("d-block");
+                                    $("#alert-del").addClass("d-block");
 
-                        $("#alert-addsuccess").removeClass("d-block");
-                        $("#alert-addsuccess").addClass("d-none");
-                    }else{
-                        $("#alert-error-assign").removeClass('d-none');
-                        $("#alert-error-assign").addClass('d-block');
-                        $("#err_msg_assign").text(res.err_msg);
+                                    $("#alert-addsuccess").removeClass("d-block");
+                                    $("#alert-addsuccess").addClass("d-none");
+                                }else{
+                                    $("#alert-error-assign").removeClass('d-none');
+                                    $("#alert-error-assign").addClass('d-block');
+                                    $("#err_msg_assign").text(res.err_msg);
+                                }
+                                $('#table-dealer-sales').DataTable().ajax.reload();
+                            }
+                        });
                     }
-                    $('#table-dealer-sales').DataTable().ajax.reload();
                 }
-            });
+            );
         }
 
         function editDealer(data){

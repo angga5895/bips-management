@@ -92,6 +92,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('getDealerId','DealerController@getIdDealer');
     Route::get('dealer-registrasi', 'DealerController@registrasiDealer');
     Route::get('dealer-update', 'DealerController@dealerEdit');
+    Route::get('dealer-nouser', 'DealerController@dealerNoUser');
     Route::get('dealer-update/submit', 'DealerController@updateDealer');
     Route::get('dealerGetSales', 'DealerController@dealerGetSales');
     Route::get('dealerAssign/add/', 'DealerController@dealerAssignAdd');

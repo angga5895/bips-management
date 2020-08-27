@@ -454,7 +454,11 @@
         }
 
         function tablegetReg() {
+            var role_app = $("#role_app").val();
+
+
             var tableData = $("#table-reggroup").DataTable({
+
                 /*processing: true,
 
                 serverSide: true,*/
@@ -463,7 +467,9 @@
                 aaSorting: [[0, 'desc']],
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
-                    $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" type="button" id="adduser" onclick="addUser()">Add</button>');
+                    if(role_app == 2){
+                        $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" type="button" id="adduser" onclick="addUser()">Add</button>');
+                    }
                 },
                 ajax : {
                     url: '{{ url("get-dataRegistrasi/get") }}',
@@ -532,12 +538,16 @@
                     targets : [0],
                     className: 'text-center',
                     render : function (data, type, row) {
+                        var ext = "";
+                        if(role_app == 2){
+                           ext = '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
+                               '<i class="fa fa-pen"></i>' +
+                               '</a>';
+                        }
                         return '<button class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail" onclick="detailUser(\''+data+'\')">' +
                             '<i class="fa fa-search"></i>' +
-                            '</button>'+
-                            '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
-                            '<i class="fa fa-pen"></i>' +
-                            '</a>' +
+                            '</button>'+ext+
+
                             '<a class="btn btn-sm btn-facebook" href="/user/'+data+'/reset/password" data-toggle="tooltip" data-placement="top" title="Reset Password">' +
                             '<i class="fa fa-lock-open"></i>' +
                             '</a>' +

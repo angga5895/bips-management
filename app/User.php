@@ -28,6 +28,7 @@ class User extends Authenticatable
         'last_teriminalid',
         'user_type',
         'hash_pin',
+        'role_app',
     ];
 
     /**

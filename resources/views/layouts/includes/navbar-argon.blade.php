@@ -25,6 +25,7 @@
                 </span>
                         <div class="media-body ml-2 d-none d-block">
                             <span class="mb-0 text-sm  font-weight-bold">{{ \Illuminate\Support\Facades\Auth::user()->username }}</span>
+                            <input type="hidden" value='{{ \Illuminate\Support\Facades\Auth::user()->role_app }}' id="role_app">
                         </div>
                     </div>
                 </a>

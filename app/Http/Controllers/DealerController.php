@@ -269,19 +269,24 @@ class DealerController extends Controller
                               WHERE customer.sales_id=\''.$sales_id.'\'');
 
             foreach ($selectcust as $ps){
-                try{
-                    UserAccount::create([
-                        'user_id' => $user_id,
-                        'account_no' => $ps->custcode,
-                        'access_flag' => 'T',
-                    ]);
-                } catch (QueryException $exs){
-                    if (UserAccount::where([
-                        'user_id' => $user_id,
-                        'account_no' => $ps->custcode,
-                    ])->delete()) {
-                        $insertaccountsalescust = '1';
-                        $exSalesCust = $exs->getMessage();
+                $selectCekUserAccount = DB::select('SELECT count(*) FROM user_account 
+                                WHERE user_id = \''.$user_id.'\' AND account_no = \''.$ps->custcode.'\'');
+
+                if (!$selectCekUserAccount[0]->count > 0){
+                    try{
+                        UserAccount::create([
+                            'user_id' => $user_id,
+                            'account_no' => $ps->custcode,
+                            'access_flag' => 'T',
+                        ]);
+                    } catch (QueryException $exs){
+                        if (UserAccount::where([
+                            'user_id' => $user_id,
+                            'account_no' => $ps->custcode,
+                        ])->delete()) {
+                            $insertaccountsalescust = '1';
+                            $exSalesCust = $exs->getMessage();
+                        }
                     }
                 }
             }
@@ -329,20 +334,25 @@ class DealerController extends Controller
                               JOIN account ON account.account_no = customer.custcode
                               WHERE customer.sales_id=\''.$sales_id.'\'');
 
-            foreach ($selectcust as $ps){
-                try{
-                    UserAccount::where([
-                        'user_id' => $user_id,
-                        'account_no' => $ps->custcode
-                    ])->delete();
-                } catch (QueryException $exs){
-                    if (UserAccount::create([
-                        'user_id' => $user_id,
-                        'account_no' => $ps->custcode,
-                        'access_flag' => 'T',
-                    ])) {
-                        $insertaccountsalescust = '1';
-                        $exSalesCust = $exs->getMessage();
+            foreach ($selectcust as $ps) {
+                $selectCekUserAccount = DB::select('SELECT count(*) FROM user_account 
+                            WHERE user_id = \''.$user_id.'\' AND account_no = \''.$ps->custcode.'\'');
+
+                if ($selectCekUserAccount[0]->count > 0) {
+                    try {
+                        UserAccount::where([
+                            'user_id' => $user_id,
+                            'account_no' => $ps->custcode
+                        ])->delete();
+                    } catch (QueryException $exs) {
+                        if (UserAccount::create([
+                            'user_id' => $user_id,
+                            'account_no' => $ps->custcode,
+                            'access_flag' => 'T',
+                        ])) {
+                            $insertaccountsalescust = '1';
+                            $exSalesCust = $exs->getMessage();
+                        }
                     }
                 }
             }

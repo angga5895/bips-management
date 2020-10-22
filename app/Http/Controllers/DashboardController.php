@@ -45,13 +45,13 @@ class DashboardController extends Controller
     public function countUserActivityLogin(){
         $query = DB::connection('pgsql2')->select('SELECT DISTINCT
                     (SELECT COUNT(DISTINCT user_id) cnt_web FROM user_activity WHERE terminal=\'web\' AND activity=\'LOGIN\' 
-                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('d M Y').'\'),
+                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
                     (SELECT COUNT(DISTINCT user_id) cnt_mobile FROM user_activity WHERE terminal=\'mobile\' AND activity=\'LOGIN\' 
-                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('d M Y').'\'),
+                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
                     (SELECT COUNT(DISTINCT user_id) cnt_pc FROM user_activity WHERE terminal=\'pc\' AND activity=\'LOGIN\'
-                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('d M Y').'\'),
+                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
                     (SELECT COUNT(DISTINCT user_id) cnt_web_mobile FROM user_activity WHERE terminal IN (\'web\',\'mobile\')
-                    AND activity=\'LOGIN\' AND status=\'SUCCESS\' AND timestamp::date=\''.date('d M Y').'\'),
+                    AND activity=\'LOGIN\' AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
                     CONCAT (CAST(to_char(now(), \'dd Mon YYYY HH24:MI:ss\') as varchar(4000)),\' WIB\') as now_date,
                     now() as dt
                     FROM user_activity');

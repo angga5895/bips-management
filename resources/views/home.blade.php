@@ -16,7 +16,7 @@
             <div class="col-sm-12 col-xs-12">
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
-                        <li class="breadcrumb-item"><a href="#"><i class="fa fa-home"></i> Dashboards</a></li>
+                        <li class="breadcrumb-item"><a href="#"><i class="fa fa-home"></i> Home</a></li>
                     </ol>
                 </nav>
             </div>

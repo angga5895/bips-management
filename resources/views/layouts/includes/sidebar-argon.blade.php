@@ -101,7 +101,7 @@
             </form>--}}
 
             <!-- Heading -->
-            <h6 class="navbar-heading text-muted">Dashboard</h6>
+            <h6 class="navbar-heading text-muted">DXADMIN</h6>
             <!-- Divider -->
             {{--<hr class="my-0">--}}
             <!-- Navigation -->

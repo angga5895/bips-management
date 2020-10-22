@@ -34,6 +34,8 @@ Route::group(['middleware' => 'auth'], function() {
     //page report
     Route::get('/report/dailylogin', 'ReportController@dailylogin')->name('report.dailylogin');
     Route::get('/report/monthlylogin', 'ReportController@monthlylogin')->name('report.monthlylogin');
+    //page dashboards
+    Route::get('/dashboard', 'DashboardController@dashboard')->name('dashboard');
 
     Route::get('get-becust', 'RiskManagementController@getBECust');
     Route::get('get-becuststock/{id}', 'RiskManagementController@getBECustStock');
@@ -46,6 +48,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('chartmonthlylogin-get', 'ReportController@chartMonthlyLogin');
     Route::get('datamonthlylogin-get', 'ReportController@dataMonthlyLogin');
     Route::get('reportmonthlylogin-get', 'ReportController@monthlyReport');
+    Route::get('countuseractivity-get', 'DashboardController@countUserActivityLogin');
 
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');

@@ -43,6 +43,6 @@ class HomeController extends Controller
                                     ORDER BY cl_app.cla_order;
                             ');
 
-        return view('home', ['title' => 'Dashboard', 'countgroup'=>$countgroup, 'clapp' => $clapp, 'role_app' => $role_app]);
+        return view('home', ['title' => 'Home', 'countgroup'=>$countgroup, 'clapp' => $clapp, 'role_app' => $role_app]);
     }
 }

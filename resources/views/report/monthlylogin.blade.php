@@ -68,10 +68,6 @@
                 responsive: true,
                 aaSorting: [[0, 'desc']],
                 bFilter:false,
-                dom: 'l<"toolbar">frtip',
-                initComplete: function(){
-                    $("div.toolbar").html('<button class="form-control-btn-0 btn btn-outline-default mb-2" type="button" onclick="exportExcel()"><i style="color: #00b862" class="fa fa-file-excel"></i> Export Excel</button>');
-                },
                 ajax : {
                     url: '{{ url("datamonthlylogin-get") }}',
                     data: function (d) {
@@ -663,6 +659,9 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            <div class="toolbar">
+                                <button class="form-control-btn-0 btn btn-outline-default mb-0" type="button" onclick="exportExcel()"><i style="color: #00b862" class="fa fa-file-excel"></i> Export Excel</button>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="table-monthly">
                                     <thead class="bg-gradient-primary text-lighter">

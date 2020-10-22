@@ -31,12 +31,21 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/tradelimit', 'RiskManagementController@tradelimit')->name('riskmanagement.tradelimit');
     Route::get('/statistics/tradesummary', 'StatisticController@tradesummary')->name('statistic.tradesummary');
     Route::get('/statistics/customersummary', 'StatisticController@customersummary')->name('statistic.customersummary');
+    //page report
+    Route::get('/report/dailylogin', 'ReportController@dailylogin')->name('report.dailylogin');
+    Route::get('/report/monthlylogin', 'ReportController@monthlylogin')->name('report.monthlylogin');
 
     Route::get('get-becust', 'RiskManagementController@getBECust');
     Route::get('get-becuststock/{id}', 'RiskManagementController@getBECustStock');
     //feature
     Route::get('charttradesummary-get', 'StatisticController@chartTradeSummary');
     Route::get('chartcustomersummary-get', 'StatisticController@chartCustomerSummary');
+    Route::get('chartdailylogin-get', 'ReportController@chartDailyLogin');
+    Route::get('datadailylogin-get', 'ReportController@dataDailyLogin');
+    Route::get('reportdailylogin-get', 'ReportController@dailyReport');
+    Route::get('chartmonthlylogin-get', 'ReportController@chartMonthlyLogin');
+    Route::get('datamonthlylogin-get', 'ReportController@dataMonthlyLogin');
+    Route::get('reportmonthlylogin-get', 'ReportController@monthlyReport');
 
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');

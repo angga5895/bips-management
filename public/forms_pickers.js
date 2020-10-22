@@ -43,6 +43,17 @@ $(function() {
         todayBtn: "linked",
     });
     $('#datepicker-inline').datepicker();
+
+    $("#monthPicker").datepicker({
+        orientation: isRtl ? 'auto right' : 'auto left',
+        startDate: '01/1920',
+        endDate : sd,
+        autoclose: true,
+        format:"MM yyyy",
+        viewMode : "months",
+        minViewMode : "months",
+        todayBtn: "linked",
+    });
 });
 
 // Bootstrap Daterangepicker

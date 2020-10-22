@@ -385,7 +385,7 @@ class PrivilegeController extends Controller
     public function checkclApp(){
         $role_app = $_GET['role_app'];
 
-        $clapp = DB::select('SELECT cl_permission_app_mod.clp_role_app, cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app_mod
+        $clappmod = DB::select('SELECT cl_permission_app_mod.clp_role_app, cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app_mod
                                 LEFT JOIN cl_app ON cl_app.cla_id = cl_app_mod.clam_cla_id
                                 LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
                                 LEFT JOIN cl_permission_app_mod ON cl_permission_app_mod.clp_app_mod = cl_app_mod.id
@@ -395,6 +395,16 @@ class PrivilegeController extends Controller
                                 AND cl_permission_app_mod.clp_role_app = '.$role_app.'
                                 AND cl_permission_app.clp_role_app = '.$role_app.' 
                                 ORDER BY cl_app_mod.id;');
+        $clapps = DB::select('SELECT cl_permission_app.clp_role_app, cl_app_mod.*, cl_app.*, cl_module.* FROM cl_app
+                                LEFT JOIN cl_app_mod ON cl_app.cla_id = cl_app_mod.clam_cla_id
+                                LEFT JOIN cl_module ON cl_module.clm_id = cl_app_mod.clam_clm_id
+                                LEFT JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                LEFT JOIN role_app ON role_app.id = cl_permission_app.clp_role_app
+                                WHERE cl_app.cla_module = FALSE
+                                AND cl_permission_app.clp_role_app = '.$role_app.' 
+                                ORDER BY cl_app_mod.id;');
+
+        $clapp = array_merge($clappmod,$clapps);
         return response()->json($clapp);
     }
 

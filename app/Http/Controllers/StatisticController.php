@@ -95,7 +95,7 @@ class StatisticController extends Controller
         $tgl_awal = $_GET['tgl_awal'];
         $tgl_akhir = $_GET['tgl_akhir'];
 
-        $tsummary = DB::select('SELECT * FROM stat_trade_summary
+        $tsummary = DB::connection('pgsql2')->select('SELECT * FROM stat_trade_summary
                         WHERE rec_date BETWEEN \''.$tgl_awal.'\' AND \''.$tgl_akhir.'\'
                         ORDER BY rec_date ASC');
         return response()->json($tsummary);
@@ -105,7 +105,7 @@ class StatisticController extends Controller
         $tgl_awal = $_GET['tgl_awal'];
         $tgl_akhir = $_GET['tgl_akhir'];
 
-        $tsummary = DB::select('SELECT * FROM stat_customer_summary
+        $tsummary = DB::connection('pgsql2')->select('SELECT * FROM stat_customer_summary
                         WHERE rec_date BETWEEN \''.$tgl_awal.'\' AND \''.$tgl_akhir.'\'
                         ORDER BY rec_date ASC');
         return response()->json($tsummary);

@@ -17,9 +17,6 @@
     <script src="{{ url('bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
 
     <script src="{{ url('forms_pickers.js') }}"></script>
-
-    {{--<script src="{{ url('charts_morrisjs.js') }}"></script>--}}
-
     <script type="text/javascript">
         var chartBar = 0;
         var chartLine = 0;
@@ -27,22 +24,97 @@
 
         var barshow1 = 0;
         var barshow2 = 0;
+        var barshow3 = 0;
         var lineshow1 = 0;
         var lineshow2 = 0;
+        var lineshow3 = 0;
         var areashow1 = 0;
         var areashow2 = 0;
+        var areashow3 = 0;
+
         $(document).ready(function () {
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
             $('.bootstrap-select').selectpicker();
 
+            tablegetDaily();
             var lastmonth = new Date($("#tgl_awal").val());
             var thismonth = new Date($("#tgl_akhir").val());
             $("#tgl_awal_current").datepicker("setDate",lastmonth);
             $("#tgl_akhir_current").datepicker("setDate",thismonth);
             chartSummary();
         });
+
+        function exportExcel() {
+            $.ajax({
+                type    : "GET",
+                url     : "{{url('reportdailylogin-get')}}",
+                data    : {
+                    'tgl_awal': $("#tgl_awal").val(),
+                    'tgl_akhir': $("#tgl_akhir").val()
+                },
+                complete : function (){
+                    window.location = this.url;
+                    console.log('Export Excel Success..');
+                }
+            });
+        }
+
+        function tablegetDaily() {
+            var tableData = $("#table-daily").DataTable({
+                /*processing: true,
+                serverSide: true,*/
+                responsive: true,
+                aaSorting: [[0, 'desc']],
+                bFilter:false,
+                dom: 'l<"toolbar">frtip',
+                initComplete: function(){
+                    $("div.toolbar").html('<button class="form-control-btn-0 btn btn-outline-default mb-2" type="button" onclick="exportExcel()"><i style="color: #00b862" class="fa fa-file-excel"></i> Export Excel</button>');
+                },
+                ajax : {
+                    url: '{{ url("datadailylogin-get") }}',
+                    data: function (d) {
+                        var search_data = {
+                            tgl_awal: $("#tgl_awal").val(),
+                            tgl_akhir: $("#tgl_akhir").val(),
+                        };
+                        d.search_param = search_data;
+                    }
+                },
+                columns : [
+                    {data : 'rec_date', name: 'rec_date'},
+                    {data : 'web', name: 'web'},
+                    {data : 'mobile', name: 'mobile'},
+                    {data : 'web_mobile', name: 'web_mobile'},
+                ],
+                columnDefs: [{
+                    targets : [0],
+                    searchable : true,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : getDateBipsShort(data);
+                    }
+                },{
+                    targets : [1],
+                    searchable : true,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                    }
+                },{
+                    targets : [2],
+                    searchable : true,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                    }
+                },{
+                    targets : [3],
+                    searchable : true,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                    }
+                }]
+            });
+        }
 
         function getDateBipsShort(tanggal){
             var datetime = tanggal.split(" ");
@@ -142,12 +214,19 @@
                 } else {
                     $("#barlgnd0").css('color', rgb2hex($("#barlgnd0").css('color'))+'40');
                 }
-            } else {
+            } else if(idlgnd === 'barlgnd1'){
                 barshow2++
                 if (barshow2%2 === 0){
                     $("#barlgnd1").css('color', rgb2hex($("#barlgnd1").css('color')).substr(0,7));
                 } else {
                     $("#barlgnd1").css('color', rgb2hex($("#barlgnd1").css('color'))+'40');
+                }
+            } else {
+                barshow3++
+                if (barshow3%2 === 0){
+                    $("#barlgnd2").css('color', rgb2hex($("#barlgnd2").css('color')).substr(0,7));
+                } else {
+                    $("#barlgnd2").css('color', rgb2hex($("#barlgnd2").css('color'))+'40');
                 }
             }
             chartSummary();
@@ -162,12 +241,19 @@
                 } else {
                     $("#linelgnd0").css('color', rgb2hex($("#linelgnd0").css('color'))+'40');
                 }
-            } else {
+            } else if (idlgnd === 'linelgnd1'){
                 lineshow2++
                 if (lineshow2%2 === 0){
                     $("#linelgnd1").css('color', rgb2hex($("#linelgnd1").css('color')).substr(0,7));
                 } else {
                     $("#linelgnd1").css('color', rgb2hex($("#linelgnd1").css('color'))+'40');
+                }
+            } else {
+                lineshow3++
+                if (lineshow3%2 === 0){
+                    $("#linelgnd2").css('color', rgb2hex($("#linelgnd2").css('color')).substr(0,7));
+                } else {
+                    $("#linelgnd2").css('color', rgb2hex($("#linelgnd2").css('color'))+'40');
                 }
             }
             chartSummary();
@@ -182,28 +268,38 @@
                 } else {
                     $("#arealgnd0").css('color', rgb2hex($("#arealgnd0").css('color'))+'40');
                 }
-            } else {
+            } else if(idlgnd === 'arealgnd1'){
                 areashow2++
                 if (areashow2%2 === 0){
                     $("#arealgnd1").css('color', rgb2hex($("#arealgnd1").css('color')).substr(0,7));
                 } else {
                     $("#arealgnd1").css('color', rgb2hex($("#arealgnd1").css('color'))+'40');
                 }
+            } else {
+                areashow3++
+                if (areashow3%2 === 0){
+                    $("#arealgnd2").css('color', rgb2hex($("#arealgnd2").css('color')).substr(0,7));
+                } else {
+                    $("#arealgnd2").css('color', rgb2hex($("#arealgnd2").css('color'))+'40');
+                }
             }
             chartSummary();
         }
 
         function chartSummary(){
-            let tgllast = new Date($("#tgl_awal_current").val());
-            let getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
+            var tgllast = new Date($("#tgl_awal_current").val());
+            var getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
 
-            let tglthis = new Date($("#tgl_akhir_current").val());
-            let getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1) + "/" + appendLeadingZeroes(tglthis.getDate());
+            var tglthis = new Date($("#tgl_akhir_current").val());
+            var getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1) + "/" + appendLeadingZeroes(tglthis.getDate());
+
+            $("#tgl_awal").val(getlastdate);
+            $("#tgl_akhir").val(getthisdate);
 
             console.log(getlastdate+" & "+getthisdate);
             $.ajax({
                 type: "GET",
-                url: "{{ url('chartcustomersummary-get') }}",
+                url: "{{ url('chartdailylogin-get') }}",
                 data: {
                     'tgl_awal': getlastdate,
                     'tgl_akhir': getthisdate,
@@ -245,17 +341,29 @@
                         }
 
                         //chart line
-                        var ykeysLine = ['total'];
-                        var lineColor = ['#5ECBAF','#ABD448'];
-                        if (lineshow1%2 === 0 && lineshow2%2 !== 0){
-                            ykeysLine = ['total'];
-                            lineColor = ['#5ECBAF','#ABD44840'];
-                        } else if (lineshow1%2 !== 0 && lineshow2%2 === 0){
-                            ykeysLine = [''];
-                            lineColor = ['#ABD448', '#5ECBAF40'];
-                        } else if (lineshow1%2 !== 0 && lineshow2%2 !== 0){
-                            ykeysLine = ['',''];
-                            lineColor = ['#ABD44840', '#5ECBAF40'];
+                        var ykeysLine = ['web','mobile','web_mobile'];
+                        var lineColor = ['#5ECBAF','#ABD448','#F5365C'];
+                        if (lineshow1%2 === 0 && lineshow2%2 === 0 && lineshow3%2 !== 0){
+                            ykeysLine = ['web','mobile'];
+                            lineColor = ['#5ECBAF','#ABD448','#F5365C0'];
+                        } else if (lineshow1%2 === 0 && lineshow2%2 !== 0 && lineshow3%2 === 0){
+                            ykeysLine = ['web','web_mobile'];
+                            lineColor = ['#5ECBAF','#F5365C','#ABD4480'];
+                        } else if (lineshow1%2 !== 0 && lineshow2%2 === 0 && lineshow3%2 === 0){
+                            ykeysLine = ['mobile','web_mobile'];
+                            lineColor = ['#ABD448','#F5365C','#5ECBAF0'];
+                        } else if (lineshow1%2 === 0 && lineshow2%2 !== 0 && lineshow3%2 !== 0){
+                            ykeysLine = ['web'];
+                            lineColor = ['#5ECBAF','#ABD4480', '#F5365C0'];
+                        } else if (lineshow1%2 !== 0 && lineshow2%2 === 0 && lineshow3%2 !== 0){
+                            ykeysLine = ['mobile'];
+                            lineColor = ['#ABD448','#5ECBAF40','#F5365C0'];
+                        } else if (lineshow1%2 !== 0 && lineshow2%2 !== 0 && lineshow3%2 === 0){
+                            ykeysLine = ['web_mobile'];
+                            lineColor = ['#F5365C','#5ECBAF40','#ABD4480'];
+                        } else if (lineshow1%2 !== 0 && lineshow2%2 !== 0 && lineshow3%2 !== 0){
+                            ykeysLine = ['','',''];
+                            lineColor = ['#ABD44840', '#5ECBAF40', '#F5365C0'];
                         }
 
                         var gridBorder = '#eeeeee';
@@ -265,7 +373,7 @@
                                 return new Date(a.rec_date) - new Date(b.rec_date)}),
                             xkey: 'rec_date',
                             ykeys: ykeysLine,
-                            labels: ['Total'],
+                            labels: ['Web','Mobile','Web Mobile'],
                             xLabelFormat: function (x) {
                                 Date.prototype.toShortFormat = function () {
 
@@ -285,26 +393,23 @@
                                 return x.toShortFormat();
                             },
                             hoverCallback: function (index, options, content, row) {
-                                var total = row.total;
-                                var active = row.active;
-                                var suspend_trade = row.suspend_trade;
-                                var suspend_buy = row.suspend_buy;
-                                var suspend_sell = row.suspend_sell;
+                                var mobile = row.mobile;
+                                var web = row.web;
+                                var webmobile = row.web_mobile;
+                                var desktop = row.desktop;
 
-                                if (total === null){total = '-';}
-                                if (active === null){active = '-';}
-                                if (suspend_trade === null){suspend_trade = '-';}
-                                if (suspend_buy === null){suspend_buy = '-';}
-                                if (suspend_sell === null){suspend_sell = '-';}
+                                if (mobile === null){mobile = '-';}
+                                if (web === null){web = '-';}
+                                if (webmobile === null){webmobile = '-';}
+                                if (desktop === null){desktop = '-';}
 
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total : " + total + "</div>" +
-                                    "<div class='text-primary'>Active : " + active + "</div>" +
-                                    "<div class='text-light'>Suspend Trade : " + suspend_trade + "</div>" +
-                                    "<div class='text-danger'>Suspend Buy : " + suspend_buy + "</div>" +
-                                    "<div class='text-success'>Suspend Sell : " + suspend_sell + "</div>";
+                                    "<div style='color: #FFC107'>Mobile : " + mobile + "</div>" +
+                                    "<div class='text-danger'>Web : " + web + "</div>" +
+                                    "<div class='text-light'>Web Mobile : " + webmobile + "</div>" +
+                                    "<div class='text-success'>Desktop : " + desktop + "</div>";
                             },
                             lineWidth: 1,
                             pointSize: 4,
@@ -327,17 +432,29 @@
                         chartLine++;
 
                         //chart bar
-                        var ykeysBars = ['total'];
-                        var barsColor = ['#5ECBAF','#ABD448'];
-                        if (barshow1%2 === 0 && barshow2%2 !== 0){
-                            ykeysBars = ['total'];
-                            barsColor = ['#5ECBAF','#ABD44840'];
-                        } else if (barshow1%2 !== 0 && barshow2%2 === 0){
-                            ykeysBars = [];
-                            barsColor = ['#ABD448', '#5ECBAF40'];
-                        } else if (barshow1%2 !== 0 && barshow2%2 !== 0){
-                            ykeysBars = [];
-                            barsColor = ['#ABD44840', '#5ECBAF40'];
+                        var ykeysBars = ['web','mobile','web_mobile'];
+                        var barsColor = ['#5ECBAF','#ABD448','#F5365C'];
+                        if (barshow1%2 === 0 && barshow2%2 === 0 && barshow3%2 !== 0){
+                            ykeysBars = ['web','mobile'];
+                            barsColor = ['#5ECBAF','#ABD448','#F5365C0'];
+                        } else if (barshow1%2 === 0 && barshow2%2 !== 0 && barshow3%2 === 0){
+                            ykeysBars = ['web','web_mobile'];
+                            barsColor = ['#5ECBAF','#F5365C','#ABD4480'];
+                        } else if (barshow1%2 !== 0 && barshow2%2 === 0 && barshow3%2 === 0){
+                            ykeysBars = ['mobile','web_mobile'];
+                            barsColor = ['#ABD448','#F5365C','#5ECBAF0'];
+                        } else if (barshow1%2 === 0 && barshow2%2 !== 0 && barshow3%2 !== 0){
+                            ykeysBars = ['web'];
+                            barsColor = ['#5ECBAF','#ABD4480', '#F5365C0'];
+                        } else if (barshow1%2 !== 0 && barshow2%2 === 0 && barshow3%2 !== 0){
+                            ykeysBars = ['mobile'];
+                            barsColor = ['#ABD448','#5ECBAF40','#F5365C0'];
+                        } else if (barshow1%2 !== 0 && barshow2%2 !== 0 && barshow3%2 === 0){
+                            ykeysBars = ['web_mobile'];
+                            barsColor = ['#F5365C','#5ECBAF40','#ABD4480'];
+                        } else if (barshow1%2 !== 0 && barshow2%2 !== 0 && barshow3%2 !== 0){
+                            ykeysBars = ['','',''];
+                            barsColor = ['#ABD44840', '#5ECBAF40', '#F5365C0'];
                         }
 
                         var mBar = new Morris.Bar({
@@ -346,31 +463,28 @@
                                 return new Date(a.rec_date) - new Date(b.rec_date)}),
                             xkey: 'rec_date',
                             ykeys: ykeysBars,
-                            labels: ['Total'],
+                            labels: ['Web', 'Mobile', 'Web Mobile'],
                             xLabelFormat: function (x) {
                                 return getDateBipsShort(x.src.rec_date);
                             },
                             hoverCallback: function (index, options, content, row) {
-                                var total = row.total;
-                                var active = row.active;
-                                var suspend_trade = row.suspend_trade;
-                                var suspend_buy = row.suspend_buy;
-                                var suspend_sell = row.suspend_sell;
+                                var mobile = row.mobile;
+                                var web = row.web;
+                                var webmobile = row.web_mobile;
+                                var desktop = row.desktop;
 
-                                if (total === null){total = '-';}
-                                if (active === null){active = '-';}
-                                if (suspend_trade === null){suspend_trade = '-';}
-                                if (suspend_buy === null){suspend_buy = '-';}
-                                if (suspend_sell === null){suspend_sell = '-';}
+                                if (mobile === null){mobile = '-';}
+                                if (web === null){web = '-';}
+                                if (webmobile === null){webmobile = '-';}
+                                if (desktop === null){desktop = '-';}
 
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total : " + total + "</div>" +
-                                    "<div class='text-primary'>Active : " + active + "</div>" +
-                                    "<div class='text-light'>Suspend Trade : " + suspend_trade + "</div>" +
-                                    "<div class='text-danger'>Suspend Buy : " + suspend_buy + "</div>" +
-                                    "<div class='text-success'>Suspend Sell : " + suspend_sell + "</div>";
+                                    "<div style='color: #FFC107'>Mobile : " + mobile + "</div>" +
+                                    "<div class='text-danger'>Web : " + web + "</div>" +
+                                    "<div class='text-light'>Web Mobile : " + webmobile + "</div>" +
+                                    "<div class='text-success'>Desktop : " + desktop + "</div>";
                             },
                             barRatio: 0.4,
                             /*xLabelAngle: 35,*/
@@ -392,17 +506,29 @@
                         chartBar++;
 
                         //chart area
-                        var ykeysArea = ['total'];
-                        var areaColor = ['#5ECBAF','#ABD448','#ff0200'];
-                        if (areashow1%2 === 0 && areashow2%2 !== 0){
-                            ykeysArea = ['total'];
-                            areaColor = ['#5ECBAF','#ABD44840'];
-                        } else if (areashow1%2 !== 0 && areashow2%2 === 0){
-                            ykeysArea = [''];
-                            areaColor = ['#ABD448', '#5ECBAF40'];
-                        } else if (areashow1%2 !== 0 && areashow2%2 !== 0){
-                            ykeysArea = [''];
-                            areaColor = ['#ABD44840', '#5ECBAF40'];
+                        var ykeysArea = ['web','mobile','web_mobile'];
+                        var areaColor = ['#5ECBAF','#ABD448','#F5365C'];
+                        if (areashow1%2 === 0 && areashow2%2 === 0 && areashow3%2 !== 0){
+                            ykeysArea = ['web','mobile'];
+                            areaColor = ['#5ECBAF','#ABD448','#F5365C0'];
+                        } else if (areashow1%2 === 0 && areashow2%2 !== 0 && areashow3%2 === 0){
+                            ykeysArea = ['web','web_mobile'];
+                            areaColor = ['#5ECBAF','#F5365C','#ABD4480'];
+                        } else if (areashow1%2 !== 0 && areashow2%2 === 0 && areashow3%2 === 0){
+                            ykeysArea = ['mobile','web_mobile'];
+                            areaColor = ['#ABD448','#F5365C','#5ECBAF0'];
+                        } else if (areashow1%2 === 0 && areashow2%2 !== 0 && areashow3%2 !== 0){
+                            ykeysArea = ['web'];
+                            areaColor = ['#5ECBAF','#ABD4480', '#F5365C0'];
+                        } else if (areashow1%2 !== 0 && areashow2%2 === 0 && areashow3%2 !== 0){
+                            ykeysArea = ['mobile'];
+                            areaColor = ['#ABD448','#5ECBAF40','#F5365C0'];
+                        } else if (areashow1%2 !== 0 && areashow2%2 !== 0 && areashow3%2 === 0){
+                            ykeysArea = ['web_mobile'];
+                            areaColor = ['#F5365C','#5ECBAF40','#ABD4480'];
+                        } else if (areashow1%2 !== 0 && areashow2%2 !== 0 && areashow3%2 !== 0){
+                            ykeysArea = ['','',''];
+                            areaColor = ['#ABD44840', '#5ECBAF40', '#F5365C0'];
                         }
 
                         var mArea = new Morris.Area({
@@ -411,7 +537,7 @@
                                 return new Date(a.rec_date) - new Date(b.rec_date)}),
                             xkey: 'rec_date',
                             ykeys: ykeysArea,
-                            labels: ['Total'],
+                            labels: ['Web', 'Mobile', 'Web Mobile'],
                             xLabelFormat: function (x) {
                                 Date.prototype.toShortFormat = function () {
 
@@ -431,25 +557,23 @@
                                 return x.toShortFormat();
                             },
                             hoverCallback: function (index, options, content, row) {
-                                var total = row.total;
-                                var active = row.active;
-                                var suspend_trade = row.suspend_trade;
-                                var suspend_buy = row.suspend_buy;
-                                var suspend_sell = row.suspend_sell;
+                                var mobile = row.mobile;
+                                var web = row.web;
+                                var webmobile = row.web_mobile;
+                                var desktop = row.desktop;
 
-                                if (total === null){total = '-';}
-                                if (active === null){active = '-';}
-                                if (suspend_trade === null){suspend_trade = '-';}
-                                if (suspend_buy === null){suspend_buy = '-';}
-                                if (suspend_sell === null){suspend_sell = '-';}
+                                if (mobile === null){mobile = '-';}
+                                if (web === null){web = '-';}
+                                if (webmobile === null){webmobile = '-';}
+                                if (desktop === null){desktop = '-';}
+
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.rec_date) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Total : " + total + "</div>" +
-                                    "<div class='text-primary'>Active : " + active + "</div>" +
-                                    "<div class='text-light'>Suspend Trade : " + suspend_trade + "</div>" +
-                                    "<div class='text-danger'>Suspend Buy : " + suspend_buy + "</div>" +
-                                    "<div class='text-success'>Suspend Sell : " + suspend_sell + "</div>";
+                                    "<div style='color: #FFC107'>Mobile : " + mobile + "</div>" +
+                                    "<div class='text-danger'>Web : " + web + "</div>" +
+                                    "<div class='text-light'>Web Mobile : " + webmobile + "</div>" +
+                                    "<div class='text-success'>Desktop : " + desktop + "</div>";
                             },
                             hideHover: 'auto',
                             lineColors: areaColor,
@@ -478,12 +602,14 @@
                             '<div>' +
                             'No data available in chart' +
                             '</div></div>' + '');
+
                         $("#morrisjs-graph").addClass('chart-empty');
                         $("#morrisjs-graph").append('' +
                             '<div style="font-size: 18px"><i class="ni ni-sound-wave" style="font-size: 36px"></i>' +
                             '<div>' +
                             'No data available in chart' +
                             '</div></div>' + '');
+
                         $("#morrisjs-area").addClass('chart-empty');
                         $("#morrisjs-area").append('' +
                             '<div style="font-size: 18px"><i class="ni ni-sound-wave" style="font-size: 36px"></i>' +
@@ -491,6 +617,7 @@
                             'No data available in chart' +
                             '</div></div>' + '');
                     }
+                    $('#table-daily').DataTable().ajax.reload();
                 }
             });
         }
@@ -515,37 +642,72 @@
         <hr class="mt-0 bg-white mb-2">
     </div>
 
-    <div class="card shadow" id="main-user">
+    <div class="card shadow">
         <div class="card card-header">
             <form class="form-inline">
-                <label class="form-control-label pr-5 mb-2">Type Chart :</label>
-                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="chartType"  onchange="chartSummary();">
-                    <option value="1" selected>Chart Bar</option>
-                    <option value="2">Chart Line</option>
-                    <option value="3">Chart Area</option>
-                </select>
-                &nbsp;&nbsp;
+                <label class="form-control-label pr-5 mb-2">Filter by :</label>
                 <div class="ml-input-2 input-daterange input-group" id="datepicker-range">
-                    <input type="text" class="form-control" name="start" id="tgl_awal_current" readonly value="{{ $lastmonth }}" onchange="chartSummary();">
+                    <input type="text" class="form-control" name="start" id="tgl_awal_current" readonly value="{{ $startmonth }}" onchange="chartSummary();">
                     <div class="input-group-prepend">
                         <span class="input-group-text">To</span>
                     </div>
                     <input type="text" class="form-control" name="end" id="tgl_akhir_current" readonly value="{{ $thismonth }}" onchange="chartSummary();">
                 </div>&nbsp;&nbsp;
                 <button class="form-control-btn btn btn-primary mb-1" type="button" id="btn-current" onclick="chartSummary();">Refresh</button>
-                <input value="{{ $lastmonth }}" type="hidden" id="tgl_awal"/>
+                <input value="{{ $startmonth }}" type="hidden" id="tgl_awal"/>
                 <input value="{{ $thismonth }}" type="hidden" id="tgl_akhir"/>
             </form>
         </div>
         <div class="card card-body" style="min-height: 365px">
-            <div class="demo-vertical-spacing-lg">
-                <div id="morrisjs-bars" class="chart-empty chart-height" style="width:auto"></div>
-                <div id="legendBars" style="text-align: center"></div>
-                <div id="morrisjs-graph" class="d-none chart-height" style="width:auto"></div>
-                <div id="legendLine" class="d-none" style="text-align: center"></div>
-                <div id="morrisjs-area" class="d-none chart-height" style="width:auto"></div>
-                <div id="legendArea" class="d-none" style="text-align: center"></div>
-            </div>
+            <section class="content">
+
+                <!-- Default box -->
+                <div class="box">
+                    <div class="box-body">
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="table-daily">
+                                    <thead class="bg-gradient-primary text-lighter">
+                                    <tr>
+                                        <th>Rec Date</th>
+                                        <th>Web</th>
+                                        <th>Mobile</th>
+                                        <th>Web Mobile</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="box-header">
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            <form class="form-inline">
+                                <label class="form-control-label pr-5 mb-2">Type Chart :</label>
+                                <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="chartType"  onchange="chartSummary();">
+                                    <option value="1" selected>Chart Bar</option>
+                                    <option value="2">Chart Line</option>
+                                    <option value="3">Chart Area</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            <div class="demo-vertical-spacing-lg">
+                                <div id="morrisjs-bars" class="chart-empty chart-height" style="width:auto"></div>
+                                <div id="legendBars" style="text-align: center"></div>
+                                <div id="morrisjs-graph" class="d-none chart-height" style="width:auto"></div>
+                                <div id="legendLine" class="d-none" style="text-align: center"></div>
+                                <div id="morrisjs-area" class="d-none chart-height" style="width:auto"></div>
+                                <div id="legendArea" class="d-none" style="text-align: center"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 @endsection

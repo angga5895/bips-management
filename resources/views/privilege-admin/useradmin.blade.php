@@ -846,7 +846,7 @@
             <div class="col-sm-12 col-xs-12">
                 <nav aria-label="breadcrumb" class="d-inline-block ml-0 w-100">
                     <ol class="breadcrumb breadcrumb-links breadcrumb-dark mb-2">
-                        <li class="breadcrumb-item active"><i class="ni ni-single-02"></i> @foreach($clapps as $p) {{ $p->cla_name }} @endforeach</li>
+                        <li class="breadcrumb-item active"><i class="@foreach($clapps as $p) {{ $p->cla_icon }} @endforeach" style="color: #8898aa!important;"></i> @foreach($clapps as $p) {{ $p->cla_name }} @endforeach</li>
                         <li class="breadcrumb-item active" aria-current="page"> @foreach($clmodule as $p) {{ $p->clm_name }} @endforeach</li>
                         <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
                         <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>

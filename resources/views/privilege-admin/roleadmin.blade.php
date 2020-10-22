@@ -941,7 +941,7 @@
                 )
             }
         });
-        
+
         function checkclapp(thees) {
             if ($(".chclapp"+thees).is(':checked')){
                 $(".chclappmod"+thees).prop('checked', true);

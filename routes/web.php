@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('datamonthlylogin-get', 'ReportController@dataMonthlyLogin');
     Route::get('reportmonthlylogin-get', 'ReportController@monthlyReport');
     Route::get('countuseractivity-get', 'DashboardController@countUserActivityLogin');
+    Route::get('toptrade-get', 'DashboardController@datatopTrade');
 
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');

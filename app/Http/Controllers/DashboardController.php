@@ -6,6 +6,7 @@ use App\RoleApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class DashboardController extends Controller
 {
@@ -55,7 +56,34 @@ class DashboardController extends Controller
                     CONCAT (CAST(to_char(now(), \'dd Mon YYYY HH24:MI:ss\') as varchar(4000)),\' WIB\') as now_date,
                     now() as dt
                     FROM user_activity');
-        return response()->json($query);
+
+        $query2 = DB::connection('pgsql2')->select('SELECT DISTINCT (Select sum(trade_value) sum_web_trade from v_trades WHERE source = \'Web\'),
+                    (Select sum(trade_value) sum_mobile_trade from v_trades WHERE source = \'Mobile\'),
+                    (Select sum(trade_value) sum_dealer_trade from v_trades WHERE source = \'Dealer\'),
+                    (Select sum(trade_value) sum_trade_all from v_trades) FROM v_trades');
+
+        $query3 = DB::connection('pgsql2')->select('SELECT DISTINCT (SELECT SUM(order_value) sum_web_order FROM v_order_all WHERE source = \'Web\'),
+                    (SELECT SUM(order_value) sum_mobile_order FROM v_order_all WHERE source = \'Mobile\'),
+                    (SELECT SUM(order_value) sum_dealer_order FROM v_order_all WHERE source = \'Dealer\'),
+                    (SELECT SUM(order_value) sum_order_all FROM v_order_all) FROM v_order_all');
+
+        $query4 = DB::connection('pgsql2')->select('SELECT DISTINCT (SELECT COUNT(*) cnt_web_order FROM v_order_all WHERE source = \'Web\'),
+                    (SELECT COUNT(*) cnt_mobile_order FROM v_order_all WHERE source = \'Mobile\'),
+                    (SELECT COUNT(*) cnt_dealer_order FROM v_order_all WHERE source = \'Dealer\') FROM v_order_all');
+
+        $query5 = DB::connection('pgsql2')->select('SELECT COUNT(DISTINCT base_account_no) cnt_trades FROM trades');
+
+        $query6 = DB::connection('pgsql2')->select('SELECT COUNT(DISTINCT base_account_no) cnt_orders FROM v_order_all');
+
+        return response()->json(array_merge(['user_activity' => $query],['sum_trade' => $query2],
+            ['sum_order' => $query3],['number_order' => $query4],
+            ['trades' => $query5],['orders' => $query6]));
+    }
+
+    public function datatopTrade(Request $request){
+        $data = DB::connection('pgsql2')->select('SELECT base_account_no, SUM(trade_value) total_val 
+                                  FROM v_trades GROUP BY base_account_no ORDER BY total_val DESC LIMIT 10;');
+        return DataTables::of($data)->make(true);
     }
 
 }

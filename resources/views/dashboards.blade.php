@@ -11,6 +11,8 @@
     <script src="{{ url('chart/eve/eve.js') }}"></script>
     <script src="{{ url('chart/raphael/raphael.js') }}"></script>
     <script src="{{ url('chart/morris/morris.js') }}"></script>
+    <script src="{{ url('chart/chartjs/chartjs.js') }}"></script>
+    <script src="{{ url('chart/chartjs/chartjs-plugin-label.js') }}"></script>
 
     <script src="{{ url('moment/moment.js') }}"></script>
     <script src="{{ url('bootstrap-datepicker/bootstrap-datepicker.js') }}"></script>
@@ -111,11 +113,85 @@
         }
 
         $(document).ready(function () {
+            $('.js-example-basic-single').select2({
+                placeholder: 'AOID'
+            });
+            $('.bootstrap-select').selectpicker();
             getuseractivity();
+            tablegetTopTrade();
             setInterval(function(){
                 getuseractivity();
+                $('#table-toptrade').DataTable().ajax.reload();
             }, 120000);
         });
+
+        function tablegetTopTrade() {
+            var tableData = $("#table-toptrade").DataTable({
+                /*processing: true,
+                serverSide: true,*/
+                responsive: true,
+                aaSorting: [[2, 'desc']],
+                bPaginate: false,
+                bInfo: false,
+                ajax : {
+                    url: '{{ url("toptrade-get") }}',
+                },
+                columns : [
+                    {data : 'base_account_no', name: 'base_account_no'},
+                    {data : 'base_account_no', name: 'base_account_no'},
+                    {data : 'total_val', name: 'total_val'},
+                ],
+                columnDefs: [{
+                    targets : [0],
+                    searchable : true,
+                    orderable:false,
+                    render : function (data, type, row, index) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : row;
+                    }
+                },{
+                    targets : [1],
+                    searchable : true,
+                    orderable:false,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                    }
+                },{
+                    targets : [2],
+                    searchable : true,
+                    orderable:false,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: right; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(Number(data))+'</div>';
+                    }
+                }]
+            });
+
+            tableData.on( 'order.dt search.dt', function () {
+                tableData.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                    cell.innerHTML = i+1;
+                } );
+            } ).draw();
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function changePie() {
+            var type = $("#piechartType").val();
+
+            if (type === '1'){
+                $("#pie-trade").removeClass('d-none');
+                $("#pie-order").addClass('d-none');
+            } else {
+                $("#pie-order").removeClass('d-none');
+                $("#pie-trade").addClass('d-none');
+            }
+
+            getuseractivity();
+            setTimeout(function () {
+                getuseractivity();
+            },100)
+        }
 
         function getuseractivity() {
             $.ajax({
@@ -124,11 +200,138 @@
                 success : function (res){
                     $("#morrisjs-bars").empty();
                     if ($.trim(res)) {
-                        $('.date-now').text(res[0].now_date);
-                        $("#cnt_web").text(res[0].cnt_web);
-                        $("#cnt_mobile").text(res[0].cnt_mobile);
-                        $("#cnt_web_mobile").text(res[0].cnt_web_mobile);
-                        $("#cnt_pc").text(res[0].cnt_pc);
+                        $('.date-now').text(res.user_activity[0].now_date);
+                        $("#cnt_web").text(numberWithCommas(Number(res.user_activity[0].cnt_web)));
+                        $("#cnt_mobile").text(numberWithCommas(Number(res.user_activity[0].cnt_mobile)));
+                        $("#cnt_web_mobile").text(numberWithCommas(Number(res.user_activity[0].cnt_web_mobile)));
+                        $("#cnt_pc").text(numberWithCommas(Number(res.user_activity[0].cnt_pc)));
+
+                        $("#sum_web_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_web_trade)));
+                        $("#sum_mobile_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_mobile_trade)));
+                        $("#sum_dealer_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_dealer_trade)));
+                        $("#sum_trade_all").text(numberWithCommas(Number(res.sum_trade[0].sum_trade_all)));
+
+                        $("#sum_web_order").text(numberWithCommas(Number(res.sum_order[0].sum_web_order)));
+                        $("#sum_mobile_order").text(numberWithCommas(Number(res.sum_order[0].sum_mobile_order)));
+                        $("#sum_dealer_order").text(numberWithCommas(Number(res.sum_order[0].sum_dealer_order)));
+                        $("#sum_order_all").text(numberWithCommas(Number(res.sum_order[0].sum_order_all)));
+
+                        $("#cnt_orders").text(numberWithCommas(Number(res.orders[0].cnt_orders)));
+                        $("#cnt_trades").text(numberWithCommas(Number(res.trades[0].cnt_trades)));
+                        $("#cnt_web_order").text(numberWithCommas(Number(res.number_order[0].cnt_web_order)));
+                        $("#cnt_mobile_order").text(numberWithCommas(Number(res.number_order[0].cnt_mobile_order)));
+                        $("#cnt_dealer_order").text(numberWithCommas(Number(res.number_order[0].cnt_dealer_order)));
+
+                        var piechrt1 = Number(res.sum_trade[0].sum_web_trade);
+                        var piechrt2 = Number(res.sum_trade[0].sum_mobile_trade);
+                        var piechrt3 = Number(res.sum_trade[0].sum_dealer_trade);
+
+                        //chartjs
+                        var chart6 = new Chart(document.getElementById('statistics-chart-6').getContext("2d"), {
+                            type: 'pie',
+                            data: {
+                                labels: ['WEB', 'MOBILE', 'DEALER'],
+                                datasets: [{
+                                    data: [piechrt1,piechrt2,piechrt3],
+                                    backgroundColor: ['rgba(99,125,138,0.5)', 'rgba(28,151,244,0.5)', 'rgba(2,188,119,0.5)'],
+                                    borderColor: ['#647c8a', '#2196f3', '#02bc77'],
+                                    hoverBackgroundColor: ['#647c8a', '#2196f3', '#02bc77'],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                scales: {
+                                    xAxes: [{
+                                        display: false,
+                                    }],
+                                    yAxes: [{
+                                        display: false
+                                    }]
+                                },
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        boxWidth: 12
+                                    }
+                                },
+                                responsive: false,
+                                maintainAspectRatio: false,
+                                tooltips: {
+                                    callbacks: {
+                                        title: function (tooltipItem, data) {
+                                            return data['labels'][tooltipItem[0]['index']];
+                                        },
+                                        label: function (tooltipItem, data) {
+                                            return numberWithCommas(data['datasets'][0]['data'][tooltipItem['index']]);
+                                        }
+                                    },
+                                },
+                                plugins: {
+                                    labels: {
+                                        render: 'percentage',
+                                        fontColor: ['white', 'white', 'white'],
+                                        precision: 2
+                                    }
+                                },
+                            }
+                        });
+                        chart6.resize();
+
+                        var opiechrt1 = Number(res.sum_order[0].sum_web_order);
+                        var opiechrt2 = Number(res.sum_order[0].sum_mobile_order);
+                        var opiechrt3 = Number(res.sum_order[0].sum_dealer_order);
+
+                        var chart5 = new Chart(document.getElementById('statistics-chart-5').getContext("2d"), {
+                            type: 'pie',
+                            data: {
+                                labels: ['WEB', 'MOBILE', 'DEALER'],
+                                datasets: [{
+                                    data: [opiechrt1,opiechrt2,opiechrt3],
+                                    backgroundColor: ['rgba(99,125,138,0.5)', 'rgba(28,151,244,0.5)', 'rgba(2,188,119,0.5)'],
+                                    borderColor: ['#647c8a', '#2196f3', '#02bc77'],
+                                    hoverBackgroundColor: ['#647c8a', '#2196f3', '#02bc77'],
+                                    borderWidth: 1
+                                }]
+                            },
+
+                            options: {
+                                scales: {
+                                    xAxes: [{
+                                        display: false,
+                                    }],
+                                    yAxes: [{
+                                        display: false
+                                    }]
+                                },
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        boxWidth: 12
+                                    }
+                                },
+                                responsive: false,
+                                maintainAspectRatio: false,
+                                tooltips: {
+                                    callbacks: {
+                                        title: function (tooltipItem, data) {
+                                            return data['labels'][tooltipItem[0]['index']];
+                                        },
+                                        label: function (tooltipItem, data) {
+                                            return numberWithCommas(data['datasets'][0]['data'][tooltipItem['index']]);
+                                        }
+                                    },
+                                },
+                                plugins: {
+                                    labels: {
+                                        render: 'percentage',
+                                        fontColor: ['white', 'white', 'white'],
+                                        precision: 2
+                                    }
+                                },
+                            }
+                        });
+                        chart5.resize();
 
                         $("#morrisjs-bars").removeClass('chart-empty');
                         $("#morrisjs-bars").removeClass('d-none');
@@ -137,37 +340,37 @@
                         var gridBorder = '#eeeeee';
 
                         //chart bar
-                        var ykeysBars = ['cnt_web','cnt_mobile','cnt_web_mobile','cnt_pc'];
+                        var ykeysBars = ['cnt_web','cnt_mobile','cnt_pc','cnt_web_mobile'];
                         var barsColor = ['#5ECBAF','#ABD448','#F5365C','#FFD600'];
                         if (barshow1%2 === 0 && barshow2%2 === 0 && barshow3%2 === 0 && barshow4%2 !== 0){
-                            ykeysBars = ['cnt_web','cnt_mobile','cnt_web_mobile'];
+                            ykeysBars = ['cnt_web','cnt_mobile','cnt_pc'];
                             barsColor = ['#5ECBAF','#ABD448','#F5365C','#FFD6000'];
                         } else if (barshow1%2 === 0 && barshow2%2 === 0 && barshow3%2 !== 0 && barshow4%2 === 0){
-                            ykeysBars = ['cnt_web','cnt_mobile','cnt_pc'];
+                            ykeysBars = ['cnt_web','cnt_mobile','cnt_web_mobile'];
                             barsColor = ['#5ECBAF','#ABD448','#FFD600','#F5365C0'];
                         } else if (barshow1%2 === 0 && barshow2%2 !== 0 && barshow3%2 === 0 && barshow4%2 === 0){
-                            ykeysBars = ['cnt_web','cnt_mobile','cnt_pc'];
+                            ykeysBars = ['cnt_web','cnt_pc','cnt_web_mobile'];
                             barsColor = ['#5ECBAF','#F5365C','#FFD600','#ABD4480'];
                         } else if (barshow1%2 !== 0 && barshow2%2 === 0 && barshow3%2 === 0 && barshow4%2 === 0){
-                            ykeysBars = ['cnt_web','cnt_mobile','cnt_pc'];
+                            ykeysBars = ['cnt_mobile','cnt_pc','cnt_web_mobile'];
                             barsColor = ['#ABD448','#F5365C','#FFD600','#5ECBAF0'];
                         } else if (barshow1%2 === 0 && barshow2%2 === 0 && barshow3%2 !== 0 && barshow4%2 !== 0){
                             ykeysBars = ['cnt_web','cnt_mobile'];
                             barsColor = ['#5ECBAF','#ABD448','#F5365C0','#FFD6000'];
                         } else if (barshow1%2 === 0 && barshow2%2 !== 0 && barshow3%2 === 0 && barshow4%2 !== 0){
-                            ykeysBars = ['cnt_web','cnt_web_mobile'];
+                            ykeysBars = ['cnt_web','cnt_pc'];
                             barsColor = ['#5ECBAF','#F5365C','#ABD4480','#FFD6000'];
                         } else if (barshow1%2 !== 0 && barshow2%2 === 0 && barshow3%2 === 0 && barshow4%2 !== 0){
-                            ykeysBars = ['cnt_mobile','cnt_web_mobile'];
+                            ykeysBars = ['cnt_mobile','cnt_pc'];
                             barsColor = ['#ABD448','#F5365C','#5ECBAF0','#FFD6000'];
                         } else if (barshow1%2 === 0 && barshow2%2 !== 0 && barshow3%2 !== 0 && barshow4%2 === 0){
-                            ykeysBars = ['cnt_web','cnt_pc'];
+                            ykeysBars = ['cnt_web','cnt_web_mobile'];
                             barsColor = ['#5ECBAF','#FFD600','#ABD4480','#F5365C0'];
                         } else if (barshow1%2 !== 0 && barshow2%2 !== 0 && barshow3%2 === 0 && barshow4%2 === 0){
-                            ykeysBars = ['cnt_web_mobile','cnt_pc'];
+                            ykeysBars = ['cnt_pc','cnt_web_mobile'];
                             barsColor = ['#F5365C','#FFD600','#5ECBAF0','#ABD4480'];
                         } else if (barshow1%2 !== 0 && barshow2%2 === 0 && barshow3%2 !== 0 && barshow4%2 === 0){
-                            ykeysBars = ['cnt_mobile','cnt_pc'];
+                            ykeysBars = ['cnt_mobile','cnt_web_mobile'];
                             barsColor = ['#ABD448','#FFD600','#F5365C0','#5ECBAF0'];
                         } else if (barshow1%2 === 0 && barshow2%2 !== 0 && barshow3%2 !== 0 && barshow4%2 !== 0){
                             ykeysBars = ['cnt_web'];
@@ -176,10 +379,10 @@
                             ykeysBars = ['cnt_mobile'];
                             barsColor = ['#ABD448','#5ECBAF40','#F5365C0','#FFD6000'];
                         } else if (barshow1%2 !== 0 && barshow2%2 !== 0 && barshow3%2 === 0 && barshow4%2 !== 0){
-                            ykeysBars = ['cnt_web_mobile'];
+                            ykeysBars = ['cnt_pc'];
                             barsColor = ['#F5365C','#5ECBAF40','#ABD4480','#FFD6000'];
                         } else if (barshow1%2 !== 0 && barshow2%2 !== 0 && barshow3%2 !== 0 && barshow4%2 === 0){
-                            ykeysBars = ['cnt_pc'];
+                            ykeysBars = ['cnt_web_mobile'];
                             barsColor = ['#FFD600','#5ECBAF40','#ABD4480','#F5365C0'];
                         } else if (barshow1%2 !== 0 && barshow2%2 !== 0 && barshow3%2 !== 0){
                             ykeysBars = ['','',''];
@@ -188,31 +391,31 @@
 
                         var mBar = new Morris.Bar({
                             element: 'morrisjs-bars',
-                            data: res,
+                            data: res.user_activity,
                             xkey: 'dt',
                             ykeys: ykeysBars,
-                            labels: ['Web', 'Mobile', 'Web Mobile', 'Desktop'],
+                            labels: ['Web', 'Mobile', 'Dealer', 'Web Mobile'],
                             xLabelFormat: function (x) {
-                                return getDateBipsShort(x.src.dt);
+                                return '';
                             },
                             hoverCallback: function (index, options, content, row) {
                                 var mobile = row.cnt_mobile;
                                 var web = row.cnt_web;
                                 var webmobile = row.cnt_web_mobile;
-                                var desktop = row.cnt_pc;
+                                var dealer = row.cnt_pc;
 
                                 if (mobile === null){mobile = '-';}
                                 if (web === null){web = '-';}
                                 if (webmobile === null){webmobile = '-';}
-                                if (desktop === null){desktop = '-';}
+                                if (dealer === null){dealer = '-';}
 
                                 return "" +
                                     "<div class='text-info'>" + getDateBipsShort(row.dt) + "</div>" +
                                     "<br/>" +
-                                    "<div style='color: #FFC107'>Mobile : " + mobile + "</div>" +
-                                    "<div class='text-danger'>Web : " + web + "</div>" +
-                                    "<div class='text-light'>Web Mobile : " + webmobile + "</div>" +
-                                    "<div class='text-success'>Desktop : " + desktop + "</div>";
+                                    "<div style='color: #FFC107'>Mobile : " + numberWithCommas(Number(mobile)) + "</div>" +
+                                    "<div class='text-danger'>Web : " + numberWithCommas(Number(web)) + "</div>" +
+                                    "<div class='text-success'>Dealer : " + numberWithCommas(Number(dealer)) + "</div>"+
+                                    "<div class='text-light'>Web Mobile : " + numberWithCommas(Number(webmobile)) + "</div>" ;
                             },
                             barRatio: 0.4,
                             /*xLabelAngle: 35,*/
@@ -257,6 +460,10 @@
                         {{--<li class="breadcrumb-item active" aria-current="page"> @foreach($clmodule as $p) {{ $p->clm_name }} @endforeach</li>--}}
                         <li id="breadAdditional" class="breadcrumb-item active d-none" aria-current="page"></li>
                         <li id="breadAdditionalText" class="breadcrumb-item active d-none" aria-current="page"></li>
+                        <div class="form-inline" style="position: absolute; right:20px; top: 2.5px;">
+                            <button class="form-control-btn btn btn btn-outline-secondary mb-1" onclick="getuseractivity();">
+                                <i class="fa fa-sync-alt"></i> Refresh</button>
+                        </div>
                     </ol>
                 </nav>
             </div>
@@ -269,6 +476,192 @@
             <section class="content">
                 <div class="box">
                     <div class="box-body">
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            Trade Statistics
+                            <div class="row">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">TOTAL AMOUNT</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_trade_all">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                                        <i class="ni ni-tag"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-luggage-cart"></i> TRADES AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">WEB</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_web_trade">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                                                        <i class="ni ni-laptop"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-luggage-cart"></i> TRADES AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">MOBILE</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_mobile_trade">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                                                        <i class="ni ni-mobile-button"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-luggage-cart"></i> TRADES AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">DEALER</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_dealer_trade">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                                                        <i class="ni ni-tv-2"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-luggage-cart"></i> TRADES AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            Order Statistics
+                            <div class="row">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">TOTAL AMOUNT</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_order_all">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                                        <i class="ni ni-tag"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-shopping-cart"></i> ORDER AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">WEB</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_web_order">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                                                        <i class="ni ni-laptop"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-shopping-cart"></i> ORDER AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">MOBILE</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_mobile_order">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                                                        <i class="ni ni-mobile-button"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-shopping-cart"></i> ORDER AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card card-stats">
+                                        <!-- Card body -->
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">DEALER</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="sum_dealer_order">0</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                                                        <i class="ni ni-tv-2"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 mb-0 text-sm">
+                                                <span class="text-success mr-2"><i class="fa fa-shopping-cart"></i> ORDER AMOUNT</span>
+                                                <span class="text-nowrap date-now"><?php echo date('d M Y H:i:s')." WIB"?></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                             User Activity
                             <div class="row">
@@ -322,12 +715,12 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col">
-                                                    <h5 class="card-title text-uppercase text-muted mb-0">WEB MOBILE</h5>
-                                                    <span class="h2 font-weight-bold mb-0" id="cnt_web_mobile">0</span>
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">DEALER</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="cnt_pc">0</span>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                                                        <i class="ni ni-world-2"></i>
+                                                    <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                                                        <i class="ni ni-tv-2"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -344,12 +737,12 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col">
-                                                    <h5 class="card-title text-uppercase text-muted mb-0">DESKTOP</h5>
-                                                    <span class="h2 font-weight-bold mb-0" id="cnt_pc">0</span>
+                                                    <h5 class="card-title text-uppercase text-muted mb-0">WEB MOBILE</h5>
+                                                    <span class="h2 font-weight-bold mb-0" id="cnt_web_mobile">0</span>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                                                        <i class="ni ni-tv-2"></i>
+                                                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                                                        <i class="ni ni-world-2"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -361,9 +754,77 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="demo-vertical-spacing-lg">
-                                <div id="morrisjs-bars" class="chart-empty chart-height" style="width:auto"></div>
-                                <div id="legendBars" style="text-align: center"></div>
+                        </div>
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            <div class="row">
+                                <div class="col-xl-6 col-md-12">
+                                    Stat User Activity
+                                    <div class="demo-vertical-spacing-lg">
+                                        <div id="morrisjs-bars" class="chart-empty chart-height" style="width:auto"></div>
+                                        <div id="legendBars" style="text-align: center"></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-md-12">
+                                    <form class="form-inline">
+                                        Stat &nbsp;
+                                        <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="piechartType" onchange="changePie();">
+                                            <option value="1" selected>Trade</option>
+                                            <option value="2">Order</option>
+                                        </select>
+                                    </form>
+                                    <div class="demo-vertical-spacing-lg" id="pie-trade">
+                                        <div class="chart-height" style="width:auto">
+                                            <canvas class="chart-height" id="statistics-chart-6"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="demo-vertical-spacing-lg d-none" id="pie-order">
+                                        <div class="chart-height" style="width:auto">
+                                            <canvas class="chart-height" id="statistics-chart-5"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            Other Statistics
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <tbody>
+                                    <tr class="bg-gradient-primary text-lighter">
+                                        <th rowspan="2">Number Of Order</th>
+                                        <th>Web</th>
+                                        <th>Mobile</th>
+                                        <th>Dealer</th>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right" id="cnt_web_order"></td>
+                                        <td class="text-right" id="cnt_mobile_order"></td>
+                                        <td class="text-right" id="cnt_dealer_order"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-gradient-primary text-lighter">#Customer Order</th>
+                                        <td colspan="3" class="text-right" id="cnt_orders"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-gradient-primary text-lighter">#Customer Trades</th>
+                                        <td colspan="3" class="text-right" id="cnt_trades"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                            Top 10 Customer Trades
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="table-toptrade">
+                                    <thead class="bg-gradient-primary text-lighter">
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Custcode</th>
+                                        <th>Total Val</th>
+                                    </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>

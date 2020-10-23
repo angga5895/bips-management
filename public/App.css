@@ -1,3 +1,20 @@
+.col-auto {
+    width: auto;
+    max-width: none;
+    flex: 0 0 auto;
+    position: absolute!important;
+    right: 0!important;
+}
+
+.icon{
+    width: 1rem!important;
+    height: 1rem!important;
+}
+
+.icon-shape i, .icon-shape svg{
+    font-size: .7rem!important;
+}
+
 .chart-empty{
     padding-top: 180px;
     padding-bottom: 180px;
@@ -18,133 +35,152 @@
         padding: 0 0 0 95px;
     }
     .chart-height{
-        height: 2200px;
+        width:auto!important;
+        height: 2200px!important;
     }
 }@media (min-width: 4001px) and (max-width: 5000px) {
     .px-risk {
         padding: 0 0 0 75px;
     }
     .chart-height{
-        height: 1620px;
+        width:auto!important;
+        height: 1620px!important;
     }
 }@media (min-width: 3181px) and (max-width: 4000px)  {
     .px-risk {
         padding: 0 0 0 60px;
     }
     .chart-height{
-        height: 1500px;
+        width:auto!important;
+        height: 1500px!important;
     }
 }@media (min-width: 2901px) and (max-width: 3180px) {
     .px-risk {
         padding: 0 0 0 50px;
     }
     .chart-height{
-        height: 965px;
+        width:auto!important;
+        height: 965px!important;
     }
 }@media (min-width: 2731px) and (max-width: 2900px) {
     .px-risk {
         padding: 0 0 0 45px;
     }
     .chart-height{
-        height: 900px;
+        width:auto!important;
+        height: 900px!important;
     }
 }@media (min-width: 2731px) and (max-width: 2900px) {
     .px-risk {
         padding: 0 0 0 45px;
     }
     .chart-height{
-        height: 865px;
+        width:auto!important;
+        height: 865px!important;
     }
 }@media (min-width: 2591px) and (max-width: 2730px) {
     .px-risk {
         padding: 0 0 0 42px;
     }
     .chart-height{
-        height: 800px;
+        width:auto!important;
+        height: 800px!important;
     }
 }@media (min-width: 2431px) and (max-width: 2590px) {
     .px-risk {
         padding: 0 0 0 39px;
     }
     .chart-height{
-        height: 765px;
+        width:auto!important;
+        height: 765px!important;
     }
 }@media (min-width: 2301px) and (max-width: 2430px) {
     .px-risk {
         padding: 0 0 0 36px;
     }
     .chart-height{
-        height: 700px;
+        width:auto!important;
+        height: 700px!important;
     }
 }@media (min-width: 2130px) and (max-width: 2300px) {
     .px-risk {
         padding: 0 0 0 33px;
     }
     .chart-height{
-        height: 665px;
+        width:auto!important;
+        height: 665px!important;
     }
 }@media (min-width: 2001px) and (max-width: 2129px) {
     .px-risk {
         padding: 0 0 0 30px;
     }
     .chart-height{
-        height: 600px;
+        width:auto!important;
+        height: 600px!important;
     }
 }@media (min-width: 1826px) and (max-width: 2000px) {
     .px-risk {
         padding: 0 0 0 27px;
     }
     .chart-height{
-        height: 565px;
+        width:auto!important;
+        height: 565px!important;
     }
 }@media (min-width: 1701px) and (max-width: 1825px) {
     .px-risk {
         padding: 0 0 0 24px;
     }
     .chart-height{
-        height: 500px;
+        width:auto!important;
+        height: 500px!important;
     }
 }@media (min-width: 1521px) and (max-width: 1700px) {
     .px-risk {
         padding: 0 0 0 21px;
     }
     .chart-height{
-        height: 465px;
+        width:auto!important;
+        height: 465px!important;
     }
 }@media (min-width: 1401px) and (max-width: 1520px) {
     .px-risk {
         padding: 0 0 0 18px;
     }
     .chart-height{
-        height: 400px;
+        width:auto!important;
+        height: 400px!important;
     }
 }@media (min-width: 1200px) and (max-width: 1400px) {
     .px-risk {
         padding: 0 0 0 15px;
     }
     .chart-height{
-        height: 365px;
+        width:auto!important;
+        height: 365px!important;
     }
 }@media (min-width: 800px) and (max-width: 1199px) {
     .px-risk {
         padding: 0 0 0 9px;
     }
     .chart-height{
-        height: 365px;
+        width:auto!important;
+        height: 365px!important;
     }
 }@media (min-width: 768px) and  (max-width: 799px) {
     .px-risk {
         padding: 0 0 0 5px;
     }
     .chart-height{
-        height: 365px;
+        width:auto!important;
+        height: 365px!important;
     }
 }@media (min-width: 576px) and  (max-width: 767px) {
     .px-risk {
         padding: 0 0 0 9px;
     }
     .chart-height{
-        height: 365px;
+        width:auto!important;
+        height: 365px!important;
     }
 }@media (max-width: 575px) {
     .px-risk {
@@ -152,7 +188,8 @@
     }
 
     .chart-height{
-        height: 365px;
+        width:auto!important;
+        height: 365px!important;
     }
 }
 

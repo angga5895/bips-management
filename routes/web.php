@@ -59,6 +59,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('rolenameadmin-get', 'PrivilegeController@getRolenameAdmin');
     Route::get('rolenameadmin-checkclapp', 'PrivilegeController@checkclApp');
     Route::get('roleadmin-privilege/submit', 'PrivilegeController@updateRoleadminPrivilege');
+    Route::get('usermanage-privilege/submit', 'PrivilegeController@updateUserManagePrivilege');
+    Route::get('rolenameadmin-checkclusermanage', 'PrivilegeController@checkclUserManage');
+    Route::get('userActivity-get', 'UserController@dataUserActivity');
 
     Route::get('useradmin-delete/submit', 'PrivilegeController@deleteUseradmin');
     Route::get('useradmin-update', 'PrivilegeController@useradminEdit');
@@ -70,6 +73,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('/test', 'UserController@getMaxID');
     Route::get('get-detailUser', 'UserController@getDetailUser');
+    Route::get('get-activityUser', 'UserController@getActivityUser');
     Route::get('user-unlocked', 'UserController@unlockedUser');
     Route::get('username-unique', 'UserController@uniqueUsername');
     Route::get('username-get', 'UserController@getUsername');

@@ -8,6 +8,7 @@
 
         var role_app = 0;
         var bapp = 0;
+        var manage_user_app = 0;
 
         var rulesobj = {
             "name" : {
@@ -352,6 +353,9 @@
                             '</button>' +
                             '<button class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="top" title="Role Privilege" onclick="roleUser(\''+data+'\',\''+row.name+'\')">' +
                             '<i class="ni ni-settings"></i>' +
+                            '</button>'+
+                            '<button class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="User Management Privilege" onclick="manageUser(\''+data+'\',\''+row.name+'\')">' +
+                            '<i class="fa fa-user-edit"></i>' +
                             '</button>'
                     }
                 }]
@@ -368,6 +372,8 @@
             $("#main-user").addClass("d-none");
             $("#role-user").removeClass("d-block");
             $("#role-user").addClass("d-none");
+            $("#manage-user").removeClass("d-block");
+            $("#manage-user").addClass("d-none");
             $("#breadAdditional").addClass("d-block"); $("#breadAdditional").removeClass("d-none");$("#breadAdditional").text("Add");
 
             $("#savegroupbutton").addClass('d-block');
@@ -406,6 +412,8 @@
             $("#main-user").addClass("d-none");
             $("#role-user").removeClass("d-block");
             $("#role-user").addClass("d-none");
+            $("#manage-user").removeClass("d-block");
+            $("#manage-user").addClass("d-none");
 
             $("#savegroupbutton").addClass('d-none');
             $("#savegroupbutton").removeClass('d-block');
@@ -421,6 +429,8 @@
             $("#main-user").removeClass("d-none");
             $("#role-user").addClass("d-none");
             $("#role-user").removeClass("d-block");
+            $("#manage-user").addClass("d-none");
+            $("#manage-user").removeClass("d-block");
 
             $("#savegroupbutton").addClass('d-none');
             $("#savegroupbutton").removeClass('d-block');
@@ -630,6 +640,8 @@
             $("#main-user").addClass("d-none");
             $("#role-user").removeClass("d-none");
             $("#role-user").addClass("d-block");
+            $("#manage-user").removeClass("d-block");
+            $("#manage-user").addClass("d-none");
 
             $("#savegroupbutton").addClass('d-none');
             $("#savegroupbutton").removeClass('d-block');
@@ -637,6 +649,199 @@
             $("#editgroupbutton").addClass('d-block');
 
             $("#role-admin-name").text(name);
+        }
+
+        function cancelUserManage(){
+            $("#add-user").removeClass("d-block");
+            $("#add-user").addClass("d-none");
+            $("#main-user").addClass("d-block");
+            $("#main-user").removeClass("d-none");
+            $("#role-user").addClass("d-none");
+            $("#role-user").removeClass("d-block");
+            $("#manage-user").addClass("d-none");
+            $("#manage-user").removeClass("d-block");
+
+            $("#savegroupbutton").addClass('d-none');
+            $("#savegroupbutton").removeClass('d-block');
+            $("#editgroupbutton").removeClass('d-none');
+            $("#editgroupbutton").addClass('d-block');
+
+            $("#breadAdditional").addClass("d-none").removeClass("d-block").text("");
+
+            $("#breadAdditionalText").addClass("d-none").removeClass("d-block").text("");
+
+
+            $(".chclusermanage").prop('checked', false);
+
+            role_app = 0;
+            $('#table-reggroup').DataTable().ajax.reload();
+        }
+
+        $("#cancelUserManage").on("click", function () {
+            //if cancel confirm
+            var clusermanagelength = $(".chclusermanage").length;
+            var coba =0;
+            for (var x=0; x<clusermanagelength; x++){
+                if($(".chclusermanage")[x].checked === true) {
+                    coba+=x;
+                } else {
+                    coba = coba-1;
+                }
+            }
+
+            console.log(manage_user_app+' '+coba);
+
+            if(manage_user_app !== coba) {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        cancelButtonText: "No",
+                        confirmButtonText: "Yes",
+                        closeOnCancel: true,
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            cancelUserManage();
+                        }
+                    }
+                )
+            } else {
+                cancelUserManage();
+            }
+        });
+
+        $("#updateUserManage").on("click", function () {
+            swal({
+                    title: "Are you sure?",
+                    type: "warning",
+                    showCancelButton: true,
+                    cancelButtonClass: "btn-danger",
+                    confirmButtonClass: "btn-success",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
+                    closeOnCancel: true,
+                },
+                function(isConfirm) {
+                    var myApp = [];
+                    var myAppmod = [];
+                    $('.chclusermanage').each(function() {
+                        if ($("#"+this.id).is(':checked')){
+                            var chclusermanage = this.id.split("chclusermanage");
+                            myApp.push(chclusermanage[1]);
+                        }
+                    });
+
+                    if (isConfirm) {
+                        $.ajax({
+                            type : "GET",
+                            url  : "{{ url('usermanage-privilege/submit') }}",
+                            data : {
+                                'role_app' : role_app,
+                                'clusermanage' : (myApp.length > 0)? myApp : 0,
+                                'name' : name
+                            },
+                            success : function (res) {
+                                // console.log(res.name);
+                                if(res.status === '00'){
+                                    swal({
+                                        title: res.user,
+                                        text: "Has Updated",
+                                        type: "success",
+                                        showCancelButton: false,
+                                        confirmButtonClass: 'btn-success',
+                                        confirmButtonText: 'OK'
+                                    }, function () {
+                                        window.location.href = "{{ route('adminprivilege.uradmin') }}";
+                                    });
+                                } else {
+                                    swal({
+                                        title: res.user,
+                                        text: res.message,
+                                        type: "error",
+                                        showCancelButton: false,
+                                        confirmButtonClass: 'btn-danger',
+                                        confirmButtonText: 'OK'
+                                    }, function () {
+                                        window.location.href = "{{ route('adminprivilege.uradmin') }}";
+                                    });
+                                }
+
+
+                                window.location.href = "{{ route('adminprivilege.uradmin') }}";
+                            }
+                        });
+                    }
+                });
+        });
+
+        function ajaxManageUser(data,names) {
+            $(".chclusermanage").prop('checked', false);
+            manage_user_app = 0;
+            role_app = 0;
+            name = '';
+
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('rolenameadmin-checkclusermanage/') }}",
+                data : {
+                    'role_app' : data,
+                },
+                success : function (res) {
+                    if (res.length > 0){
+                        for (var i=0; i<res.length; i++){
+                            $("#chclusermanage"+res[i].clp_user_manage)[0].checked = true;
+                        }
+                    } else {
+                        $(".chclusermanage").prop('checked', false);
+                    }
+
+                    //if cancel confirm
+                    var clusermanagelength = $(".chclusermanage").length;
+                    var coba =0;
+                    for (var x=0; x<clusermanagelength; x++){
+                        if($(".chclusermanage")[x].checked === true) {
+                            coba+=x;
+                        } else {
+                            coba = coba-1;
+                        }
+                    }
+
+                    manage_user_app=coba;
+                    role_app = data;
+                    name = names;
+
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("User Management Menu");
+
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(names);
+                    $("#hiddenadminid").val(data);
+                    $("#hiddenadminname").val(names);
+                    $("#name").val(names);
+                }
+            });
+        }
+
+        function manageUser(data,name){
+            ajaxManageUser(data,name);
+            $("#hiddenadminid").val(data);
+
+            $("#add-user").removeClass("d-block");
+            $("#add-user").addClass("d-none");
+            $("#main-user").removeClass("d-block");
+            $("#main-user").addClass("d-none");
+            $("#role-user").removeClass("d-block");
+            $("#role-user").addClass("d-none");
+            $("#manage-user").removeClass("d-none");
+            $("#manage-user").addClass("d-block");
+
+            $("#savegroupbutton").addClass('d-none');
+            $("#savegroupbutton").removeClass('d-block');
+            $("#editgroupbutton").removeClass('d-none');
+            $("#editgroupbutton").addClass('d-block');
+
+            $("#manage-user-name").text(name);
         }
 
         /*function deleteUser(data){
@@ -727,6 +932,8 @@
                             $("#add-user").addClass("d-none");
                             $("#role-user").removeClass("d-block");
                             $("#role-user").addClass("d-none");
+                            $("#manage-user").removeClass("d-block");
+                            $("#manage-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
                             $("#main-user").addClass("d-block");
                             $("#breadAdditional").addClass("d-none");
@@ -739,6 +946,8 @@
             } else {
                 $("#add-user").removeClass("d-block");
                 $("#add-user").addClass("d-none");
+                $("#manage-user").removeClass("d-none");
+                $("#manage-user").addClass("d-block");
                 $("#role-user").removeClass("d-none");
                 $("#role-user").addClass("d-block");
                 $("#main-user").removeClass("d-none");
@@ -799,6 +1008,8 @@
                         $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
                         if (res.status === "00"){
                             $('#table-reggroup').DataTable().ajax.reload();
+                            $("#manage-user").removeClass("d-block");
+                            $("#manage-user").addClass("d-none");
                             $("#role-user").removeClass("d-block");
                             $("#role-user").addClass("d-none");
                             $("#add-user").removeClass("d-block");
@@ -814,6 +1025,8 @@
                             clearVariable();
                         } else {
                             $('#table-reggroup').DataTable().ajax.reload();
+                            $("#manage-user").removeClass("d-block");
+                            $("#manage-user").addClass("d-none");
                             $("#role-user").removeClass("d-block");
                             $("#role-user").addClass("d-none");
                             $("#add-user").removeClass("d-block");
@@ -848,6 +1061,8 @@
                     if ($.trim(res)) {
                         if (res.status === "00") {
                             $('#table-reggroup').DataTable().ajax.reload();
+                            $("#manage-user").removeClass("d-block");
+                            $("#manage-user").addClass("d-none");
                             $("#role-user").removeClass("d-block");
                             $("#role-user").addClass("d-none");
                             $("#add-user").removeClass("d-block");
@@ -909,6 +1124,8 @@
             $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
             $("#role-user").removeClass("d-block");
             $("#role-user").addClass("d-none");
+            $("#manage-user").removeClass("d-block");
+            $("#manage-user").addClass("d-none");
             $("#add-user").removeClass("d-block");
             $("#add-user").addClass("d-none");
             $("#main-user").removeClass("d-none");
@@ -1176,6 +1393,43 @@
                 <button class="form-control-btn btn btn-success mb-2" type="button" id="updateRole">Update</button>
                 <button class="form-control-btn btn btn-info mb-2" onclick="ajaxRoleUser($('#hiddenadminid').val(),$('#hiddenadminname').val());">Reset</button>
                 <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelRole">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow d-none" id="manage-user">
+        <div class="card card-header">
+            <span>User Management Privilege : <strong id="manage-user-name"></strong></span>
+        </div>
+        <div class="card card-body" style="min-height: 365px">
+            <div style="border: 1px solid #f2f2f2;">
+                @foreach($clusermanage as $p)
+                    <div>
+                        <div class="px-0">
+                            <div class="row">
+                                <div class="col-md-12 ml-auto">
+                                    <div class="accordion my-0">
+                                        <div class="card">
+                                            <div id="cla{{ $p->id }}" class="px-collapse">
+                                                <input type="checkbox" class="chclusermanage chclusermanage{{ $p->id }}" id="chclusermanage{{ $p->id }}" onclick="checkclapp({{ $p->id }})">
+                                                <button class="btn btn-link text-collapse text-left px-0 w-collapse" type="button" data-toggle="collapse" data-target="#collapse{{ $p->id }}" aria-expanded="true" aria-controls="collapse{{ $p->id }}">
+                                                    {{ $p->name }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        <div class="card card-footer text-right">
+            <div class="form-inline justify-content-end">
+                <button class="form-control-btn btn btn-success mb-2" type="button" id="updateUserManage">Update</button>
+                <button class="form-control-btn btn btn-info mb-2" onclick="ajaxManageUser($('#hiddenadminid').val(),$('#hiddenadminname').val());">Reset</button>
+                <button class="form-control-btn btn btn-danger mb-2" type="button" id="cancelUserManage">Cancel</button>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ClPermissionApp;
 use App\ClPermissionAppMod;
+use App\ClPermissionUserManage;
 use App\RoleApp;
 use App\UserAdmin;
 use Illuminate\Database\QueryException;
@@ -81,7 +82,8 @@ class PrivilegeController extends Controller
                             ');
             $clappss = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'adminprivilege\' ');
             $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'roleadmin\' ');
-            return view('privilege-admin.roleadmin', compact('clapp', 'role_app', 'roleApp', 'clapps', 'clappss', 'clmodule'), ['title' => 'Role Admin']);
+            $clusermanage = DB::select('SELECT * FROM cl_user_manage');
+            return view('privilege-admin.roleadmin', compact('clapp', 'role_app', 'roleApp', 'clapps', 'clappss', 'clmodule', 'clusermanage'), ['title' => 'Role Admin']);
         }
     }
 
@@ -408,6 +410,13 @@ class PrivilegeController extends Controller
         return response()->json($clapp);
     }
 
+    public function checkclUserManage(){
+        $role_app = $_GET['role_app'];
+
+        $clusermanage = DB::select('SELECT * FROM cl_permission_user_manage WHERE clp_role_app = '.$role_app);
+        return response()->json($clusermanage);
+    }
+
     public function updateRoleadminPrivilege(){
         $name = $_GET['name'];
         $role_app = $_GET['role_app'];
@@ -586,6 +595,150 @@ class PrivilegeController extends Controller
                         $status = "01";
                         $user = "";
                         $message = 'Error';
+                    }
+                } else {
+                    $status = "01";
+                    $user = "";
+                    $message = 'Error';
+                }
+            } catch(QueryException $ex){
+                $status = "01";
+                $user = null;
+                $message = $ex->getMessage();
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'user' => $user,
+            'message' => $message,
+        ]);
+    }
+
+    public function updateUserManagePrivilege(){
+        $name = $_GET['name'];
+        $role_app = $_GET['role_app'];
+        $clusermanage = $_GET['clusermanage'];
+
+        $cl_user_manage = ClPermissionUserManage::where('clp_role_app',$role_app)->get();
+
+        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
+
+        if ($clusermanage === "0" || $clusermanage === 0){
+            try {
+                if (count($cl_user_manage) > 0){
+                    try{
+                        $delclusermanage = ClPermissionUserManage::where('clp_role_app',$role_app)->delete();
+
+                        if ($delclusermanage){
+                            try{
+                                $q = RoleApp::where('id', $role_app)->update([
+                                    'updated_at' => $current_time
+                                ]);
+
+                                if ($q){
+                                    $status = '00';
+                                    $user = $name;
+                                    $message = 'Success';
+                                } else {
+                                    $status = "01";
+                                    $user = "";
+                                    $message = 'Error';
+                                }
+                            } catch (QueryException $exupum){
+                                $status = "01";
+                                $user = "";
+                                $message = $exupum->getMessage();
+                            }
+
+                        } else {
+                            $status = "01";
+                            $user = "";
+                            $message = 'Error';
+                        }
+                    } catch (QueryException $exclusermanage){
+                        $status = "01";
+                        $user = "";
+                        $message = $exclusermanage->getMessage();
+                    }
+                } else {
+                    try{
+                        $qqq = RoleApp::where('id', $role_app)->update([
+                            'updated_at' => $current_time
+                        ]);
+
+                        if ($qqq){
+                            $status = '00';
+                            $user = $name;
+                            $message = 'Success';
+                        } else {
+                            $status = "01";
+                            $user = "";
+                            $message = 'Error';
+                        }
+                    } catch (QueryException $exupumum){
+                        $status = "01";
+                        $user = "";
+                        $message = $exupumum->getMessage();
+                    }
+                }
+            } catch(QueryException $ex){
+                $status = "01";
+                $user = null;
+                $message = $ex->getMessage();
+            }
+        } else {
+            try {
+                if (count($cl_user_manage) > 0){
+                    try{
+                        $delclusermanage = ClPermissionUserManage::where('clp_role_app',$role_app)->delete();
+
+                        if ($delclusermanage){
+                            $execclusermanage = 1;
+                        } else {
+                            $execclusermanage = 0;
+                        }
+                    } catch (QueryException $exclusermanage){
+                        $exclusermanage->getMessage();
+                        $execclusermanage = 0;
+                    }
+
+                    if ($execclusermanage === 1){
+                        foreach ($clusermanage as $p){
+                            $query = ClPermissionUserManage::create([
+                                'clp_role_app' => $role_app,
+                                'clp_user_manage' => $p
+                            ]);
+                        }
+                    }
+                } else {
+                    foreach ($clusermanage as $p){
+                        $query = ClPermissionUserManage::create([
+                            'clp_role_app' => $role_app,
+                            'clp_user_manage' => $p
+                        ]);
+                    }
+                }
+
+                if ($query) {
+                    try{
+                        $qq = RoleApp::where('id', $role_app)->update([
+                            'updated_at' => $current_time
+                        ]);
+
+                        if ($qq){
+                            $status = '00';
+                            $user = $name;
+                            $message = 'Success';
+                        } else {
+                            $status = "01";
+                            $user = "";
+                            $message = 'Error';
+                        }
+                    } catch (QueryException $exupds){
+                        $status = "01";
+                        $user = "";
+                        $message = $exupds->getMessage();
                     }
                 } else {
                     $status = "01";

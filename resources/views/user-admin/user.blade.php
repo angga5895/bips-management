@@ -1,6 +1,17 @@
 @extends('layouts.app-argon')
 
+@section('css')
+    <link rel="stylesheet" href="{{ url('bootstrap-datepicker/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet" href="{{ url('bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}">
+@endsection
+
 @section('js')
+    <script src="{{ url('moment/moment.js') }}"></script>
+    <script src="{{ url('bootstrap-datepicker/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ url('bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
+
+    <script src="{{ url('forms_pickers.js') }}"></script>
+
     <script>
         var conpass = 0;
         var conpin = 0;
@@ -119,10 +130,23 @@
             });
         });
 
+        function appendLeadingZeroes(n){
+            if(n <= 9){
+                return "0" + n;
+            }
+            return n
+        }
+
         $(document).ready(function () {
             tablegetReg();
             tablelist();
             tablelistaccount();
+            tableuseractivity();
+
+            var lastmonth = new Date($("#tgl_awal").val());
+            var thismonth = new Date($("#tgl_akhir").val());
+            $("#act_tgl_awal_current").datepicker("setDate",lastmonth);
+            $("#act_tgl_akhir_current").datepicker("setDate",thismonth);
 
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
@@ -411,6 +435,64 @@
             });
         }
 
+        function tableuseractivity() {
+            var tgllast = new Date($("#act_tgl_awal_current").val());
+            var getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
+
+            var tglthis = new Date($("#act_tgl_akhir_current").val());
+            var getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1) + "/" + appendLeadingZeroes(tglthis.getDate());
+
+            $("#tgl_awal").val(getlastdate);
+            $("#tgl_akhir").val(getthisdate);
+
+            $("#table-useractivity").DataTable({
+                responsive: true,
+
+                /*processing: true,
+                serverSide: true,*/
+                ajax : {
+                    url: '{{ url("userActivity-get") }}',
+                    data: function (d) {
+                        var search_data = {
+                            tgl_awal:$("#tgl_awal").val(),
+                            tgl_akhir:$("#tgl_akhir").val(),
+                            status:$("#act_userStatus").val(),
+                            activity:$("#act_userActivity").val(),
+                            userID:$("#act_user_id").text()
+                        };
+                        d.search_param = search_data;
+                    }
+                },
+                columns : [
+                    {data : 'activity', name : 'activity'},
+                    {data : 'ip_address', name : 'ip_address'},
+                    {data : 'terminal', name: 'terminal'},
+                    {data : 'status', name: 'status'},
+                    {data : 'timestamp', name: 'timestamp'},
+                ],
+                columnDefs: [{
+                    targets : [0],
+                    orderable : true,
+                    searchable : true
+                },{
+                    targets : [1],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [2],
+                    orderable : true,
+                    searchable : true,
+                },{
+                    targets : [3],
+                    orderable : true,
+                    searchable : true
+                },{
+                    targets : [4],
+                    orderable : true,
+                    searchable : true
+                }],
+            });
+        }
 
         function tablelist() {
             $("#table-listmember").DataTable({
@@ -455,6 +537,13 @@
 
         function tablegetReg() {
             var role_app = $("#role_app").val();
+            var prm0 = "<?php echo $permusermanage0; ?>";
+            var prm1 = "<?php echo $permusermanage1; ?>";
+            var prm2 = "<?php echo $permusermanage2; ?>";
+            var prm3 = "<?php echo $permusermanage3; ?>";
+            var prm4 = "<?php echo $permusermanage4; ?>";
+            var prm5 = "<?php echo $permusermanage5; ?>";
+            var prm6 = "<?php echo $permusermanage6; ?>";
 
 
             var tableData = $("#table-reggroup").DataTable({
@@ -467,7 +556,7 @@
                 aaSorting: [[0, 'desc']],
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
-                    if(role_app == 2){
+                    if(prm0 === '1' || prm1 === '1' || prm2 === '1' || prm3 === '1' || prm4 === '1' || prm5 === '1' || prm6 === '1'){
                         $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" type="button" id="adduser" onclick="addUser()">Add</button>');
                     }
                 },
@@ -538,25 +627,56 @@
                     targets : [0],
                     className: 'text-center',
                     render : function (data, type, row) {
-                        var ext = "";
-                        if(role_app == 2){
-                           ext = '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
-                               '<i class="fa fa-pen"></i>' +
-                               '</a>';
-                        }
-                        return '<button class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail" onclick="detailUser(\''+data+'\')">' +
-                            '<i class="fa fa-search"></i>' +
-                            '</button>'+ext+
+                        var detail = "";
+                        var edit = "";
+                        var chgpass = "";
+                        var chgpin = "";
+                        var unlocked = "";
+                        var useractivity = "";
 
-                            '<a class="btn btn-sm btn-facebook" href="/user/'+data+'/reset/password" data-toggle="tooltip" data-placement="top" title="Reset Password">' +
-                            '<i class="fa fa-lock-open"></i>' +
-                            '</a>' +
-                            '<a class="btn btn-sm btn-dark" href="/user/'+data+'/reset/pin" data-toggle="tooltip" data-placement="top" title="Reset PIN">' +
-                            '<i class="fa fa-qrcode"></i>' +
-                            '</a>' +
-                            '<button class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title="Unlocked User" onclick="unlockedUser(\''+data+'\');">' +
-                            '<i class="fa fa-user-lock"></i>' +
-                            '</button>'
+                        if(prm0 === '2' || prm1 === '2' || prm2 === '2' || prm3 === '2' || prm4 === '2' || prm5 === '2' || prm6 === '2'){
+                            detail = '<button class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail" onclick="detailUser(\''+data+'\')">' +
+                                '<i class="fa fa-search"></i>' +
+                                '</button>';
+                        }
+
+                        if(prm0 === '3' || prm1 === '3' || prm2 === '3' || prm3 === '3' || prm4 === '3' || prm5 === '3' || prm6 === '3'){
+                            edit = '<a class="btn btn-sm btn-warning" href="/user/'+data+'/edit" data-toggle="tooltip" data-placement="top" title="Edit Status">' +
+                                '<i class="fa fa-pen"></i>' +
+                                '</a>';
+                        }
+
+                        if(prm0 === '4' || prm1 === '4' || prm2 === '4' || prm3 === '4' || prm4 === '4' || prm5 === '4' || prm6 === '4'){
+                            chgpass = '<a class="btn btn-sm btn-facebook" href="/user/'+data+'/reset/password" data-toggle="tooltip" data-placement="top" title="Reset Password">' +
+                                '<i class="fa fa-lock-open"></i>' +
+                                '</a>';
+                        }
+
+                        if(prm0 === '5' || prm1 === '5' || prm2 === '5' || prm3 === '5' || prm4 === '5' || prm5 === '5' || prm6 === '5'){
+                            chgpin = '<a class="btn btn-sm btn-dark" href="/user/'+data+'/reset/pin" data-toggle="tooltip" data-placement="top" title="Reset PIN">' +
+                                '<i class="fa fa-qrcode"></i>' +
+                                '</a>';
+                        }
+
+                        if(prm0 === '6' || prm1 === '6' || prm2 === '6' || prm3 === '6' || prm4 === '6' || prm5 === '6' || prm6 === '6'){
+                            unlocked = '<button class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title="Unlocked User" onclick="unlockedUser(\''+data+'\');">' +
+                                '<i class="fa fa-user-lock"></i>' +
+                                '</button>';
+                        }
+
+                        if(prm0 === '7' || prm1 === '7' || prm2 === '7' || prm3 === '7' || prm4 === '7' || prm5 === '7' || prm6 === '7'){
+                            unlocked = '<button class="btn btn-sm btn-light" data-toggle="tooltip" data-placement="top" title="User Activity" onclick="activityUser(\''+data+'\');">' +
+                                '<i class="fa fa-history"></i>' +
+                                '</button>';
+                        }
+
+                        var returnmenu = detail+edit+chgpass+chgpin+unlocked+useractivity;
+
+                        if (returnmenu === ''){
+                            return '<div>No Action</div>';
+                        } else {
+                            return detail+edit+chgpass+chgpin+unlocked+useractivity;
+                        }
                     }
                 }]
             });
@@ -630,12 +750,54 @@
                     $("#detail-userid").text(res.user_id);
                     $("#detail-user").removeClass("d-none");
                     $("#detail-user").addClass("d-block");
+                    $("#activity-user").removeClass("d-block");
+                    $("#activity-user").addClass("d-none");
                     $("#add-user").removeClass("d-block");
                     $("#add-user").addClass("d-none");
                     $("#main-user").removeClass("d-block");
                     $("#main-user").addClass("d-none");
                     $('#table-listaccount').DataTable().ajax.reload();
                     $("#breadAdditional").addClass("d-block"); $("#breadAdditional").removeClass("d-none");$("#breadAdditional").text("Detail");
+                    $("#breadAdditionalText").addClass("d-block"); $("#breadAdditionalText").removeClass("d-none");$("#breadAdditionalText").text(res.user_name);
+
+                }
+            });
+        }
+
+        function realodActivity() {
+            var tgllast = new Date($("#act_tgl_awal_current").val());
+            var getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
+
+            var tglthis = new Date($("#act_tgl_akhir_current").val());
+            var getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1) + "/" + appendLeadingZeroes(tglthis.getDate());
+
+            $("#tgl_awal").val(getlastdate);
+            $("#tgl_akhir").val(getthisdate);
+            $('#table-useractivity').DataTable().ajax.reload();
+        }
+
+        function activityUser(userid) {
+            $.get("/mockjax");
+
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('get-activityUser') }}",
+                data : {
+                    'user_id' : userid,
+                },
+                success : function (res) {
+                    $("#act_user_id").text(res.user_id);
+                    $("#act_user_name").text(res.user_name);
+                    $("#activity-user").removeClass("d-none");
+                    $("#activity-user").addClass("d-block");
+                    $("#detail-user").removeClass("d-block");
+                    $("#detail-user").addClass("d-none");
+                    $("#add-user").removeClass("d-block");
+                    $("#add-user").addClass("d-none");
+                    $("#main-user").removeClass("d-block");
+                    $("#main-user").addClass("d-none");
+                    realodActivity();
+                    $("#breadAdditional").addClass("d-block"); $("#breadAdditional").removeClass("d-none");$("#breadAdditional").text("User Activity");
                     $("#breadAdditionalText").addClass("d-block"); $("#breadAdditionalText").removeClass("d-none");$("#breadAdditionalText").text(res.user_name);
 
                 }
@@ -654,6 +816,8 @@
             $("#main-user").addClass("d-none");
             $("#detail-user").removeClass("d-block");
             $("#detail-user").addClass("d-none");
+            $("#activity-user").removeClass("d-block");
+            $("#activity-user").addClass("d-none");
             $("#breadAdditional").addClass("d-block"); $("#breadAdditional").removeClass("d-none");$("#breadAdditional").text("Add");
 
             clearCache();
@@ -662,6 +826,33 @@
         $("#backdetail").on("click", function () {
             $("#detail-user").removeClass("d-block");
             $("#detail-user").addClass("d-none");
+            $("#activity-user").removeClass("d-block");
+            $("#activity-user").addClass("d-none");
+            $("#add-user").removeClass("d-block");
+            $("#add-user").addClass("d-none");
+            $("#main-user").removeClass("d-none");
+            $("#main-user").addClass("d-block");
+            $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
+            $("#breadAdditionalText").addClass("d-none"); $("#breadAdditionalText").removeClass("d-block");$("#breadAdditionalText").text("");
+
+        });
+
+        $("#backactivity").on("click", function () {
+            var lastmonth = new Date("<?php echo $startmonth ?>;");
+            var thismonth = new Date("<?php echo $thismonth ?>;");
+            $("#act_tgl_awal_current").datepicker("setDate",lastmonth);
+            $("#act_tgl_akhir_current").datepicker("setDate",thismonth);
+            $("#tgl_awal").val("<?php echo $startmonth ?>;");
+            $("#tgl_akhir").val("<?php echo $thismonth ?>;");
+            $("[id=act_userActivity]").val('');
+            $("[data-id=act_userActivity] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('All Activity');
+            $("[id=act_userStatus]").val('');
+            $("[data-id=act_userStatus] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('All Status');
+
+            $("#detail-user").removeClass("d-block");
+            $("#detail-user").addClass("d-none");
+            $("#activity-user").removeClass("d-block");
+            $("#activity-user").addClass("d-none");
             $("#add-user").removeClass("d-block");
             $("#add-user").addClass("d-none");
             $("#main-user").removeClass("d-none");
@@ -710,6 +901,8 @@
                             $("#main-user").addClass("d-block");
                             $("#detail-user").removeClass("d-block");
                             $("#detail-user").addClass("d-none");
+                            $("#activity-user").removeClass("d-block");
+                            $("#activity-user").addClass("d-none");
                             $("#breadAdditional").addClass("d-none");
                             $("#breadAdditional").removeClass("d-block");
                             $("#breadAdditional").text("");
@@ -724,6 +917,8 @@
                 $("#main-user").addClass("d-block");
                 $("#detail-user").removeClass("d-block");
                 $("#detail-user").addClass("d-none");
+                $("#activity-user").removeClass("d-block");
+                $("#activity-user").addClass("d-none");
                 $("#breadAdditional").addClass("d-none");
                 $("#breadAdditional").removeClass("d-block");
                 $("#breadAdditional").text("");
@@ -1312,6 +1507,74 @@
                             </tbody>
                         </table>
                     </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow d-none" id="activity-user">
+        <div class="card card-header">
+            <form class="form-inline">
+                <button class="btn btn-sm btn-primary mb-0" type="button" id="backactivity"><i class="fa fa-backspace"></i> Back</button>
+                <label class="form-control-label pr-1 mb-0"> | Filtered by :</label>
+
+                    <div class="ml-input-2 input-daterange input-group" id="datepicker-range">
+                        <input type="text" class="form-control" name="start" id="act_tgl_awal_current" readonly value="{{ $startmonth }}" onchange="realodActivity();">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">To</span>
+                        </div>
+                        <input type="text" class="form-control" name="end" id="act_tgl_akhir_current" readonly value="{{ $thismonth }}" onchange="realodActivity();">
+                    </div>&nbsp;&nbsp;
+                    <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="act_userActivity" onchange="realodActivity();">
+                        <option value="" selected>All Activity</option>
+                        @foreach($act_activity as $p)
+                            <option value="{{ $p->activity }}">{{ $p->activity }}</option>
+                        @endforeach
+                    </select>
+                    &nbsp;&nbsp;
+                    <select class="form-control bootstrap-select w-select-100" data-live-search="true" data-style="btn-default" id="act_userStatus" onchange="realodActivity();">
+                        <option value="" selected>All Status</option>
+                        @foreach($act_status as $p)
+                            <option value="{{ $p->status }}">{{ $p->status }}</option>
+                        @endforeach
+                    </select>
+                    <input value="{{ $startmonth }}" type="hidden" id="tgl_awal"/>
+                    <input value="{{ $thismonth }}" type="hidden" id="tgl_akhir"/>
+
+            </form>
+        </div>
+        <div class="card card-body" style="min-height: 365px">
+            <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group form-inline ">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User Code</label>
+                            <div class="col-sm-8 pr-0 row" id="act_user_id"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group form-inline ">
+                            <label class="form-control-label form-inline-label col-sm-4 mb-2 px-0 text-primary">User Name</label>
+                            <div class="col-sm-8 pr-0 row" id="act_user_name"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover table-hoverclick" id="table-useractivity">
+                                <thead class="bg-gradient-primary text-lighter">
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>IP Address</th>
+                                    <th>Terminal</th>
+                                    <th>Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

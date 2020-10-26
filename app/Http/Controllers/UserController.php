@@ -64,7 +64,66 @@ class UserController extends Controller
         } else {
             $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'useradmin\' ');
             $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'user\' ');
-            return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp', 'role_app', 'clapps', 'clmodule'), ['title' => 'User']);
+
+            $clusermanage = DB::select('SELECT * FROM cl_permission_user_manage WHERE clp_role_app ='.$role_app);
+
+            $permusermanage0 = '';
+            $permusermanage1 = '';
+            $permusermanage2 = '';
+            $permusermanage3 = '';
+            $permusermanage4 = '';
+            $permusermanage5 = '';
+            $permusermanage6 = '';
+
+            if (isset($clusermanage[0]->clp_user_manage)){
+                $permusermanage0 = $clusermanage[0]->clp_user_manage;
+            }
+            if (isset($clusermanage[1]->clp_user_manage)){
+                $permusermanage1 = $clusermanage[1]->clp_user_manage;
+            }
+            if (isset($clusermanage[2]->clp_user_manage)){
+                $permusermanage2 = $clusermanage[2]->clp_user_manage;
+            }
+            if (isset($clusermanage[3]->clp_user_manage)){
+                $permusermanage3 = $clusermanage[3]->clp_user_manage;
+            }
+            if (isset($clusermanage[4]->clp_user_manage)){
+                $permusermanage4 = $clusermanage[4]->clp_user_manage;
+            }
+            if (isset($clusermanage[5]->clp_user_manage)){
+                $permusermanage5 = $clusermanage[5]->clp_user_manage;
+            }
+            if (isset($clusermanage[6]->clp_user_manage)){
+                $permusermanage6 = $clusermanage[6]->clp_user_manage;
+            }
+
+            $tgl = DB::select('SELECT (\'now\'::TIMESTAMP - \'1 month\'::INTERVAL) AS bulanlalu, (\'now\'::TIMESTAMP) AS bulanini');
+
+            $bulanini = '';
+            $bulanlalu = '';
+            foreach ($tgl as $p){
+                $bulanini = $p->bulanini;
+                $bulanlalu = $p->bulanlalu;
+            }
+
+            $lastmonth = date_format(date_create($bulanlalu),"Y/m/d");
+            $thismonth = date_format(date_create($bulanini),"Y/m/d");
+            $monththis = date_format(date_create($bulanini),"Y/m");
+            $startmonth = date_format(date_create($monththis."/01"),"Y/m/d");
+
+            $act_activity = DB::connection('pgsql2')->select('SELECT DISTINCT activity FROM user_activity;');
+            $act_status = DB::connection('pgsql2')->select('SELECT DISTINCT status FROM user_activity;');
+
+            return view('user-admin.user', compact('usertype', 'userstatus', 'countgroup', 'clapp', 'role_app', 'clapps', 'clmodule',
+                'permusermanage0',
+                'permusermanage1',
+                'permusermanage2',
+                'permusermanage3',
+                'permusermanage4',
+                'permusermanage5',
+                'permusermanage6',
+                'act_activity', 'act_status',
+                'lastmonth', 'thismonth', 'startmonth'), ['title' => 'User']);
         }
     }
 
@@ -603,6 +662,53 @@ class UserController extends Controller
             'last_teriminalid' => $last_teriminalid,
             'user_type' => $user_type
         ]);
+    }
+
+    public function getActivityUser(){
+        $user_id = $_GET['user_id'];
+        $selectUser = DB::select('SELECT * FROM users WHERE user_id =\''.$user_id.'\'');
+
+        $user_id = '';
+        $user_name = '';
+
+        foreach ($selectUser as $p){
+            $user_id = $p->user_id;
+            $user_name = $p->user_name;
+        }
+
+        return response()->json([
+            'user_id' => $user_id,
+            'user_name' => $user_name
+        ]);
+    }
+
+    public function dataUserActivity(Request $request){
+        $requestData = $request->all();
+
+        $userID = $requestData['search_param']['userID'];
+        $tglAwal = $requestData['search_param']['tgl_awal'];
+        $tglAkhir = $requestData['search_param']['tgl_akhir'];
+        $activity = $requestData['search_param']['activity'];
+        $status = $requestData['search_param']['status'];
+
+        $whereActivity = '';
+        if ($activity !== null){
+            $whereActivity = ' AND activity = \''.$activity.'\' ';
+        }
+
+        $whereStatus = '';
+        if ($status !== null){
+            $whereStatus = ' AND status = \''.$status.'\' ';
+        }
+
+
+        $data = DB::connection('pgsql2')->select('SELECT * FROM user_activity 
+                                WHERE user_id = \''.$userID.'\'
+                                '.$whereActivity.'
+                                '.$whereStatus.' 
+                                AND ("timestamp" BETWEEN \''.$tglAwal.'\' AND \''.$tglAkhir.'\')'
+        );
+        return DataTables::of($data)->make(true);
     }
 
     public function dataClient(Request $request){

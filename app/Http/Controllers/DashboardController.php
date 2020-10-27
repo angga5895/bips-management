@@ -86,11 +86,13 @@ class DashboardController extends Controller
         $tableType = $requestData['search_param']['tableType'];
 
         if ($tableType === '1'){
-            $data = DB::connection('pgsql2')->select('SELECT sales_id as user_code, SUM(trade_value) total_val 
-                                  FROM v_trade_sales GROUP BY sales_id ORDER BY total_val DESC LIMIT 10;');
+            $data = DB::connection('pgsql2')->select('SELECT a.sales_id AS user_code, b.sales_name AS user_name, 
+                                                              SUM(trade_value) AS total_val FROM v_trade_sales a,sales b 
+                                                              WHERE a.sales_id=b.sales_id GROUP BY a.sales_id, sales_name ORDER BY total_val DESC LIMIT 10;');
         } else {
-            $data = DB::connection('pgsql2')->select('SELECT base_account_no as user_code, SUM(trade_value) total_val 
-                                  FROM v_trades GROUP BY base_account_no ORDER BY total_val DESC LIMIT 10;');
+            $data = DB::connection('pgsql2')->select('SELECT base_account_no AS user_code, b.custname AS user_name, 
+                                                              SUM(trade_value) AS total_val FROM v_trades a, customer b 
+                                                              WHERE a.base_account_no=b.custcode GROUP BY base_account_no, custname ORDER BY total_val DESC LIMIT 10;');
         }
 
         return DataTables::of($data)->make(true);

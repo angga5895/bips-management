@@ -132,9 +132,13 @@
             if (tabletype === '1'){
                 $("#title-label").text('Sales');
                 $("#usercode-label").text('Sales ID');
+                $("#username-label").text('Sales Name');
+                $("#total-label").text('Total Val');
             } else {
                 $("#title-label").text('Customer');
                 $("#usercode-label").text('Custcode');
+                $("#username-label").text('Custame');
+                $("#total-label").text('Trade Val');
             }
             $('#table-toptrade').DataTable().ajax.reload();
         }
@@ -159,6 +163,7 @@
                 columns : [
                     {data : 'user_code', name: 'user_code'},
                     {data : 'user_code', name: 'user_code'},
+                    {data : 'user_name', name: 'user_name'},
                     {data : 'total_val', name: 'total_val'},
                 ],
                 columnDefs: [{
@@ -177,6 +182,13 @@
                     }
                 },{
                     targets : [2],
+                    searchable : true,
+                    orderable:false,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                    }
+                },{
+                    targets : [3],
                     searchable : true,
                     orderable:false,
                     render : function (data, type, row) {
@@ -874,7 +886,8 @@
                                     <tr>
                                         <th>No.</th>
                                         <th id="usercode-label"></th>
-                                        <th>Total Val</th>
+                                        <th id="username-label"></th>
+                                        <th id="total-label">Total Val</th>
                                     </tr>
                                     </thead>
                                 </table>

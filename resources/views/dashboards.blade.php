@@ -201,30 +201,51 @@
                     $("#morrisjs-bars").empty();
                     if ($.trim(res)) {
                         $('.date-now').text(res.user_activity[0].now_date);
-                        $("#cnt_web").text(numberWithCommas(Number(res.user_activity[0].cnt_web)));
-                        $("#cnt_mobile").text(numberWithCommas(Number(res.user_activity[0].cnt_mobile)));
-                        $("#cnt_web_mobile").text(numberWithCommas(Number(res.user_activity[0].cnt_web_mobile)));
-                        $("#cnt_pc").text(numberWithCommas(Number(res.user_activity[0].cnt_pc)));
 
-                        $("#sum_web_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_web_trade)));
-                        $("#sum_mobile_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_mobile_trade)));
-                        $("#sum_dealer_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_dealer_trade)));
-                        $("#sum_trade_all").text(numberWithCommas(Number(res.sum_trade[0].sum_trade_all)));
+                        if (res.user_activity.length > 0){
+                            $("#cnt_web").text(numberWithCommas(Number(res.user_activity[0].cnt_web)));
+                            $("#cnt_mobile").text(numberWithCommas(Number(res.user_activity[0].cnt_mobile)));
+                            $("#cnt_web_mobile").text(numberWithCommas(Number(res.user_activity[0].cnt_web_mobile)));
+                            $("#cnt_pc").text(numberWithCommas(Number(res.user_activity[0].cnt_pc)));
+                        }
 
-                        $("#sum_web_order").text(numberWithCommas(Number(res.sum_order[0].sum_web_order)));
-                        $("#sum_mobile_order").text(numberWithCommas(Number(res.sum_order[0].sum_mobile_order)));
-                        $("#sum_dealer_order").text(numberWithCommas(Number(res.sum_order[0].sum_dealer_order)));
-                        $("#sum_order_all").text(numberWithCommas(Number(res.sum_order[0].sum_order_all)));
+                        if (res.sum_trade.length > 0){
+                            $("#sum_web_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_web_trade)));
+                            $("#sum_mobile_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_mobile_trade)));
+                            $("#sum_dealer_trade").text(numberWithCommas(Number(res.sum_trade[0].sum_dealer_trade)));
+                            $("#sum_trade_all").text(numberWithCommas(Number(res.sum_trade[0].sum_trade_all)));
+                        }
 
-                        $("#cnt_orders").text(numberWithCommas(Number(res.orders[0].cnt_orders)));
-                        $("#cnt_trades").text(numberWithCommas(Number(res.trades[0].cnt_trades)));
-                        $("#cnt_web_order").text(numberWithCommas(Number(res.number_order[0].cnt_web_order)));
-                        $("#cnt_mobile_order").text(numberWithCommas(Number(res.number_order[0].cnt_mobile_order)));
-                        $("#cnt_dealer_order").text(numberWithCommas(Number(res.number_order[0].cnt_dealer_order)));
+                        if (res.sum_order.length > 0){
+                            $("#sum_web_order").text(numberWithCommas(Number(res.sum_order[0].sum_web_order)));
+                            $("#sum_mobile_order").text(numberWithCommas(Number(res.sum_order[0].sum_mobile_order)));
+                            $("#sum_dealer_order").text(numberWithCommas(Number(res.sum_order[0].sum_dealer_order)));
+                            $("#sum_order_all").text(numberWithCommas(Number(res.sum_order[0].sum_order_all)));
+                        }
 
-                        var piechrt1 = Number(res.sum_trade[0].sum_web_trade);
-                        var piechrt2 = Number(res.sum_trade[0].sum_mobile_trade);
-                        var piechrt3 = Number(res.sum_trade[0].sum_dealer_trade);
+                        if (res.orders.length > 0) {
+                            $("#cnt_orders").text(numberWithCommas(Number(res.orders[0].cnt_orders)));
+                        }
+
+                        if (res.trades.length > 0) {
+                            $("#cnt_trades").text(numberWithCommas(Number(res.trades[0].cnt_trades)));
+                        }
+
+                        if (res.number_order.length > 0){
+                            $("#cnt_web_order").text(numberWithCommas(Number(res.number_order[0].cnt_web_order)));
+                            $("#cnt_mobile_order").text(numberWithCommas(Number(res.number_order[0].cnt_mobile_order)));
+                            $("#cnt_dealer_order").text(numberWithCommas(Number(res.number_order[0].cnt_dealer_order)));
+                        }
+
+                        var piechrt1 = 0;
+                        var piechrt2 = 0;
+                        var piechrt3 = 0;
+
+                        if (res.sum_trade.length > 0){
+                            piechrt1 = Number(res.sum_trade[0].sum_web_trade);
+                            piechrt2 = Number(res.sum_trade[0].sum_mobile_trade);
+                            piechrt3 = Number(res.sum_trade[0].sum_dealer_trade);
+                        }
 
                         //chartjs
                         var chart6 = new Chart(document.getElementById('statistics-chart-6').getContext("2d"), {
@@ -278,9 +299,15 @@
                         });
                         chart6.resize();
 
-                        var opiechrt1 = Number(res.sum_order[0].sum_web_order);
-                        var opiechrt2 = Number(res.sum_order[0].sum_mobile_order);
-                        var opiechrt3 = Number(res.sum_order[0].sum_dealer_order);
+                        var opiechrt1 = 0;
+                        var opiechrt2 = 0;
+                        var opiechrt3 = 0;
+
+                        if (res.sum_order.length > 0){
+                            opiechrt1 = Number(res.sum_order[0].sum_web_order);
+                            opiechrt2 = Number(res.sum_order[0].sum_mobile_order);
+                            opiechrt3 = Number(res.sum_order[0].sum_dealer_order);
+                        }
 
                         var chart5 = new Chart(document.getElementById('statistics-chart-5').getContext("2d"), {
                             type: 'pie',

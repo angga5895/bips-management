@@ -665,7 +665,7 @@
                         }
 
                         if(prm0 === '7' || prm1 === '7' || prm2 === '7' || prm3 === '7' || prm4 === '7' || prm5 === '7' || prm6 === '7'){
-                            unlocked = '<button class="btn btn-sm btn-light" data-toggle="tooltip" data-placement="top" title="User Activity" onclick="activityUser(\''+data+'\');">' +
+                            useractivity = '<button class="btn btn-sm btn-light" data-toggle="tooltip" data-placement="top" title="User Activity" onclick="activityUser(\''+data+'\');">' +
                                 '<i class="fa fa-history"></i>' +
                                 '</button>';
                         }

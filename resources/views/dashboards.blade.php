@@ -119,11 +119,25 @@
             $('.bootstrap-select').selectpicker();
             getuseractivity();
             tablegetTopTrade();
+            changeTypeCust();
             setInterval(function(){
                 getuseractivity();
                 $('#table-toptrade').DataTable().ajax.reload();
             }, 120000);
         });
+
+        function changeTypeCust() {
+            var tabletype = $("#tableType").val();
+
+            if (tabletype === '1'){
+                $("#title-label").text('Sales');
+                $("#usercode-label").text('Sales ID');
+            } else {
+                $("#title-label").text('Customer');
+                $("#usercode-label").text('Custcode');
+            }
+            $('#table-toptrade').DataTable().ajax.reload();
+        }
 
         function tablegetTopTrade() {
             var tableData = $("#table-toptrade").DataTable({
@@ -135,10 +149,16 @@
                 bInfo: false,
                 ajax : {
                     url: '{{ url("toptrade-get") }}',
+                    data: function (d) {
+                        var search_data = {
+                            tableType:$("#tableType").val()
+                        };
+                        d.search_param = search_data;
+                    }
                 },
                 columns : [
-                    {data : 'base_account_no', name: 'base_account_no'},
-                    {data : 'base_account_no', name: 'base_account_no'},
+                    {data : 'user_code', name: 'user_code'},
+                    {data : 'user_code', name: 'user_code'},
                     {data : 'total_val', name: 'total_val'},
                 ],
                 columnDefs: [{
@@ -146,7 +166,7 @@
                     searchable : true,
                     orderable:false,
                     render : function (data, type, row, index) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : row;
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
                     }
                 },{
                     targets : [1],
@@ -841,13 +861,19 @@
                             </div>
                         </div>
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
-                            Top 10 Customer Trades
+                            <form class="form-inline">
+                                <select class="form-control bootstrap-select w-select-100 pr-2" data-live-search="true" data-style="btn-default" id="tableType" onchange="changeTypeCust();">
+                                    <option value="1" selected>Sales</option>
+                                    <option value="2">Customer</option>
+                                </select>
+                                <label>Top 10 &nbsp;<span id="title-label">Sales</span>&nbsp; Trades</label>
+                            </form>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover" id="table-toptrade">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         <th>No.</th>
-                                        <th>Custcode</th>
+                                        <th id="usercode-label"></th>
                                         <th>Total Val</th>
                                     </tr>
                                     </thead>

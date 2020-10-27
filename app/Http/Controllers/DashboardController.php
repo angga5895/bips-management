@@ -81,8 +81,18 @@ class DashboardController extends Controller
     }
 
     public function datatopTrade(Request $request){
-        $data = DB::connection('pgsql2')->select('SELECT base_account_no, SUM(trade_value) total_val 
+        $requestData = $request->all();
+
+        $tableType = $requestData['search_param']['tableType'];
+
+        if ($tableType === '1'){
+            $data = DB::connection('pgsql2')->select('SELECT sales_id as user_code, SUM(trade_value) total_val 
+                                  FROM v_trade_sales GROUP BY sales_id ORDER BY total_val DESC LIMIT 10;');
+        } else {
+            $data = DB::connection('pgsql2')->select('SELECT base_account_no as user_code, SUM(trade_value) total_val 
                                   FROM v_trades GROUP BY base_account_no ORDER BY total_val DESC LIMIT 10;');
+        }
+
         return DataTables::of($data)->make(true);
     }
 

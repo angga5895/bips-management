@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\DailyExportReport;
 use App\Exports\MonthlyExportReport;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
@@ -236,8 +237,12 @@ class ReportController extends Controller
                         WHERE year_month BETWEEN \''.$tgl_awal.'\' AND \''.$tgl_akhir.'\'
                         ORDER BY year_month ASC');
 
-        $pdf = PDF::Loadview('report.report-monthlyreportidx-pdf',['monthlyloginidx' => $data]);
+        $pdf = PDF::loadView('report.report-monthlyreportidx-pdf',['monthlyloginidx' => $data], compact('judul'));
         $pdf->setPaper('A4','potrait');
-        return $pdf->stream($judul,array('Attachment'=>false));
+        /*return $pdf->stream($judul,array('Attachment'=>false));*/
+        return new Response($pdf->output(), 200, array(
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'filename="'.$judul.'"',
+        ));
     }
 }

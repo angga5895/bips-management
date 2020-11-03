@@ -41,8 +41,8 @@
                     'tgl_akhir': $("#tgl_akhir").val()
                 },
                 complete : function (){
-                    // window.open(this.url, '_blank');
-                    window.location = this.url;
+                    window.open(this.url, '_blank');
+                    //window.location = this.url;
                     console.log('Export PDF Success..');
                 }
             });

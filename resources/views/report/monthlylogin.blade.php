@@ -39,8 +39,8 @@
             $('.bootstrap-select').selectpicker();
 
             tablegetMonthly();
-            var lastmonth = new Date($("#tgl_awal").val());
-            var thismonth = new Date($("#tgl_akhir").val());
+            var lastmonth = new Date($("#tgl_awal").val()+'/01');
+            var thismonth = new Date($("#tgl_akhir").val()+'/01');
             $("#tgl_awal_current").datepicker("setDate",lastmonth);
             $("#tgl_akhir_current").datepicker("setDate",thismonth);
             chartSummary();
@@ -59,6 +59,10 @@
                     console.log('Export Excel Success..');
                 }
             });
+        }
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
         function tablegetMonthly() {
@@ -88,25 +92,25 @@
                     targets : [0],
                     searchable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : getMonthBipsShort(data);
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<span style="display: none;">'+data+'</span>'+getMonthBipsShort(data);
                     }
                 },{
                     targets : [1],
                     searchable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(data)+'</div>';
                     }
                 },{
                     targets : [2],
                     searchable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(data)+'</div>';
                     }
                 },{
                     targets : [3],
                     searchable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(data)+'</div>';
                     }
                 }]
             });
@@ -281,10 +285,10 @@
         }
 
         function chartSummary(){
-            var tgllast = new Date($("#tgl_awal_current").val());
+            var tgllast = new Date($("#tgl_awal_current").val()+'/01');
             var getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1);
 
-            var tglthis = new Date($("#tgl_akhir_current").val());
+            var tglthis = new Date($("#tgl_akhir_current").val()+'/01');
             var getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1);
 
             $("#tgl_awal").val(getlastdate);

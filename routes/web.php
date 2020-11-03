@@ -34,6 +34,7 @@ Route::group(['middleware' => 'auth'], function() {
     //page report
     Route::get('/report/dailylogin', 'ReportController@dailylogin')->name('report.dailylogin');
     Route::get('/report/monthlylogin', 'ReportController@monthlylogin')->name('report.monthlylogin');
+    Route::get('/report/idxmonthlylogin', 'ReportController@monthlyloginidx')->name('report.idxmonthlylogin');
     //page dashboards
     Route::get('/dashboard', 'DashboardController@dashboard')->name('dashboard');
 
@@ -47,7 +48,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('reportdailylogin-get', 'ReportController@dailyReport');
     Route::get('chartmonthlylogin-get', 'ReportController@chartMonthlyLogin');
     Route::get('datamonthlylogin-get', 'ReportController@dataMonthlyLogin');
+    Route::get('datamonthlyloginidx-get', 'ReportController@dataMonthlyLoginIdx');
     Route::get('reportmonthlylogin-get', 'ReportController@monthlyReport');
+    Route::get('/reportmonthlyloginidx/pdf', 'ReportController@pdfMonthlyLoginIdx')->name('pdfMonthlyLoginIdx');
     Route::get('countuseractivity-get', 'DashboardController@countUserActivityLogin');
     Route::get('toptrade-get', 'DashboardController@datatopTrade');
 

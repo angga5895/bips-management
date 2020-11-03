@@ -701,12 +701,14 @@ class UserController extends Controller
             $whereStatus = ' AND status = \''.$status.'\' ';
         }
 
+        $tglAw = $tglAwal . ' 00:00:00';
+        $tglAk = $tglAkhir . ' 23:59:59';
 
         $data = DB::connection('pgsql2')->select('SELECT * FROM user_activity 
                                 WHERE user_id = \''.$userID.'\'
                                 '.$whereActivity.'
                                 '.$whereStatus.' 
-                                AND ("timestamp" BETWEEN \''.$tglAwal.'\' AND \''.$tglAkhir.'\')'
+                                AND ("timestamp" BETWEEN \''.$tglAw.'\' AND \''.$tglAk.'\')'
         );
         return DataTables::of($data)->make(true);
     }

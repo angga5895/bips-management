@@ -32,20 +32,47 @@
             tableSummary();
         });
 
-        function exportPDF() {
+        function exportExcel() {
             $.ajax({
                 type    : "GET",
-                url     : "{{url('/reportmonthlyloginidx/pdf')}}",
+                url     : "{{url('reportmonthlyloginidx-get')}}",
                 data    : {
                     'tgl_awal': $("#tgl_awal").val(),
                     'tgl_akhir': $("#tgl_akhir").val()
                 },
                 complete : function (){
-                    window.open(this.url, '_blank');
-                    //window.location = this.url;
-                    console.log('Export PDF Success..');
+                    //window.open(this.url, '_blank');
+                    window.location = this.url;
+                    console.log('Export Excel Success..');
                 }
             });
+        }
+
+        function exportPDF() {
+            if ($("#tgl_awal").val() !== $("#tgl_akhir").val()){
+                swal({
+                    title: "Must 1 Month Period!",
+                    text: "Report pdf must be 1 month period.",
+                    type: "warning",
+                    showCancelButton: false,
+                    confirmButtonClass: 'btn-warning',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                $.ajax({
+                    type    : "GET",
+                    url     : "{{url('/reportmonthlyloginidx/pdf')}}",
+                    data    : {
+                        'tgl_awal': $("#tgl_awal").val(),
+                        'tgl_akhir': $("#tgl_akhir").val()
+                    },
+                    complete : function (){
+                        window.open(this.url, '_blank');
+                        //window.location = this.url;
+                        console.log('Export PDF Success..');
+                    }
+                });
+            }
         }
 
         function numberWithCommas(x) {
@@ -204,7 +231,7 @@
                     </div>
                     <input type="text" class="form-control" name="end" id="tgl_akhir_current" readonly value="{{ $thismonth }}" onchange="tableSummary();">
                 </div>&nbsp;&nbsp;
-                <button class="form-control-btn btn btn-primary mb-1" type="button" id="btn-current">Refresh</button>
+                <button class="form-control-btn btn btn-primary mb-1" type="button" id="btn-current" onclick="tableSummary()">Refresh</button>
                 <input value="{{ $startmonth }}" type="hidden" id="tgl_awal"/>
                 <input value="{{ $thismonth }}" type="hidden" id="tgl_akhir"/>
             </form>

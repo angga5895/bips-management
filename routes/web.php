@@ -50,6 +50,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('datamonthlylogin-get', 'ReportController@dataMonthlyLogin');
     Route::get('datamonthlyloginidx-get', 'ReportController@dataMonthlyLoginIdx');
     Route::get('reportmonthlylogin-get', 'ReportController@monthlyReport');
+    Route::get('reportmonthlyloginidx-get', 'ReportController@idxmonthlyReport');
     Route::get('/reportmonthlyloginidx/pdf', 'ReportController@pdfMonthlyLoginIdx')->name('pdfMonthlyLoginIdx');
     Route::get('countuseractivity-get', 'DashboardController@countUserActivityLogin');
     Route::get('toptrade-get', 'DashboardController@datatopTrade');

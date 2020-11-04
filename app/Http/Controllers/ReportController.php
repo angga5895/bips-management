@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\DailyExportReport;
+use App\Exports\IDXMonthlyExportReport;
 use App\Exports\MonthlyExportReport;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -224,25 +225,39 @@ class ReportController extends Controller
         return (new MonthlyExportReport($tgl_awal,$tgl_akhir))->download($judul.'_'. date('Y-m-d H:i:s').'.xls');
     }
 
+    public function idxmonthlyReport (){
+        $tgl_awal = str_replace("/","-",$_GET['tgl_awal']);
+        $tgl_akhir = str_replace("/","-",$_GET['tgl_akhir']);
+
+        date_default_timezone_set('Asia/Jakarta');
+        $judul = 'Report Monthly Login IDX';
+
+        return (new IDXMonthlyExportReport($tgl_awal,$tgl_akhir))->download($judul.'_'. date('Y-m-d H:i:s').'.xls');
+    }
+
     public function pdfMonthlyLoginIdx(Request $request){
         $tgl_awal = str_replace("/","-",$_GET['tgl_awal']);
         $tgl_akhir = str_replace("/","-",$_GET['tgl_akhir']);
         //$tgl_awal = '2020-01';
         //$tgl_akhir = '2020-11';
 
-        date_default_timezone_set('Asia/Jakarta');
-        $judul = 'Report Monthly Login IDX_'. date('Y-m-d H:i:s').'.pdf';
+        if ($tgl_awal !== $tgl_akhir){
+            return view('permission');
+        } else {
+            date_default_timezone_set('Asia/Jakarta');
+            $judul = 'Report Monthly Login IDX_' . date('Y-m-d H:i:s') . '.pdf';
 
-        $data = DB::connection('pgsql2')->select('SELECT * FROM stat_monthly_login_idx
-                        WHERE year_month BETWEEN \''.$tgl_awal.'\' AND \''.$tgl_akhir.'\'
-                        ORDER BY year_month ASC');
+            $data = DB::connection('pgsql2')->select('SELECT * FROM stat_monthly_login_idx
+                            WHERE year_month BETWEEN \'' . $tgl_awal . '\' AND \'' . $tgl_akhir . '\'
+                            ORDER BY year_month ASC');
 
-        $pdf = PDF::loadView('report.report-monthlyreportidx-pdf',['monthlyloginidx' => $data], compact('judul'));
-        $pdf->setPaper('A4','potrait');
-        /*return $pdf->stream($judul,array('Attachment'=>false));*/
-        return new Response($pdf->output(), 200, array(
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'filename="'.$judul.'"',
-        ));
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('report.report-monthlyreportidx-pdf', ['monthlyloginidx' => $data], compact('judul'));
+            $pdf->setPaper('A4', 'potrait');
+            /*return $pdf->stream($judul,array('Attachment'=>false));*/
+            return new Response($pdf->output(), 200, array(
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'filename="' . $judul . '"',
+            ));
+        }
     }
 }

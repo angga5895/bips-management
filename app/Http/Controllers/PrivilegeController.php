@@ -428,7 +428,7 @@ class PrivilegeController extends Controller
 
         $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
-        if ($clapp === "0" || $clappmod === "0"){
+        if ($clapp === "0" && $clappmod === "0"){
             try {
                 if (count($cl_app) > 0){
                     try{
@@ -500,6 +500,69 @@ class PrivilegeController extends Controller
                         $user = "";
                         $message = $exupddd->getMessage();
                     }
+                }
+            } catch(QueryException $ex){
+                $status = "01";
+                $user = null;
+                $message = $ex->getMessage();
+            }
+        } else if ($clappmod === "0"){
+            try {
+                if (count($cl_app) > 0){
+                    try{
+                        $delclapp = ClPermissionApp::where('clp_role_app',$role_app)->delete();
+
+                        if ($delclapp){
+                            $execclapp = 1;
+                        } else {
+                            $execclapp = 0;
+                        }
+                    } catch (QueryException $exclapp){
+                        $exclapp->getMessage();
+                        $execclapp = 0;
+                    }
+
+                    if ($execclapp === 1){
+                        foreach ($clapp as $p){
+                            $query = ClPermissionApp::create([
+                                'clp_role_app' => $role_app,
+                                'clp_app' => $p
+                            ]);
+                        }
+                    }
+                } else {
+                    foreach ($clapp as $p){
+                        $query = ClPermissionApp::create([
+                            'clp_role_app' => $role_app,
+                            'clp_app' => $p
+                        ]);
+                    }
+                }
+
+                if ($query) {
+                    try{
+                        $qq = RoleApp::where('id', $role_app)->update([
+                            'updated_at' => $current_time
+                        ]);
+
+                        if ($qq){
+                            $status = '00';
+                            $user = $name;
+                            $message = 'Success';
+                        } else {
+                            $status = "01";
+                            $user = "";
+                            $message = 'Error';
+                        }
+                    } catch (QueryException $exupds){
+                        $status = "01";
+                        $user = "";
+                        $message = $exupds->getMessage();
+                    }
+                } else {
+                    $status = "01";
+                    $user = "";
+                    $message = 'Error';
                 }
             } catch(QueryException $ex){
                 $status = "01";

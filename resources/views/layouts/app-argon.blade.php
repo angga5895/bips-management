@@ -66,7 +66,9 @@
 
 <body>
 <!-- Sidenav -->
+@if(!isset($fullscreendashboard))
 @include('layouts.includes.sidebar-argon')
+@endif
 
 <!-- Main content -->
 <div class="main-content">

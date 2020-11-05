@@ -1,5 +1,24 @@
 <!-- Top navbar -->
 <nav class="navbar navbar-top navbar-expand-md navbar-blue navbar-border-bottom" id="navbar-main">
+    @if(isset($fullscreendashboard))
+        <div class="h4 mb-0 text-white text-uppercase d-inline-block">
+            <a class="navbar-brand pt-0" href="{{ url('/') }}">
+            {{--<img src="./assets/img/brand/blue.png" class="navbar-brand-img" alt="...">--}}
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+                {{--<span class="logo-lg"><b>Bahana</b></span><br>--}}
+                <img width="55px" style="background: white; padding: 2.5px; border-radius: 10px" src="{{asset('/logo_bahana_dx_trade.png')}}"/>
+            </a>
+        </div>
+        <div class="h4 mb-0 text-white text-uppercase d-inline-block">
+            <button class="form-control-btn btn btn btn-secondary mb-1" onclick="getuseractivity();">
+                <i class="fa fa-sync-alt"></i> Refresh</button>
+        </div>
+        <div class="h4 mb-0 text-white text-uppercase d-inline-block">
+            <button class="form-control-btn btn btn btn-default disabled mb-1">
+                <span class="text-nowrap date-now">Data taken at : <?php echo date('d M Y H:i:s')." WIB"?></span>
+            </button>
+        </div>
+    @endif
     <div class="container-fluid" style="justify-content: flex-end!important;">
         <!-- Brand -->
         <div class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"></div>

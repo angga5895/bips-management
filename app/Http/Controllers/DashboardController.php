@@ -43,16 +43,50 @@ class DashboardController extends Controller
         }
     }
 
+    public function dashboardfull()
+    {
+        $roleApp = RoleApp::orderBy('id','ASC')->get();
+
+        $role_app = Auth::user()->role_app;
+        $clapp = DB::select('SELECT cl_permission_app.clp_role_app, cl_app.* FROM cl_app 
+                                    JOIN cl_permission_app ON cl_permission_app.clp_app = cl_app.cla_id
+                                    JOIN role_app ON cl_permission_app.clp_role_app = role_app.id
+                                    WHERE cl_app.cla_shown = 1 
+                                    AND cl_permission_app.clp_role_app = '.$role_app.'
+                                    ORDER BY cl_app.cla_order;
+                            ');
+
+        $permission = DB::select('SELECT count(*) FROM cl_permission_app
+                            JOIN cl_app ON cl_permission_app.clp_app = cl_app.cla_id
+                            WHERE cl_app.cla_routename = \'dashboardfull\' AND cl_permission_app.clp_role_app = '.$role_app);
+
+        $countpermission = 0;
+        foreach ($permission as $p){
+            $countpermission = $p->count;
+        }
+
+        if ($countpermission === 0  || $countpermission === '0'){
+            return view('permission');
+        } else {
+            $idlogin = Auth::user()->id;
+            $clapps = DB::select('SELECT cl_app.* FROM cl_app WHERE cl_app.cla_routename = \'dashboardfull\' ');
+            $clmodule = DB::select('SELECT cl_module.* FROM cl_module WHERE cl_module.clm_slug = \'dashboardfull\' ');
+            $fullscreendashboard=1;
+            return view('dashboards-full', compact('clapp', 'role_app', 'roleApp','idlogin','clapps','clmodule','fullscreendashboard'), ['title' => 'Dashboard']);
+        }
+    }
+
     public function countUserActivityLogin(){
+        //date('Y-m-d')
         $query = DB::connection('pgsql2')->select('SELECT DISTINCT
                     (SELECT COUNT(DISTINCT user_id) cnt_web FROM user_activity WHERE terminal=\'web\' AND activity=\'LOGIN\' 
-                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
+                    AND status=\'SUCCESS\' AND timestamp::date=\'2020-10-12\'),
                     (SELECT COUNT(DISTINCT user_id) cnt_mobile FROM user_activity WHERE terminal=\'mobile\' AND activity=\'LOGIN\' 
-                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
+                    AND status=\'SUCCESS\' AND timestamp::date=\'2020-10-12\'),
                     (SELECT COUNT(DISTINCT user_id) cnt_pc FROM user_activity WHERE terminal=\'pc\' AND activity=\'LOGIN\'
-                    AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
+                    AND status=\'SUCCESS\' AND timestamp::date=\'2020-10-12\'),
                     (SELECT COUNT(DISTINCT user_id) cnt_web_mobile FROM user_activity WHERE terminal IN (\'web\',\'mobile\')
-                    AND activity=\'LOGIN\' AND status=\'SUCCESS\' AND timestamp::date=\''.date('Y-m-d').'\'),
+                    AND activity=\'LOGIN\' AND status=\'SUCCESS\' AND timestamp::date=\'2020-10-12\'),
                     CONCAT (CAST(to_char(now(), \'dd Mon YYYY HH24:MI:ss\') as varchar(4000)),\' WIB\') as now_date,
                     now() as dt
                     FROM user_activity');

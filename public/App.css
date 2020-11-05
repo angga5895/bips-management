@@ -582,3 +582,11 @@ table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before,
     margin: 10px 55px 10px 25px;
     padding-left: 4px;
 }
+
+.mbox-mini {
+    display: inline-block;
+    /* width: 70px; */
+    height: 10px;
+    margin: 10px 15px 10px 15px;
+    padding-left: 4px;
+}

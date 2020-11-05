@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/report/idxmonthlylogin', 'ReportController@monthlyloginidx')->name('report.idxmonthlylogin');
     //page dashboards
     Route::get('/dashboard', 'DashboardController@dashboard')->name('dashboard');
+    Route::get('/dashboardfull', 'DashboardController@dashboardfull')->name('dashboardfull');
 
     Route::get('get-becust', 'RiskManagementController@getBECust');
     Route::get('get-becuststock/{id}', 'RiskManagementController@getBECustStock');

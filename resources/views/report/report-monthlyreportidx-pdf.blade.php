@@ -264,7 +264,8 @@
                 </tr>
                 <tr>
                     <td colspan="2" class="text-center" width="200px">
-                        <img src="{{ image_ttd() }}" alt="ttd"><br/><hr/>
+                        {{--<img src="{{ image_ttd() }}" alt="ttd">--}}
+                        <div style="height: 54px!important;"></div><br/><hr/>
                     </td>
                 </tr>
                 <tr><td colspan="2"></td></tr>

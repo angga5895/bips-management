@@ -75,6 +75,22 @@
             }
         }
 
+        function detailPDF(data) {
+            $.ajax({
+                type    : "GET",
+                url     : "{{url('/detailmonthlyloginidx')}}",
+                data    : {
+                    'tgl_awal': data,
+                    'tgl_akhir': data
+                },
+                complete : function (){
+                    window.open(this.url, '_blank');
+                    //window.location = this.url;
+                    console.log('Detail PDF Success..');
+                }
+            });
+        }
+
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
@@ -84,7 +100,7 @@
                 /*processing: true,
                 serverSide: true,*/
                 responsive: true,
-                aaSorting: [[0, 'desc']],
+                aaSorting: [[1, 'desc']],
                 bFilter:false,
                 ajax : {
                     url: '{{ url("datamonthlyloginidx-get") }}',
@@ -98,6 +114,7 @@
                 },
                 columns : [
                     {data : 'year_month', name: 'year_month'},
+                    {data : 'year_month', name: 'year_month'},
                     {data : 'total_cust_login', name: 'total_cust_login'},
                     {data : 'cust_general', name: 'cust_general'},
                     {data : 'cust_academic', name: 'cust_academic'},
@@ -108,13 +125,13 @@
                     targets : [0],
                     searchable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<span style="display: none;">'+data+'</span>'+getMonthBipsShort(data);
+                        return '<button onclick="detailPDF(\''+data+'\')" class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-eye"></i></button>';
                     }
                 },{
                     targets : [1],
                     searchable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(data)+'</div>';
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<span style="display: none;">'+data+'</span>'+getMonthBipsShort(data);
                     }
                 },{
                     targets : [2],
@@ -136,6 +153,12 @@
                     }
                 },{
                     targets : [5],
+                    searchable : true,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(data)+'</div>';
+                    }
+                },{
+                    targets : [6],
                     searchable : true,
                     render : function (data, type, row) {
                         return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(data)+'</div>';
@@ -252,6 +275,7 @@
                                 <table class="table table-striped table-bordered table-hover" id="table-monthly">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
+                                        <th></th>
                                         <th>Year Month</th>
                                         <th>Total Nasabah Login</th>
                                         <th>Nasabah Umum</th>

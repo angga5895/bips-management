@@ -78,9 +78,16 @@
             margin-left: 60px;
             margin-right: 40px;
         }
+
+        .detail{
+            margin-left: 250px;
+            margin-right: 200px;
+            margin-top: 75px;
+            margin-bottom: 75px;
+        }
     </style>
 </head>
-<body>
+<body class="{{ isset($detail) ? 'detail' : '' }}">
 <?php
         function tgl_indo_month($tanggal){
             $bulan = array (

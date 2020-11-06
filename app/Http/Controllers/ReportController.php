@@ -260,4 +260,23 @@ class ReportController extends Controller
             ));
         }
     }
+
+    public function detailMonthlyLoginIdx(Request $request){
+        $tgl_awal = str_replace("/","-",$_GET['tgl_awal']);
+        $tgl_akhir = str_replace("/","-",$_GET['tgl_akhir']);
+
+        if ($tgl_awal !== $tgl_akhir){
+            return view('permission');
+        } else {
+            date_default_timezone_set('Asia/Jakarta');
+            $judul = 'DX TRADE ADMIN - Report Monthly Login IDX_' . date('Y-m-d H:i:s');
+            $detail = true;
+
+            $data = DB::connection('pgsql2')->select('SELECT * FROM stat_monthly_login_idx
+                                WHERE year_month BETWEEN \'' . $tgl_awal . '\' AND \'' . $tgl_akhir . '\'
+                                ORDER BY year_month ASC');
+
+            return view('report.report-monthlyreportidx-pdf', ['monthlyloginidx' => $data], compact('judul', 'detail'));
+        }
+    }
 }

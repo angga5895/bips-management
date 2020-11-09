@@ -88,7 +88,7 @@
                     targets : [0],
                     searchable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : getDateBipsShort(data);
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<span style="display: none;">'+data+'</span>'+getDateBipsShort(data);
                     }
                 },{
                     targets : [1],

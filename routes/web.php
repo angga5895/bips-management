@@ -38,6 +38,8 @@ Route::group(['middleware' => 'auth'], function() {
     //page dashboards
     Route::get('/dashboard', 'DashboardController@dashboard')->name('dashboard');
     Route::get('/dashboardfull', 'DashboardController@dashboardfull')->name('dashboardfull');
+    //page parameter
+    Route::get('/parameter/marketholiday', 'ParameterController@marketholiday')->name('parameter.marketholiday');
 
     Route::get('/detailmonthlyloginidx', 'ReportController@detailMonthlyLoginIdx')->name('detailmonthlyloginidx');
 
@@ -57,6 +59,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/reportmonthlyloginidx/pdf', 'ReportController@pdfMonthlyLoginIdx')->name('pdfMonthlyLoginIdx');
     Route::get('countuseractivity-get', 'DashboardController@countUserActivityLogin');
     Route::get('toptrade-get', 'DashboardController@datatopTrade');
+
+    Route::get('datamarketholiday-get', 'ParameterController@dataMarketholiday');
+    Route::get('marketholidaydate-check', 'ParameterController@checkDate');
+    Route::get('marketholiday-registrasi', 'ParameterController@registrasiMarketholiday');
+    Route::get('marketholiday-update/submit', 'ParameterController@updateMarketholiday');
+    Route::get('marketholiday-update', 'ParameterController@marketholidayEdit');
+    Route::get('marketholiday-delete/submit', 'ParameterController@deleteMarketholiday');
 
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');

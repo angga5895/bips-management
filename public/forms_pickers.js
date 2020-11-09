@@ -42,6 +42,27 @@ $(function() {
         format: "dd MM yyyy",
         todayBtn: "linked",
     });
+
+    $('#datepicker-basic').datepicker({
+        orientation: isRtl ? 'auto right' : 'auto left',
+        startDate: '01/01/1920',
+        autoclose: true,
+        daysOfWeekDisabled:[0,6],
+        /*todayHighlight: true,*/
+        format: "dd MM yyyy",
+        todayBtn: "linked",
+    });
+
+    $('#datepicker-range-year').datepicker({
+        orientation: isRtl ? 'auto right' : 'auto left',
+        startDate: '01/01/1920',
+        autoclose: true,
+        endDate : '31/12/'+sd.getFullYear(),
+        /*todayHighlight: true,*/
+        format: "dd MM yyyy",
+        todayBtn: "linked",
+    });
+
     $('#datepicker-inline').datepicker();
 
     $("#monthPicker").datepicker({

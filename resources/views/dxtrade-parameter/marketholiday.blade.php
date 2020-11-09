@@ -453,6 +453,7 @@
             /*$("[id=status]").val('');
             $("[data-id=status] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('Choose Status');*/
             $("#description").val('');
+            $("#hiddenuseradminid").val('');
 
             $("#add-user").removeClass("d-none");
             $("#add-user").addClass("d-block");

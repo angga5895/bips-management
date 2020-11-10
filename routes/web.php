@@ -40,6 +40,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/dashboardfull', 'DashboardController@dashboardfull')->name('dashboardfull');
     //page parameter
     Route::get('/parameter/marketholiday', 'ParameterController@marketholiday')->name('parameter.marketholiday');
+    Route::get('/parameter/stockhaircut', 'ParameterController@stockhaircut')->name('parameter.stockhaircut');
 
     Route::get('/detailmonthlyloginidx', 'ReportController@detailMonthlyLoginIdx')->name('detailmonthlyloginidx');
 
@@ -66,6 +67,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('marketholiday-update/submit', 'ParameterController@updateMarketholiday');
     Route::get('marketholiday-update', 'ParameterController@marketholidayEdit');
     Route::get('marketholiday-delete/submit', 'ParameterController@deleteMarketholiday');
+
+    Route::get('datastockhaircut-get', 'ParameterController@dataStockhaircut');
+    Route::get('stockhaircutcode-check', 'ParameterController@checkStockHaircut');
+    Route::get('stockhaircut-registrasi', 'ParameterController@registrasiHaircut');
+    Route::get('stockhaircut-update/submit', 'ParameterController@updateStockHaircut');
+    Route::get('stockhaircut-update', 'ParameterController@stockhaircutEdit');
+    Route::get('stockhaircut-delete/submit', 'ParameterController@deleteStockHaircut');
 
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');

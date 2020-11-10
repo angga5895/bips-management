@@ -12,27 +12,37 @@
 
     <script src="{{ url('forms_pickers.js') }}"></script>
     <script type="text/javascript">
-        var urecdate = '';
-        var udescription = '';
-        var ustatus = '';
-        var conrecdate = 0;
+        var ustockcode = '';
+        var uhaircut = '';
+        var uhaircutcomite = '';
+        var uhc1 = '';
+        var uhc2 = '';
+        var constockdate = 0;
 
         var rulesobj = {
-            "rec_date" : {
+            "stockcode" : {
                 required : true
             },
-            "status" : {
+            "haircut" : {
                 required : true
             },
-            "description" : {
+            "haircutcomite" : {
+                required : true
+            },
+            "hc1" : {
+                required : true
+            },
+            "hc2" : {
                 required : true
             }
         }
 
         var messagesobj = {
-            "status" : "Please pick an role admin.",
-            "rec_date" : "Field is required.",
-            "description" : "Field is required.",
+            "stockcode" : "Field is required.",
+            "haircut" : "Field is required.",
+            "haircutcomite" : "Field is required.",
+            "hc1" : "Field is required.",
+            "hc2" : "Field is required."
         }
 
         $(function () {
@@ -51,40 +61,30 @@
                 },
                 highlight: function (element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
-
-                    if (element.id === 'status'){
-                        $(".lbl-status > .dropdown.bootstrap-select").addClass("is-invalid");
-                    }
                 },
                 unhighlight: function (element, errorClass, validClass) {
                     $(element).removeClass('is-invalid');
-
-                    if (element.id === 'status'){
-                        $(".lbl-status > .dropdown.bootstrap-select").removeClass("is-invalid");
-                    }
                 }
             });
 
             $form.find("#saveUser").on('click', function () {
                 if ($form.valid()) {
-                    var rdate = $("#tgl_rec_date").val();
+                    var data = $("#stockcode").val().toUpperCase();
                     $.ajax({
                         type : "GET",
-                        url  : "{{ url('marketholidaydate-check') }}",
+                        url  : "{{ url('stockhaircutcode-check') }}",
                         data : {
-                            'tgl_rec_date' : rdate,
+                            'stockcode' : data,
                         },
                         success : function (res) {
                             if (res.status === "01"){
-                                var ex = $("#rec_date").val();
-                                $("#rec_date").val('');
-                                $("#rec_date").valid();
+                                $("#stockcode").val('');
+                                $("#stockcode").valid();
                                 $(".lbl-group").removeClass('focused');
 
-                                $("#rec_date").val(ex);
-                                conrecdate = 1;
+                                constockdate = 1;
                             } else {
-                                conrecdate = 0;
+                                constockdate = 0;
                                 saveUser();
                             }
                         }
@@ -114,32 +114,34 @@
         });
 
         function saveUser() {
-            var desc = $("#description").val();
-            var recdate = $("#tgl_rec_date").val();
-            var status = $("#status").val();
+            var stockcode = $("#stockcode").val().toUpperCase();
+            var haircut = $("#haircut").val();
+            var haircutcomite = $("#haircutcomite").val();
+            var hc1 = $("#hc1").val();
+            var hc2 = $("#hc2").val();
 
             $.get("/mockjax");
 
             $.ajax({
                 type : "GET",
-                url  : "{{ url('marketholiday-registrasi') }}",
+                url  : "{{ url('stockhaircut-registrasi') }}",
                 data : {
-                    'desc' : desc,
-                    'recdate' : recdate,
-                    'status' : status,
+                    'stockcode':stockcode,
+                    'haircut':haircut,
+                    'haircutcomite':haircutcomite,
+                    'hc1':hc1,
+                    'hc2':hc2
                 },
                 success : function (res) {
                     if ($.trim(res)){
                         $("#breadAdditional").addClass("d-none"); $("#breadAdditional").removeClass("d-block");$("#breadAdditional").text("");
                         if (res.status === "00"){
-                            $('#table-marketholiday').DataTable().ajax.reload();
+                            $('#table-stockhaircut').DataTable().ajax.reload();
                             $("#add-user").removeClass("d-block");
                             $("#add-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
                             $("#main-user").addClass("d-block");
-                            var udatadate = new Date(res.rec_date);
-                            var udate = udatadate.getFullYear() + "-" + appendLeadingZeroes(udatadate.getMonth() + 1) + "-" + appendLeadingZeroes(udatadate.getDate());
-                            $("#regisuser").text(getDateBipsShort(udate));
+                            $("#regisuser").text(res.stock_code);
                             $("#alert-success-registrasi").removeClass("d-none");
                             $("#alert-success-registrasi").addClass("d-block");
                             $("#alert-error-registrasi").removeClass("d-block");
@@ -147,7 +149,7 @@
 
                             clearVariable();
                         } else {
-                            $('#table-marketholiday').DataTable().ajax.reload();
+                            $('#table-stockhaircut').DataTable().ajax.reload();
                             $("#add-user").removeClass("d-block");
                             $("#add-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
@@ -180,27 +182,25 @@
                     },
                     function(isConfirm) {
                         if (isConfirm) {
-                            var tgl = $("#tgl_rec_date").val();
-                            var tglN = $("#hiddenuseradminid").val();
+                            var stockcode = $("#stockcode").val().toUpperCase();
+                            var stockcodeN = $("#hiddenuseradminid").val();
 
-                            if (tgl !== tglN){
+                            if (stockcode !== stockcodeN){
                                 $.ajax({
                                     type : "GET",
-                                    url  : "{{ url('marketholidaydate-check') }}",
+                                    url  : "{{ url('stockhaircutcode-check') }}",
                                     data : {
-                                        'tgl_rec_date' : tgl,
+                                        'stockcode' : stockcode,
                                     },
                                     success : function (res) {
                                         if (res.status === "01"){
-                                            var ex = $("#rec_date").val();
-                                            $("#rec_date").val('');
-                                            $("#rec_date").valid();
+                                            $("#stockcode").val('');
+                                            $("#stockcode").valid();
                                             $(".lbl-group").removeClass('focused');
 
-                                            $("#rec_date").val(ex);
-                                            conrecdate = 1;
+                                            constockdate = 1;
                                         } else {
-                                            conrecdate = 0;
+                                            constockdate = 0;
                                             updateuser();
                                         }
                                     }
@@ -218,32 +218,34 @@
 
         function updateuser() {
             var id = $("#hiddenuseradminid").val();
-            var recdate = $("#tgl_rec_date").val();
-            var status = $("#status").val();
-            var desc = $("#description").val();
+            var stockcode = $("#stockcode").val().toUpperCase();
+            var haircut = $("#haircut").val();
+            var haircutcomite = $("#haircutcomite").val();
+            var hc1 = $("#hc1").val();
+            var hc2 = $("#hc2").val();
 
             $.get("/mockjax");
 
             $.ajax({
                 type: "GET",
-                url: "{{ url('marketholiday-update/submit') }}",
+                url: "{{ url('stockhaircut-update/submit') }}",
                 data: {
                     'id': id,
-                    'desc': desc,
-                    'recdate': recdate,
-                    'status': status,
+                    'stockcode':stockcode,
+                    'haircut':haircut,
+                    'haircutcomite':haircutcomite,
+                    'hc1':hc1,
+                    'hc2':hc2
                 },
                 success: function (res) {
                     if ($.trim(res)) {
                         if (res.status === "00") {
-                            $('#table-marketholiday').DataTable().ajax.reload();
+                            $('#table-stockhaircut').DataTable().ajax.reload();
                             $("#add-user").removeClass("d-block");
                             $("#add-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
                             $("#main-user").addClass("d-block");
-                            var udatadate = new Date(res.rec_date);
-                            var udate = udatadate.getFullYear() + "-" + appendLeadingZeroes(udatadate.getMonth() + 1) + "-" + appendLeadingZeroes(udatadate.getDate());
-                            $("#update_user_notification").text(getDateBipsShort(udate));
+                            $("#update_user_notification").text(res.stock_code);
                             $("#alert-success-update").removeClass("d-none");
                             $("#alert-success-update").addClass("d-block");
 
@@ -262,9 +264,11 @@
         }
 
         function clearVariable() {
-            urecdate = '';
-            udescription = '';
-            ustatus = '';
+            ustockcode = '';
+            uhaircut = '';
+            uhaircutcomite = '';
+            uhc1 = '';
+            uhc2 = '';
         }
 
         $(document).ready(function () {
@@ -274,47 +278,45 @@
             $('.bootstrap-select').selectpicker();
 
             setInterval(function () {
-                if(conrecdate > 0){
-                    $('#rec_date-error').text('Rec date already exist.');
+                if(constockdate > 0){
+                    $('#stockcode-error').text('Stock code already exist.');
                 }
             },100);
 
-            tablegetMarketHoliday();
-
-            var lastmonth = new Date($("#tgl_awal").val());
-            var thismonth = new Date($("#tgl_akhir").val());
-            var recdate = new Date($("#tgl_rec_date").val());
-            $("#tgl_awal_current").datepicker("setDate",lastmonth);
-            $("#tgl_akhir_current").datepicker("setDate",thismonth);
-            $("#rec_date").datepicker("setDate",recdate);
-            dateSummary();
+            tablegetStockHaircut();
         });
 
-        function tablegetMarketHoliday() {
-            var tableData = $("#table-marketholiday").DataTable({
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function tablegetStockHaircut() {
+            var tableData = $("#table-stockhaircut").DataTable({
                 /*processing: true,
                 serverSide: true,*/
                 responsive: true,
-                aaSorting: [[1, 'desc']],
+                aaSorting: [[1, 'asc']],
+                bFilter: false,
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
                     $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" type="button" id="adduser" onclick="addUser()">Add</button>');
                 },
                 ajax : {
-                    url: '{{ url("datamarketholiday-get") }}',
+                    url: '{{ url("datastockhaircut-get") }}',
                     data: function (d) {
                         var search_data = {
-                            tgl_awal: $("#tgl_awal").val(),
-                            tgl_akhir: $("#tgl_akhir").val(),
+                            stock_code: $("#stock_code").val()
                         };
                         d.search_param = search_data;
                     }
                 },
                 columns : [
-                    {data : 'rec_date', name: 'rec_date'},
-                    {data : 'rec_date', name: 'rec_date'},
-                    {data : 'status', name: 'status'},
-                    {data : 'description', name: 'description'},
+                    {data : 'stock_code', name: 'stock_code'},
+                    {data : 'stock_code', name: 'stock_code'},
+                    {data : 'haircut', name: 'haircut'},
+                    {data : 'haircut_comite', name: 'haircut_comite'},
+                    {data : 'hc1', name: 'hc1'},
+                    {data : 'hc2', name: 'hc2'},
                 ],
                 columnDefs: [{
                     searchable : true,
@@ -334,125 +336,57 @@
                     searchable : true,
                     orderable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<span style="display: none;">'+data+'</span>'+getDateBipsShort(data);
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
                     }
                 },{
                     targets : [2],
                     searchable : true,
                     orderable : true,
                     render : function (data, type, row) {
-                        var dt = data;
-                        if (dt === 'C'){
-                            dt = 'CLOSED';
-                        } else if (dt === 'O'){
-                            dt = 'OPEN';
-                        }
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : dt;
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(Number(data))+'</div>';
                     }
                 },{
                     targets : [3],
                     searchable : true,
                     orderable : true,
                     render : function (data, type, row) {
-                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : data;
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(Number(data))+'</div>';
+                    }
+                },{
+                    targets : [4],
+                    searchable : true,
+                    orderable : true,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(Number(data))+'</div>';
+                    }
+                },{
+                    targets : [5],
+                    searchable : true,
+                    orderable : true,
+                    render : function (data, type, row) {
+                        return data === '' || data === null ? '<div style="text-align: center; font-weight: bold">-</div>' : '<div style="text-align: right;">'+numberWithCommas(Number(data))+'</div>';
                     }
                 }]
             });
         }
 
-        function getDateBipsShort(tanggal){
-            var datetime = tanggal.split(" ");
-            var tgl = datetime[0].split("-");
-
-            var year = tgl[0];
-
-            if (tgl[1] == '01' ||tgl[1] == '1'){
-                var month = 'Jan';
-            } else if (tgl[1] == '02' ||tgl[1] == '2'){
-                var month = 'Feb';
-            } else if (tgl[1] == '03' ||tgl[1] == '3'){
-                var month = 'Mar';
-            } else if (tgl[1] == '04' ||tgl[1] == '4'){
-                var month = 'Apr';
-            } else if (tgl[1] == '05' ||tgl[1] == '5'){
-                var month = 'Mei';
-            } else if (tgl[1] == '06' ||tgl[1] == '6'){
-                var month = 'Jun';
-            } else if (tgl[1] == '07' ||tgl[1] == '7'){
-                var month = 'Jul';
-            } else if (tgl[1] == '08' ||tgl[1] == '8'){
-                var month = 'Aug';
-            } else if (tgl[1] == '09' ||tgl[1] == '9'){
-                var month = 'Sep';
-            } else if (tgl[1] == '10'){
-                var month = 'Oct';
-            } else if (tgl[1] == '11'){
-                var month = 'Nov';
-            } else if (tgl[1] == '12'){
-                var month = 'Dec';
-            }
-
-            var date = tgl[2];
-
-            return date+" "+month+" "+year;
-        }
-
-        function appendLeadingZeroes(n){
-            if(n <= 9){
-                return "0" + n;
-            }
-            return n
-        }
-
-        function dateSummary() {
-            var tgllast = new Date($("#tgl_awal_current").val());
-            var getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
-
-            var tglthis = new Date($("#tgl_akhir_current").val());
-            var getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1) + "/" + appendLeadingZeroes(tglthis.getDate());
-
-            $("#tgl_awal").val(getlastdate);
-            $("#tgl_akhir").val(getthisdate);
-
-            console.log(getlastdate + " & " + getthisdate);
-            //$('#table-marketholiday').DataTable().ajax.reload();
-        }
-
-        function datetableSummary(check) {
-            var tgllast = new Date($("#tgl_awal_current").val());
-            var getlastdate = tgllast.getFullYear() + "/" + appendLeadingZeroes(tgllast.getMonth() + 1) + "/" + appendLeadingZeroes(tgllast.getDate());
-
-            var tglthis = new Date($("#tgl_akhir_current").val());
-            var getthisdate = tglthis.getFullYear() + "/" + appendLeadingZeroes(tglthis.getMonth() + 1) + "/" + appendLeadingZeroes(tglthis.getDate());
-
-            $("#tgl_awal").val(getlastdate);
-            $("#tgl_akhir").val(getthisdate);
-
-            console.log(getlastdate + " & " + getthisdate);
-
-
-            $.ajax({
-                type : "GET",
-                url  : "{{ url('get-activityUser') }}",
-                data : {
-                    'user_id' : 'example',
-                },
-                success : function (res) {
-                    if (check === 1){
-                        tableRefresh();
-                    }
-                }
-            });
-        }
-
         function tableRefresh() {
-            $('#table-marketholiday').DataTable().ajax.reload();
+            $('#table-stockhaircut').DataTable().ajax.reload();
+        }
+
+        function allRefresh() {
+            $("#stock_code").val('');
+            $('#table-stockhaircut').DataTable().ajax.reload();
         }
 
         function addUser() {
             /*$("[id=status]").val('');
             $("[data-id=status] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text('Choose Status');*/
-            $("#description").val('');
+            $("#stockcode").val('');
+            $("#haircut").val('');
+            $("#haircutcomite").val('');
+            $("#hc1").val('');
+            $("#hc2").val('');
             $("#hiddenuseradminid").val('');
 
             $("#add-user").removeClass("d-none");
@@ -470,7 +404,7 @@
         }
 
         function clearCache(){
-            conrecdate = 0;
+            constockdate = 0;
             cacheError();
 
             $("#alert-error-registrasi").removeClass("d-block");
@@ -486,33 +420,35 @@
         function cacheError() {
             $('.lbl-group').removeClass('focused');
 
-            $("#rec_date-error").text('');
-            $("#status-error").text('');
-            $("#description-error").text('');
+            $("#stockcode-error").text('');
+            $("#haircut-error").text('');
+            $("#haircutcomite-error").text('');
+            $("#hc1-error").text('');
+            $("#hc2-error").text('');
 
-            $(".lbl-status > .dropdown.bootstrap-select").removeClass("is-invalid");
-            $("#rec_date").removeClass("is-invalid");
-            $("#status").removeClass("is-invalid");
-            $("#description").removeClass("is-invalid");
+            $("#stockcode").removeClass("is-invalid");
+            $("#haircut").removeClass("is-invalid");
+            $("#haircutcomite").removeClass("is-invalid");
+            $("#hc1").removeClass("is-invalid");
+            $("#hc2").removeClass("is-invalid");
 
-            $("#cekRecDate").text('');
-            $("#cekStatus").text('');
-            $("#cekDescription").text('');
+            $("#cekStockcode").text('');
+            $("#cekHaircut").text('');
+            $("#cekHaircutcomite").text('');
+            $("#cekHC1").text('');
+            $("#cekHC2").text('');
         }
 
         $("#canceluser").on("click", function () {
-            var rec_date = $("#rec_date").val();
-            var description = $("#description").val();
-            var status = $("#status").val();
+            var stockcode = $("#stock_code").val();
+            var haircut = $("#haircut").val();
+            var haircutcomite = $("#haircutcomite").val();
+            var hc1 = $("#hc1").val();
+            var hc2 = $("#hc2").val();
 
-            var rdate = new Date('<?php echo $monththis;?>');
-            rdate = rdate.getFullYear() + "/" + appendLeadingZeroes(rdate.getMonth() + 1) + "/" + appendLeadingZeroes(rdate.getDate());
-            var fdate = new Date(rec_date);
-            fdate = fdate.getFullYear() + "/" + appendLeadingZeroes(fdate.getMonth() + 1) + "/" + appendLeadingZeroes(fdate.getDate());
-
-            var res = description;
+            var res = stockcode+haircut+haircutcomite+hc1+hc2;
             res = res.trim();
-            if(res.length > 0 || rdate !== fdate) {
+            if(res.length > 0) {
                 swal({
                         title: "Are you sure?",
                         type: "warning",
@@ -548,12 +484,11 @@
         });
 
         function resetApp(){
-            var recdate = new Date('<?php echo $monththis;?>');
-            var rdate = recdate.getFullYear() + "/" + appendLeadingZeroes(recdate.getMonth() + 1) + "/" + appendLeadingZeroes(recdate.getDate());
-
-            $("#rec_date").datepicker("setDate",recdate);
-            $("#tgl_rec_date").val(rdate);
-            $("#description").val('');
+            $("#stockcode").val('');
+            $("#haircut").val('');
+            $("#haircutcomite").val('');
+            $("#hc1").val('');
+            $("#hc2").val('');
             clearCache();
         }
 
@@ -561,85 +496,67 @@
             cacheError();
             var data = $("#hiddenuseradminid").val();
 
-            var datadate = new Date(data);
-            var ddate = datadate.getFullYear() + "/" + appendLeadingZeroes(datadate.getMonth() + 1) + "/" + appendLeadingZeroes(datadate.getDate());
             $.ajax({
                 type : "GET",
-                url  : "{{ url('marketholiday-update/') }}",
+                url  : "{{ url('stockhaircut-update/') }}",
                 data : {
                     'id' : data,
                 },
                 success : function (res) {
-                    var recdate = new Date(res[0].rec_date);
-                    var rdate = recdate.getFullYear() + "/" + appendLeadingZeroes(recdate.getMonth() + 1) + "/" + appendLeadingZeroes(recdate.getDate());
-                    var udate = recdate.getFullYear() + "-" + appendLeadingZeroes(recdate.getMonth() + 1) + "-" + appendLeadingZeroes(recdate.getDate());
+                    var stockcode = res[0].stock_code;
+                    var haircut = res[0].haircut;
+                    var haircutcomite = res[0].haircut_comite;
+                    var hc1 = res[0].hc1;
+                    var hc2 = res[0].hc2;
 
                     $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
-                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(getDateBipsShort(udate));
-                    $("#hiddenuseradminid").val(ddate);
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(stockcode);
+                    $("#hiddenuseradminid").val(stockcode);
 
 
-                    $("#rec_date").datepicker("setDate",recdate);
-                    $("#tgl_rec_date").val(rdate);
-
-                    $("[id=status]").val(res[0].status);
-
-                    var sstatus = '-';
-                    if (res[0].status === 'C'){
-                        sstatus = 'CLOSED';
-                    } else {
-                        sstatus = 'OPEN';
-                    }
-                    $("[data-id=status] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text(sstatus);
-                    $("#description").val(res[0].description);
+                    $("#stockcode").val(stockcode);
+                    $("#haircut").val(Number(haircut));
+                    $("#haircutcomite").val(Number(haircutcomite));
+                    $("#hc1").val(Number(hc1));
+                    $("#hc2").val(Number(hc2));
                 }
             });
         });
 
         function editUser(data){
-            var datadate = new Date(data);
-            var ddate = datadate.getFullYear() + "/" + appendLeadingZeroes(datadate.getMonth() + 1) + "/" + appendLeadingZeroes(datadate.getDate());
-
             $.ajax({
                 type : "GET",
-                url  : "{{ url('marketholiday-update/') }}",
+                url  : "{{ url('stockhaircut-update/') }}",
                 data : {
                     'id' : data,
                 },
                 success : function (res) {
-                    var recdate = new Date(res[0].rec_date);
-                    var udate = recdate.getFullYear() + "-" + appendLeadingZeroes(recdate.getMonth() + 1) + "-" + appendLeadingZeroes(recdate.getDate());
-                    var rdate = recdate.getFullYear() + "/" + appendLeadingZeroes(recdate.getMonth() + 1) + "/" + appendLeadingZeroes(recdate.getDate());
-
                     // console.log(res.name);
+                    var stockcode = res[0].stock_code;
+                    var haircut = res[0].haircut;
+                    var haircutcomite = res[0].haircut_comite;
+                    var hc1 = res[0].hc1;
+                    var hc2 = res[0].hc2;
+
                     $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Edit");
-                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(getDateBipsShort(udate));
-                    $("#hiddenuseradminid").val(ddate);
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(stockcode);
+                    $("#hiddenuseradminid").val(stockcode);
 
-                    $("#rec_date").datepicker("setDate",recdate);
-                    $("#tgl_rec_date").val(rdate);
+                    $("#stockcode").val(stockcode);
+                    $("#haircut").val(Number(haircut));
+                    $("#haircutcomite").val(Number(haircutcomite));
+                    $("#hc1").val(Number(hc1));
+                    $("#hc2").val(Number(hc2));
 
-                    $("[id=status]").val(res[0].status);
-
-                    var sstatus = '-';
-                    if (res[0].status === 'C'){
-                        sstatus = 'CLOSED';
-                    } else {
-                        sstatus = 'OPEN';
-                    }
-                    $("[data-id=status] > .filter-option > .filter-option-inner > .filter-option-inner-inner").text(sstatus);
-                    $("#description").val(res[0].description);
-
-                    ustatus = res[0].status;
-                    udescription = res[0].description;
-
-                    var sdatadate = new Date(res[0].rec_date);
-                    var sddate = datadate.getFullYear() + "/" + appendLeadingZeroes(datadate.getMonth() + 1) + "/" + appendLeadingZeroes(datadate.getDate());
-                    urecdate = sddate;
+                    ustockcode = stockcode;
+                    uhaircut = Number(haircut);
+                    uhaircutcomite = Number(haircutcomite);
+                    uhc1 = Number(hc1);
+                    uhc2 = Number(hc2);
                 }
             });
 
-            $("#hiddenuseradminid").val(ddate);
+            $("#hiddenuseradminid").val(data);
 
             $("#add-user").removeClass("d-none");
             $("#add-user").addClass("d-block");
@@ -667,23 +584,21 @@
                     if (isConfirm) {
                         $.ajax({
                             type: "GET",
-                            url: "{{ url('marketholiday-delete/submit') }}",
+                            url: "{{ url('stockhaircut-delete/submit') }}",
                             data: {
                                 'id': data,
                             },
                             success: function (res) {
-                                console.log('--> '+res.rec_date);
-                                var vdatadate = new Date(res.rec_date);
-                                var vdate = vdatadate.getFullYear() + "-" + appendLeadingZeroes(vdatadate.getMonth() + 1) + "-" + appendLeadingZeroes(vdatadate.getDate());
+                                var vdata = res.stock_code;
                                 swal({
-                                    title: getDateBipsShort(vdate),
+                                    title: vdata,
                                     text: "Has Deleted",
                                     type: "success",
                                     showCancelButton: false,
                                     confirmButtonClass: 'btn-success',
                                     confirmButtonText: 'OK'
                                 }, function () {
-                                    $('#table-marketholiday').DataTable().ajax.reload();
+                                    $('#table-stockhaircut').DataTable().ajax.reload();
                                 });
                             }
                         });
@@ -693,15 +608,20 @@
         }
 
         $("#canceledituser").on("click", function () {
-            var descN = $("#description").val();
-            var recdateN = $("#tgl_rec_date").val();
-            var statusN = $("#status").val();
+            var stockcodeN = $("#stockcode").val().toUpperCase();
+            var haircutN = Number($("#haircut").val());
+            var haircutcomiteN = Number($("#haircutcomite").val());
+            var hc1N = Number($("#hc1").val());
+            var hc2N = Number($("#hc2").val());
 
-            console.log(recdateN,' ',urecdate);
-            console.log(descN,' ',udescription);
-            console.log(statusN,' ',ustatus);
+            console.log(stockcodeN,' ',ustockcode);
+            console.log(haircutN,' ',uhaircut);
+            console.log(haircutcomiteN,' ',uhaircutcomite);
+            console.log(hc1N,' ',uhc1);
+            console.log(hc2N,' ',uhc2);
 
-            if (udescription === descN && urecdate === recdateN && ustatus === statusN) {
+            if (ustockcode === stockcodeN && uhaircut === haircutN && uhaircutcomite === haircutcomiteN
+                && uhc1 === hc1N && uhc2 === hc2N) {
                 cancelEdit();
             } else {
                 swal({
@@ -733,13 +653,6 @@
 
             clearVariable();
         }
-
-        function chgDate() {
-            var recdate = new Date($("#rec_date").val());
-            var rdate = recdate.getFullYear() + "/" + appendLeadingZeroes(recdate.getMonth() + 1) + "/" + appendLeadingZeroes(recdate.getDate());
-
-            $("#tgl_rec_date").val(rdate);
-        }
     </script>
 @endsection
 
@@ -765,23 +678,17 @@
         <div class="card card-header">
             <div class="form-inline">
                 <label class="form-control-label pr-5 mb-2">Filter by :</label>
-                <div class="ml-input-2 input-daterange input-group" id="datepicker-range-year">
-                    <input type="text" class="form-control" name="start" id="tgl_awal_current" readonly value="{{ $startmonth }}" onchange="datetableSummary(1);">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">To</span>
-                    </div>
-                    <input type="text" class="form-control" name="end" id="tgl_akhir_current" readonly value="{{ $thismonth }}" onchange="datetableSummary(1);">
+                <div class="ml-input-2 input-group">
+                    <input type="text" class="form-control" id="stock_code" style="text-transform: uppercase;" onchange="tableRefresh();">
                 </div>&nbsp;&nbsp;
-                <button class="form-control-btn btn btn-primary mb-1" type="button" id="btn-current" onclick="datetableSummary(1);">Refresh</button>
-                <input value="{{ $startmonth }}" type="hidden" id="tgl_awal"/>
-                <input value="{{ $thismonth }}" type="hidden" id="tgl_akhir"/>
+                <button class="form-control-btn btn btn-default mb-1" type="button" id="btn-current" onclick="allRefresh();">All Data</button>
             </div>
         </div>
         <div class="card card-body" style="min-height: 365px">
             <div class="d-none" id="alert-success-registrasi">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
-                    <span class="alert-inner--text"><strong id="regisuser"></strong>, has registered.</span>
+                    <span class="alert-inner--text"><strong id="regisuser" style="text-transform:uppercase"></strong>, has registered.</span>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -790,7 +697,7 @@
             <div class="d-none" id="alert-success-update">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
-                    <span class="alert-inner--text"><strong id="update_user_notification"></strong>, has updated.</span>
+                    <span class="alert-inner--text"><strong id="update_user_notification" style="text-transform:uppercase"></strong>, has updated.</span>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -811,13 +718,15 @@
                     <div class="box-body">
                         <div class="container-fluid py-2 card d-border-radius-0 mb-2">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover" id="table-marketholiday">
+                                <table class="table table-striped table-bordered table-hover" id="table-stockhaircut">
                                     <thead class="bg-gradient-primary text-lighter">
                                     <tr>
                                         <th>Action</th>
-                                        <th>Rec Date</th>
-                                        <th>Status</th>
-                                        <th>Description</th>
+                                        <th>Stock Code</th>
+                                        <th>Haircut</th>
+                                        <th>Haircut Comite</th>
+                                        <th>HC1</th>
+                                        <th>HC2</th>
                                     </tr>
                                     </thead>
                                 </table>
@@ -844,33 +753,34 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group lbl-group">
-                                            <label class="form-control-label col-sm-3 mb-2 px-0">Rec Date</label>
-                                            <div class="input-daterange input-group" id="datepicker-basic">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-                                                </div>
-                                                <input type="text" class="px-3 form-control" name="rec_date" id="rec_date" style="text-align: left!important;" readonly value="{{ $monththis }}" onchange="chgDate();">
-                                            </div>
-                                            <input value="{{ $monththis }}" type="hidden" id="tgl_rec_date"/>
-                                            <label id="cekRecDate" class="error invalid-feedback small d-block col-sm-12 px-0" for="recdate"></label>
+                                            <label class="form-control-label col-sm-3 mb-2 px-0">Stock Code</label>
+                                            <input type="text" class="form-control col-sm-12" placeholder="Stock Code"
+                                                   id="stockcode" name="stockcode" style="text-transform:uppercase;"/>
+                                            <label id="cekStockcode" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekStockcode"></label>
                                         </div>
                                         <div class="form-group lbl-group">
-                                            <label class="form-control-label col-sm-3 mb-2 px-0">Status</label>
-                                            <div class="input-group col-sm-12 px-0 lbl-status">
-                                                <select class="form-control bootstrap-select w-select-100" disabled data-live-search="true"
-                                                        data-style="btn-white" id="status" name="status">
-                                                    <option value="" disabled>Choose Status</option>
-                                                    <option value="C" selected>CLOSED</option>
-                                                    <option value="O">OPEN</option>
-                                                </select>
-                                            </div>
-                                            <label id="cekStatus" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekStatus"></label>
+                                            <label class="form-control-label col-sm-3 mb-2 px-0">Haircut</label>
+                                            <input type="number" class="form-control col-sm-12" placeholder="Haircut"
+                                                   id="haircut" name="haircut"/>
+                                            <label id="cekHaircut" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHaircut"></label>
                                         </div>
                                         <div class="form-group lbl-group">
-                                            <label class="form-control-label col-sm-3 mb-2 px-0">Description</label>
-                                            <input type="text" class="form-control col-sm-12" placeholder="Description"
-                                                      id="description" name="description"/>
-                                            <label id="cekDescription" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekDescription"></label>
+                                            <label class="form-control-label col-sm-3 mb-2 px-0">Haircut Comite</label>
+                                            <input type="number" class="form-control col-sm-12" placeholder="Haircut Comite"
+                                                   id="haircutcomite" name="haircutcomite"/>
+                                            <label id="cekHaircutcomite" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHaircutcomite"></label>
+                                        </div>
+                                        <div class="form-group lbl-group">
+                                            <label class="form-control-label col-sm-3 mb-2 px-0">HC1</label>
+                                            <input type="number" class="form-control col-sm-12" placeholder="HC1"
+                                                   id="hc1" name="hc1"/>
+                                            <label id="cekHC1" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHC1"></label>
+                                        </div>
+                                        <div class="form-group lbl-group">
+                                            <label class="form-control-label col-sm-3 mb-2 px-0">HC2</label>
+                                            <input type="number" class="form-control col-sm-12" placeholder="HC2"
+                                                   id="hc2" name="hc2"/>
+                                            <label id="cekHC2" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHC2"></label>
                                         </div>
                                     </div>
                                 </div>

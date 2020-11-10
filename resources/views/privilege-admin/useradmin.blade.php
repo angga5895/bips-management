@@ -96,6 +96,7 @@
 
             $form.keypress(function(e) {
                 if(e.which == 13) {
+                    checking('');
                     if ($("#hiddenuseradminid").val() === ''){
                         $("#saveUser").click();
                         console.log('save');
@@ -614,21 +615,23 @@
                 }
             }
 
-            if ($(these).val() !== ''){
-                var str = $(these).attr("id");
-                str = str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
-                    return letter.toUpperCase();
-                });
+            if  (these !== ''){
+                if ($(these).val() !== ''){
+                    var str = $(these).attr("id");
+                    str = str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                        return letter.toUpperCase();
+                    });
 
-                $("#cek"+str).text('');
+                    $("#cek"+str).text('');
 
-                if (str === 'User_type'){
-                    $(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
-                }
+                    if (str === 'User_type'){
+                        $(".lbl-user-type > .dropdown.bootstrap-select").removeClass("is-invalid");
+                    }
 
-                if (str === 'User_status'){
-                    $("#user_status-error").text('');
-                    $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
+                    if (str === 'User_status'){
+                        $("#user_status-error").text('');
+                        $(".lbl-user-status > .dropdown.bootstrap-select").removeClass("is-invalid");
+                    }
                 }
             }
         }

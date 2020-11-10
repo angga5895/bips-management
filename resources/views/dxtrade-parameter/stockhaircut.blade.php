@@ -11,6 +11,7 @@
     <script src="{{ url('bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
 
     <script src="{{ url('forms_pickers.js') }}"></script>
+    <script src="{{ url('inputmask/dist/jquery.inputmask.js') }}"></script>
     <script type="text/javascript">
         var ustockcode = '';
         var uhaircut = '';
@@ -115,10 +116,10 @@
 
         function saveUser() {
             var stockcode = $("#stockcode").val().toUpperCase();
-            var haircut = $("#haircut").val();
-            var haircutcomite = $("#haircutcomite").val();
-            var hc1 = $("#hc1").val();
-            var hc2 = $("#hc2").val();
+            var haircut = parseFloat($("#haircut").val().replace(/,/g, ''));
+            var haircutcomite = parseFloat($("#haircutcomite").val().replace(/,/g, ''));
+            var hc1 = parseFloat($("#hc1").val().replace(/,/g, ''));
+            var hc2 = parseFloat($("#hc2").val().replace(/,/g, ''));
 
             $.get("/mockjax");
 
@@ -219,10 +220,10 @@
         function updateuser() {
             var id = $("#hiddenuseradminid").val();
             var stockcode = $("#stockcode").val().toUpperCase();
-            var haircut = $("#haircut").val();
-            var haircutcomite = $("#haircutcomite").val();
-            var hc1 = $("#hc1").val();
-            var hc2 = $("#hc2").val();
+            var haircut = parseFloat($("#haircut").val().replace(/,/g, ''));
+            var haircutcomite = parseFloat($("#haircutcomite").val().replace(/,/g, ''));
+            var hc1 = parseFloat($("#hc1").val().replace(/,/g, ''));
+            var hc2 = parseFloat($("#hc2").val().replace(/,/g, ''));
 
             $.get("/mockjax");
 
@@ -272,6 +273,13 @@
         }
 
         $(document).ready(function () {
+            $(".input-mask-decimal").inputmask({
+                'alias': 'decimal',
+                rightAlign: false,
+                'groupSeparator': '.',
+                'autoGroup': true
+            });
+
             $('.js-example-basic-single').select2({
                 placeholder: 'AOID'
             });
@@ -441,10 +449,10 @@
 
         $("#canceluser").on("click", function () {
             var stockcode = $("#stock_code").val();
-            var haircut = $("#haircut").val();
-            var haircutcomite = $("#haircutcomite").val();
-            var hc1 = $("#hc1").val();
-            var hc2 = $("#hc2").val();
+            var haircut = parseFloat($("#haircut").val().replace(/,/g, ''));
+            var haircutcomite = parseFloat($("#haircutcomite").val().replace(/,/g, ''));
+            var hc1 = parseFloat($("#hc1").val().replace(/,/g, ''));
+            var hc2 = parseFloat($("#hc2").val().replace(/,/g, ''));
 
             var res = stockcode+haircut+haircutcomite+hc1+hc2;
             res = res.trim();
@@ -609,10 +617,10 @@
 
         $("#canceledituser").on("click", function () {
             var stockcodeN = $("#stockcode").val().toUpperCase();
-            var haircutN = Number($("#haircut").val());
-            var haircutcomiteN = Number($("#haircutcomite").val());
-            var hc1N = Number($("#hc1").val());
-            var hc2N = Number($("#hc2").val());
+            var haircutN = parseFloat($("#haircut").val().replace(/,/g, ''));
+            var haircutcomiteN = parseFloat($("#haircutcomite").val().replace(/,/g, ''));
+            var hc1N = parseFloat($("#hc1").val().replace(/,/g, ''));
+            var hc2N = parseFloat($("#hc2").val().replace(/,/g, ''));
 
             console.log(stockcodeN,' ',ustockcode);
             console.log(haircutN,' ',uhaircut);
@@ -760,25 +768,25 @@
                                         </div>
                                         <div class="form-group lbl-group">
                                             <label class="form-control-label col-sm-3 mb-2 px-0">Haircut</label>
-                                            <input type="number" class="form-control col-sm-12" placeholder="Haircut"
+                                            <input type="text" class="form-control col-sm-12 input-mask-decimal" placeholder="Haircut"
                                                    id="haircut" name="haircut"/>
                                             <label id="cekHaircut" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHaircut"></label>
                                         </div>
                                         <div class="form-group lbl-group">
                                             <label class="form-control-label col-sm-3 mb-2 px-0">Haircut Comite</label>
-                                            <input type="number" class="form-control col-sm-12" placeholder="Haircut Comite"
+                                            <input type="text" class="form-control col-sm-12 input-mask-decimal" placeholder="Haircut Comite"
                                                    id="haircutcomite" name="haircutcomite"/>
                                             <label id="cekHaircutcomite" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHaircutcomite"></label>
                                         </div>
                                         <div class="form-group lbl-group">
                                             <label class="form-control-label col-sm-3 mb-2 px-0">HC1</label>
-                                            <input type="number" class="form-control col-sm-12" placeholder="HC1"
+                                            <input type="text" class="form-control col-sm-12 input-mask-decimal" placeholder="HC1"
                                                    id="hc1" name="hc1"/>
                                             <label id="cekHC1" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHC1"></label>
                                         </div>
                                         <div class="form-group lbl-group">
                                             <label class="form-control-label col-sm-3 mb-2 px-0">HC2</label>
-                                            <input type="number" class="form-control col-sm-12" placeholder="HC2"
+                                            <input type="text" class="form-control col-sm-12 input-mask-decimal" placeholder="HC2"
                                                    id="hc2" name="hc2"/>
                                             <label id="cekHC2" class="error invalid-feedback small d-block col-sm-12 px-0" for="cekHC2"></label>
                                         </div>

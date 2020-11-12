@@ -75,6 +75,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('stockhaircut-update', 'ParameterController@stockhaircutEdit');
     Route::get('stockhaircut-delete/submit', 'ParameterController@deleteStockHaircut');
 
+    Route::post('/import-stockhaircut/submit', 'ParameterController@import_excel_haircut');
+    Route::get('/export-stockhaircut/submit', 'ParameterController@export_excel_haircut');
+
     Route::get('nameadmin-check', 'PrivilegeController@checkNameAdmin');
     Route::get('get-dataRole/{id}', 'PrivilegeController@dataRole')->name('data-role');
     Route::get('roleadmin-update', 'PrivilegeController@roleadminEdit');

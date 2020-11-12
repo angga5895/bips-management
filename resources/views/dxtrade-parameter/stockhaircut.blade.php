@@ -298,6 +298,19 @@
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
+        function exportExcel() {
+            $.ajax({
+                type    : "GET",
+                url     : "{{url('/export-stockhaircut/submit')}}",
+                complete : function (){
+                    //window.open(this.url, '_blank');
+                    window.location = this.url;
+                    console.log('Export Excel Success..');
+                }
+            });
+        }
+
+
         function tablegetStockHaircut() {
             var tableData = $("#table-stockhaircut").DataTable({
                 /*processing: true,
@@ -307,7 +320,12 @@
                 bFilter: false,
                 dom: 'l<"toolbar">frtip',
                 initComplete: function(){
-                    $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" type="button" id="adduser" onclick="addUser()">Add</button>');
+                    $("div.toolbar").html('<button class="form-control-btn-0 btn btn-primary mb-2" type="button" id="adduser" onclick="addUser()">Add</button>' +
+                        '<button type="button" class="form-control-btn-0 btn btn-outline-default mb-2" data-toggle="modal" data-target="#importExcel">' +
+                        '<i style="color: #00b862" class="fa fa-file-excel"></i> Import Excel' +
+                        '</button>' +
+                        '<button class="form-control-btn-0 btn btn-outline-default mb-2" type="button" onclick="exportExcel()">' +
+                        '<i style="color: #00b862" class="fa fa-file-excel"></i> Export Excel</button>');
                 },
                 ajax : {
                     url: '{{ url("datastockhaircut-get") }}',
@@ -661,6 +679,11 @@
 
             clearVariable();
         }
+
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
     </script>
 @endsection
 
@@ -719,6 +742,34 @@
                     </button>
                 </div>
             </div>
+
+            {{-- notifikasi form validasi --}}
+            @if ($errors->has('file'))
+                <div>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span class="alert-inner--text">Error Because =>&nbsp;<strong>{{ $errors->first('file') }}</strong></span>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            {{-- notifikasi sukses --}}
+            @if ($sukses = Session::get('importsuccess'))
+                <div class="alert alert-success alert-block">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>{{ $sukses }}</strong>
+                </div>
+            @endif
+
+            {{-- notifikasi error --}}
+            @if ($error = Session::get('importerror'))
+                <div class="alert alert-danger alert-block">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>{{ $error }}</strong>
+                </div>
+            @endif
             <section class="content">
 
                 <!-- Default box -->
@@ -810,5 +861,37 @@
                 </div>
             </div>
         </form>
+    </div>
+    <!-- Import Excel -->
+    <div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method="post" action="{{ url('/import-stockhaircut/submit') }}" enctype="multipart/form-data">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Import Excel Data Stock Haircut</h5>
+                    </div>
+                    <div class="modal-body">
+
+                        {{ csrf_field() }}
+
+                        <label>Choose file excel</label>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="customFile" name="file" required="required">
+                            <label class="custom-file-label" for="customFile"
+                                  style="white-space: nowrap;
+                                  width: 100%;
+                                  overflow: hidden;
+                                  text-overflow: ellipsis;"
+                            >Choose file excel</label>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 @endsection

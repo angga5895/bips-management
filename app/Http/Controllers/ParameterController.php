@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StockHaircutExport;
+use App\Imports\StockHaircutImport;
 use App\MarketHoliday;
 use App\StockHaircut;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
+
+use Session;
 
 class ParameterController extends Controller
 {
@@ -398,5 +403,39 @@ class ParameterController extends Controller
             'stock_code' => $stock_code,
             'message' => $message,
         ]);
+    }
+
+    public function export_excel_haircut()
+    {
+        date_default_timezone_set('Asia/Jakarta');
+        $judul = 'Stock Haircut';
+
+        return Excel::download(new StockHaircutExport, $judul.'_'. date('Y-m-d H:i:s').'.xls');
+    }
+
+    public function import_excel_haircut(Request $request)
+    {
+        // validasi
+        $this->validate($request, [
+            'file' => 'required|mimes:csv,xls,xlsx'
+        ]);
+
+        // menangkap file excel
+        $file = $request->file('file');
+
+        // membuat nama file unik
+        $nama_file = rand().$file->getClientOriginalName();
+
+        // upload ke folder file_siswa di dalam folder public
+        $file->move('file_stockhaircut',$nama_file);
+
+        // Delete all data
+        DB::select('DELETE FROM stock_haircut;');
+
+        // import data
+        Excel::import(new StockHaircutImport, public_path('/file_stockhaircut/'.$nama_file));
+
+        // alihkan halaman kembali
+        return redirect('/parameter/stockhaircut');
     }
 }

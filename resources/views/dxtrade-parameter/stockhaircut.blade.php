@@ -756,15 +756,19 @@
             @endif
 
             {{-- notifikasi sukses --}}
-            @if ($sukses = Session::get('importsuccess'))
+            @if (Session::get('importsuccess') && Session::get('importerror'))
+                <div class="alert alert-success alert-block">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>{{ Session::get('importsuccess') }}</strong>
+                </div>
+            {{-- notifikasi sukses --}}
+            @elseif($sukses = Session::get('importsuccess'))
                 <div class="alert alert-success alert-block">
                     <button type="button" class="close" data-dismiss="alert">×</button>
                     <strong>{{ $sukses }}</strong>
                 </div>
-            @endif
-
             {{-- notifikasi error --}}
-            @if ($error = Session::get('importerror'))
+            @elseif ($error = Session::get('importerror'))
                 <div class="alert alert-danger alert-block">
                     <button type="button" class="close" data-dismiss="alert">×</button>
                     <strong>{{ $error }}</strong>

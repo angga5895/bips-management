@@ -16,7 +16,9 @@ class StockHaircutImport implements ToModel
     */
     public function model(array $row)
     {
-        if (count($row) === 5) {
+        if (strpos($row[0], ' ') === false && count($row) === 5 &&
+            (strlen($row[0]) < 22) && !is_string($row[1]) && !is_string($row[2])
+            && !is_string($row[3]) && !is_string($row[4])) {
             // notifikasi dengan session
             Session::flash('importsuccess','Data stock haircut has been imported!');
 

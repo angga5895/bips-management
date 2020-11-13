@@ -302,6 +302,9 @@
             $.ajax({
                 type    : "GET",
                 url     : "{{url('/export-stockhaircut/submit')}}",
+                data    : {
+                    'stock_code': $("#stock_code").val().toUpperCase()
+                },
                 complete : function (){
                     //window.open(this.url, '_blank');
                     window.location = this.url;

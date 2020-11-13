@@ -407,10 +407,12 @@ class ParameterController extends Controller
 
     public function export_excel_haircut()
     {
+        $stock_code = $_GET['stock_code'];
+
         date_default_timezone_set('Asia/Jakarta');
         $judul = 'Stock Haircut';
 
-        return Excel::download(new StockHaircutExport, $judul.'_'. date('Y-m-d H:i:s').'.xls');
+        return (new StockHaircutExport($stock_code))->download($judul.'_'. date('Y-m-d H:i:s').'.xls');
     }
 
     public function import_excel_haircut(Request $request)

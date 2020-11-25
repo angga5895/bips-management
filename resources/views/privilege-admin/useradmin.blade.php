@@ -5,10 +5,15 @@
         var conpass = 0;
         var conusername = 0;
 
+        var conpin = 0;
+
         var roleapp = '';
         var username = '';
         var password = '';
         var confirmpassword = '';
+
+        var pin = '';
+        var confirmpin = '';
 
         var rulesobj = {
             "username" : {
@@ -22,6 +27,12 @@
             },
             "role-app" : {
                 required : true,
+            },
+            "pin" : {
+                required : true
+            },
+            "pin-confirm" : {
+                required : true
             }
         }
 
@@ -30,6 +41,8 @@
             "password" : "Field is required.",
             "password-confirm" : "Field is required.",
             "role-app" : "Please pick an role admin.",
+            "pin" : "Field is required.",
+            "pin-confirm" : "Field is required.",
         }
 
         $(function () {
@@ -106,6 +119,38 @@
                     }
                 }
             });
+
+            var $formpin = $('#myFormPin');
+            $formpin.validate({
+                rules: rulesobj,
+                messages: messagesobj,
+                debug: false,
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                    $(element).addClass('is-invalid');
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            $formpin.find("#saveUserPin").on('click', function () {
+                pinUser($formpin);
+                return false;
+            });
+
+            $formpin.keypress(function(e) {
+                if(e.which == 13) {
+                    checkingpin('');
+                    pinUser($formpin);
+                    console.log('pin');
+                }
+            });
         });
 
         function updateUser(form){
@@ -155,6 +200,29 @@
             }
         }
 
+        function pinUser(form){
+            if (form.valid()) {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-success",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            pinuser();
+                        }
+                    }
+                )
+            }  else {
+                $('.lbl-group').removeClass('focused');
+            }
+        }
+
         $(document).ready(function () {
             tablegetReg();
             tablelist();
@@ -168,6 +236,9 @@
             });
 
             setInterval(function () {
+                if(conpin > 0){
+                    $('#pin-confirm-error').text('PIN confirm is wrong.');
+                }
                 if(conpass > 0){
                     $('#password-confirm-error').text('Password confirm is wrong.');
                 }
@@ -381,7 +452,10 @@
                     orderable : false,
                     className: 'text-center',
                     render : function (data, type, row) {
-                        return '<button class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Edit" onclick="editUser(\''+data+'\')">' +
+                        return '<button class="btn btn-sm btn-success" data-toggle="tooltip" data-placement="top" title="PIN" onclick="pinUsers(\''+data+'\')">' +
+                            '<i class="fa fa-qrcode"></i>' +
+                            '</button>' +
+                            '<button class="btn btn-sm btn-primary" data-toggle="tooltip" data-placement="top" title="Edit" onclick="editUser(\''+data+'\')">' +
                             '<i class="fa fa-pen"></i>' +
                             '</button>' +
                             '<button class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="top" title="Delete" onclick="deleteUser(\''+data+'\')">' +
@@ -403,15 +477,60 @@
             $("#add-user").addClass("d-block");
             $("#main-user").removeClass("d-block");
             $("#main-user").addClass("d-none");
+            $("#pin-user").removeClass("d-block");
+            $("#pin-user").addClass("d-none");
             $("#breadAdditional").addClass("d-block"); $("#breadAdditional").removeClass("d-none");$("#breadAdditional").text("Add");
 
             $("#savegroupbutton").addClass('d-block');
             $("#savegroupbutton").removeClass('d-none');
             $("#editgroupbutton").removeClass('d-block');
             $("#editgroupbutton").addClass('d-none');
+            $("#savegroupbuttonpin").removeClass('d-block');
+            $("#savegroupbuttonpin").addClass('d-none');
 
             clearCache();
         };
+
+        function pinUsers(data){
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('useradmin-pin/') }}",
+                data : {
+                    'id' : data,
+                },
+                success : function (res) {
+                    // console.log(res.name);
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("PIN");
+
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res[0].username);
+                    $("#hiddenuseradminidpin").val(data);
+                    $("#hiddenuseradminnamepin").val(res[0].username);
+
+                    $("#pin").val(res[0].pin);
+                    $("#pin-confirm").val(res[0].pin);
+
+                    pin = res[0].pin;
+                    confirmpin = res[0].pin;
+                }
+            });
+
+            // $("#groupname").val('');
+            $("#hiddenuseradminidpin").val(data);
+
+            $("#add-user").removeClass("d-block");
+            $("#add-user").addClass("d-none");
+            $("#main-user").removeClass("d-block");
+            $("#main-user").addClass("d-none");
+            $("#pin-user").removeClass("d-none");
+            $("#pin-user").addClass("d-block");
+            $("#savegroupbutton").addClass('d-none');
+            $("#savegroupbutton").removeClass('d-block');
+            $("#editgroupbutton").removeClass('d-block');
+            $("#editgroupbutton").addClass('d-block');
+            $("#savegroupbuttonpin").removeClass('d-none');
+            $("#savegroupbuttonpin").addClass('d-block');
+            clearCachePin();
+        }
 
         function editUser(data){
             $.ajax({
@@ -448,10 +567,14 @@
             $("#add-user").addClass("d-block");
             $("#main-user").removeClass("d-block");
             $("#main-user").addClass("d-none");
+            $("#pin-user").removeClass("d-block");
+            $("#pin-user").addClass("d-none");
             $("#savegroupbutton").addClass('d-none');
             $("#savegroupbutton").removeClass('d-block');
             $("#editgroupbutton").removeClass('d-none');
             $("#editgroupbutton").addClass('d-block');
+            $("#savegroupbuttonpin").addClass('d-none');
+            $("#savegroupbuttonpin").removeClass('d-block');
             clearCache();
         }
 
@@ -528,6 +651,38 @@
             });
         });
 
+        $("#resetuserpin").on('click', function(){
+            cacheErrorPin();
+            var data = $("#hiddenuseradminidpin").val()
+            $.ajax({
+                type : "GET",
+                url  : "{{ url('useradmin-pin/') }}",
+                data : {
+                    'id' : data,
+                },
+                success : function (res) {
+                    $("#breadAdditional").removeClass("d-none").addClass("d-block").text("Pin");
+                    $("#breadAdditionalText").removeClass("d-none").addClass("d-block").text(res[0].username);
+                    $("#hiddenuseradminidpin").val(data);
+                    $("#hiddenuseradminnamepin").val(res[0].username);
+                    $("#pin").val(res[0].pin);
+                    $("#pin-confirm").val(res[0].pin);
+                }
+            });
+        });
+
+        function cacheErrorPin() {
+            $('.lbl-group').removeClass('focused');
+
+            $("#pin-error").text('');
+            $("#pin-confirm-error").text('');
+
+            $("#pin").removeClass("is-invalid");
+            $("#pin-confirm").removeClass("is-invalid");
+
+            $("#cekPIN").text('');
+        }
+
         function cacheError() {
             $('.lbl-group').removeClass('focused');
 
@@ -570,6 +725,8 @@
                         if (isConfirm) {
                             $("#add-user").removeClass("d-block");
                             $("#add-user").addClass("d-none");
+                            $("#pin-user").removeClass("d-block");
+                            $("#pin-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
                             $("#main-user").addClass("d-block");
                             $("#detail-user").removeClass("d-block");
@@ -584,6 +741,8 @@
             } else {
                 $("#add-user").removeClass("d-block");
                 $("#add-user").addClass("d-none");
+                $("#pin-user").removeClass("d-block");
+                $("#pin-user").addClass("d-none");
                 $("#main-user").removeClass("d-none");
                 $("#main-user").addClass("d-block");
                 $("#detail-user").removeClass("d-block");
@@ -636,6 +795,28 @@
             }
         }
 
+        function checkingpin(these) {
+            var pin = $("#pin").val();
+            var cpin = $("#pin-confirm").val();
+
+            if (pin === ''){
+                conpin=0;
+            }
+
+            if(cpin !== '') {
+                if (pin != cpin) {
+                    $("#pin-confirm").focus();
+                    $("#pin-confirm").val('');
+                    $('#pin-confirm').valid();
+                    conpin = 1;
+                } else if (pin == cpin) {
+                    $('#pin').valid();
+                    $('#pin-confirm').valid();
+                    conpin = 0;
+                }
+            }
+        }
+
         function clearCache(){
             conpass = 0;
             conusername = 0;
@@ -656,6 +837,29 @@
 
             $("#alert-success-update").removeClass("d-block");
             $("#alert-success-update").addClass("d-none");
+        }
+
+        function clearCachePin(){
+            conpin = 0;
+            cacheErrorPin();
+            $("#hiddenuseradminidpin").val('');
+
+            $("#pin").val('');
+            $("#pin-confirm").val('');
+
+            $("#hiddenuseradminidpin").removeClass("is-invalid");
+
+            $("#alert-error-registrasi").removeClass("d-block");
+            $("#alert-error-registrasi").addClass("d-none");
+
+            $("#alert-success-registrasi").removeClass("d-block");
+            $("#alert-success-registrasi").addClass("d-none");
+
+            $("#alert-success-update").removeClass("d-block");
+            $("#alert-success-update").addClass("d-none");
+
+            $("#alert-success-pin").removeClass("d-block");
+            $("#alert-success-pin").addClass("d-none");
         }
 
         function resetApp(){
@@ -688,6 +892,8 @@
                             $('#table-reggroup').DataTable().ajax.reload();
                             $("#add-user").removeClass("d-block");
                             $("#add-user").addClass("d-none");
+                            $("#pin-user").removeClass("d-block");
+                            $("#pin-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
                             $("#main-user").addClass("d-block");
                             $("#regisuser").text(res.user);
@@ -701,6 +907,8 @@
                             $('#table-reggroup').DataTable().ajax.reload();
                             $("#add-user").removeClass("d-block");
                             $("#add-user").addClass("d-none");
+                            $("#pin-user").removeClass("d-block");
+                            $("#pin-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
                             $("#main-user").addClass("d-block");
                             $("#messageuser").text(res.message);
@@ -738,6 +946,8 @@
                             $('#table-reggroup').DataTable().ajax.reload();
                             $("#add-user").removeClass("d-block");
                             $("#add-user").addClass("d-none");
+                            $("#pin-user").removeClass("d-block");
+                            $("#pin-user").addClass("d-none");
                             $("#main-user").removeClass("d-none");
                             $("#main-user").addClass("d-block");
                             $("#update_user_notification").text(res.user);
@@ -746,7 +956,62 @@
 
                             clearVariable();
                         } else {
-                            $("#err_msg").text(res.message);
+                            $('#table-reggroup').DataTable().ajax.reload();
+                            $("#add-user").removeClass("d-block");
+                            $("#add-user").addClass("d-none");
+                            $("#pin-user").removeClass("d-block");
+                            $("#pin-user").addClass("d-none");
+                            $("#main-user").removeClass("d-none");
+                            $("#main-user").addClass("d-block");
+                            $("#messageuser").text(res.message);
+                            $("#alert-error-registrasi").addClass("d-block");
+                            $("#alert-error-registrasi").removeClass("d-none");
+                        }
+                    }
+                }
+            });
+        }
+
+        function pinuser() {
+            var id = $("#hiddenuseradminidpin").val();
+            var username = $("#hiddenuseradminnamepin").val();
+            var pin = $("#pin").val();
+            var cpin = $("#pin-confirm").val();
+
+            $.get("/mockjax");
+
+            $.ajax({
+                type: "GET",
+                url: "{{ url('useradmin-pin/submit') }}",
+                data: {
+                    'id': id,
+                    'username': username,
+                    'pin': pin,
+                },
+                success: function (res) {
+                    if ($.trim(res)) {
+                        if (res.status === "00") {
+                            $('#table-reggroup').DataTable().ajax.reload();
+                            $("#add-user").removeClass("d-block");
+                            $("#add-user").addClass("d-none");
+                            $("#pin-user").removeClass("d-block");
+                            $("#pin-user").addClass("d-none");
+                            $("#main-user").removeClass("d-none");
+                            $("#main-user").addClass("d-block");
+                            $("#pin_user_notification").text(res.user);
+                            $("#alert-success-pin").removeClass("d-none");
+                            $("#alert-success-pin").addClass("d-block");
+
+                            clearVariable();
+                        } else {
+                            $('#table-reggroup').DataTable().ajax.reload();
+                            $("#add-user").removeClass("d-block");
+                            $("#add-user").addClass("d-none");
+                            $("#pin-user").removeClass("d-block");
+                            $("#pin-user").addClass("d-none");
+                            $("#main-user").removeClass("d-none");
+                            $("#main-user").addClass("d-block");
+                            $("#messageuser").text(res.message);
                             $("#alert-error-registrasi").addClass("d-block");
                             $("#alert-error-registrasi").removeClass("d-none");
                         }
@@ -793,6 +1058,8 @@
             username = '';
             password = '';
             confirmpassword = '';
+            pin = '';
+            confirmpin = '';
         }
 
         function cancelEdit(){
@@ -800,6 +1067,8 @@
             $("#breadAdditionalText").removeClass("d-block").addClass("d-none").text('');
             $("#add-user").removeClass("d-block");
             $("#add-user").addClass("d-none");
+            $("#pin-user").removeClass("d-block");
+            $("#pin-user").addClass("d-none");
             $("#main-user").removeClass("d-none");
             $("#main-user").addClass("d-block");
 
@@ -819,6 +1088,35 @@
 
             if (username === usernameN && password === passwordN && confirmpassword === confirmpasswordN &&
                 roleapp === parseInt(roleappN)) {
+                cancelEdit();
+            } else {
+                swal({
+                        title: "Are you sure?",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonClass: "btn-danger",
+                        confirmButtonClass: "btn-default",
+                        confirmButtonText: "Yes",
+                        cancelButtonText: "No",
+                        closeOnCancel: true,
+                    },
+                    function(isConfirm) {
+                        if (isConfirm) {
+                            cancelEdit();
+                        }
+                    }
+                )
+            }
+        });
+
+        $("#canceluserpin").on("click", function () {
+            var pinN = $("#pin").val();
+            var confirmpinN = $("#pin-confirm").val();
+
+            console.log('PIN ::'+pinN+' PINS ::'+pin);
+            console.log('CPIN ::'+confirmpinN+' CPINS::'+confirmpin);
+
+            if ((pin === pinN && confirmpin === confirmpinN) || (pinN === null && confirmpinN === null)|| (pin === null && confirmpin === null)) {
                 cancelEdit();
             } else {
                 swal({
@@ -892,6 +1190,15 @@
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
                     <span class="alert-inner--text"><strong id="update_user_notification"></strong>, has updated.</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+            <div class="d-none" id="alert-success-pin">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span class="alert-inner--icon"><i class="ni ni-like-2"></i></span>
+                    <span class="alert-inner--text"><strong id="pin_user_notification"></strong>, pin has updated.</span>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -1001,6 +1308,55 @@
                     <button class="form-control-btn btn btn-success mb-2" type="button" id="updateUser">Update</button>
                     <button class="form-control-btn btn btn-info mb-2" type="reset" id="resetuser">Reset</button>
                     <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceledituser">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card shadow d-none" id="pin-user">
+        <form id="myFormPin">
+            <input type="hidden" id="hiddenuseradminidpin"/>
+            <input type="hidden" id="hiddenuseradminnamepin"/>
+            <div class="card card-body" style="min-height: 365px">
+                <!-- Main content -->
+                <section class="content">
+                    <!-- Default box -->
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="container-fluid py-2 card d-border-radius-0 mb-2">
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+
+                                        <div class="form-group lbl-group">
+                                            <label class="form-control-label col-sm-3 mb-2 px-0">PIN</label>
+                                            <input class="form-control col-sm-12" type="password" placeholder="Please Input"
+                                                   id="pin" name="pin" onchange="checkingpin(this)"
+
+                                            />
+                                            <label id="cekPIN" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin"></label>
+                                        </div>
+                                        <div class="form-group lbl-group">
+                                            <label class="form-control-label col-sm-3 mb-2 px-0">Confirm PIN</label>
+                                            <input class="form-control col-sm-12" type="password" placeholder="Please Input"
+                                                   id="pin-confirm" name="pin-confirm" onchange="checkingpin(this)"
+
+                                            />
+                                            <label id="cekPin-confirm" class="error invalid-feedback small d-block col-sm-12 px-0" for="pin-confirm"></label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="card card-footer text-right">
+                <div class="form-inline justify-content-end" id="savegroupbuttonpin">
+                    <button class="form-control-btn btn btn-primary mb-2" type="button" id="saveUserPin">Save</button>
+                    <button class="form-control-btn btn btn-info mb-2" type="button" id="resetuserpin">Reset</button>
+                    <button class="form-control-btn btn btn-danger mb-2" type="button" id="canceluserpin">Cancel</button>
                 </div>
             </div>
         </form>

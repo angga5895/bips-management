@@ -91,6 +91,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('userActivity-get', 'UserController@dataUserActivity');
 
     Route::get('useradmin-delete/submit', 'PrivilegeController@deleteUseradmin');
+    Route::get('useradmin-pin', 'PrivilegeController@useradminPin');
+    Route::get('useradmin-pin/submit', 'PrivilegeController@pinUseradmin');
     Route::get('useradmin-update', 'PrivilegeController@useradminEdit');
     Route::get('useradmin-update/submit', 'PrivilegeController@updateUseradmin');
     Route::get('usernameadmin-registrasi', 'PrivilegeController@registrasiUserAdmin');

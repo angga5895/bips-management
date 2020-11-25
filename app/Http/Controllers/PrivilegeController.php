@@ -253,6 +253,58 @@ class PrivilegeController extends Controller
         ]);
     }
 
+    public function pinUseradmin(){
+        $id = $_GET['id'];
+        $npin = $_GET['pin'];
+        $username = $_GET['username'];
+
+        $current_time = Carbon::now('Asia/Jakarta')->toDateTimeString();
+
+        $pin = DB::select('SELECT pin FROM user_admins WHERE id=\''.$id.'\' ')[0];
+        if ($pin->pin !== $npin){
+            if (strlen($npin) !== 6 || !is_numeric($npin)){
+                $userpin = 'TidakCocok';
+            } else{
+                $userpin = Hash::make($npin);
+            }
+        } else {
+            $userpin = $pin->pin;
+        }
+
+        if ($userpin === 'TidakCocok'){
+            $status = "01";
+            $user = "";
+            $message = 'PIN must be numeric and 6 digit.';
+        } else{
+            try {
+            $query = UserAdmin::where('id', $id)->update([
+                'pin' => $userpin,
+                'updated_at' => $current_time
+            ]);
+
+            if ($query) {
+                $status = '00';
+                $user = $username;
+                $message = 'Success';
+            } else {
+                $status = "01";
+                $user = "";
+                $message = 'Error';
+            }
+        }catch(QueryException $ex){
+            $status = "01";
+            $user = null;
+            $message = $ex->getMessage();
+        }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'user' => $user,
+            'message' => $message,
+        ]);
+    }
+
     public function useradminEdit()
     {
         $id = $_GET['id'];
@@ -262,6 +314,14 @@ class PrivilegeController extends Controller
 
         $pass = DB::select('SELECT password FROM user_admins WHERE id=\''.$id.'\' ')[0];
         return response()->json([$user,$pass]);
+    }
+
+    public function useradminPin()
+    {
+        $id = $_GET['id'];
+
+        $pin = DB::select('SELECT * FROM user_admins WHERE id=\''.$id.'\' ');
+        return response()->json($pin);
     }
 
     public function dataRole(Request $request){
